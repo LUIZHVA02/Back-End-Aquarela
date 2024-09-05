@@ -12,7 +12,6 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 dadosUsuario.nome_usuario == '' || dadosUsuario.nome_usuario == undefined || dadosUsuario.nome_usuario > 150 ||
                 dadosUsuario.foto_usuario == '' || dadosUsuario.foto_usuario == undefined || dadosUsuario.foto_usuario > 300 ||
                 dadosUsuario.descricao == '' || dadosUsuario.descricao == undefined || dadosUsuario.descricao.lenght > 300 ||
-
                 dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.lenght > 50 ||
                 dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.lenght > 16 ||
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.lenght != 11 ||
