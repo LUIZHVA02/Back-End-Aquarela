@@ -1,6 +1,6 @@
 create database db_aquarela;
 use db_aquarela;
-create table usuario(
+create table tbl_usuario( 
 	id_usuario int not null primary key auto_increment,
     nome varchar(150) not null,
     nome_usuario varchar(150) not null,
@@ -14,7 +14,7 @@ create table usuario(
     disponibilidade boolean not null,
     status boolean not null 
     );
-create table endereco(
+create table tbl_endereco( 
 	id_endereco int not null primary key auto_increment,
     logradouro varchar(150) not null,
     numero_casa int not null,
@@ -25,12 +25,12 @@ create table endereco(
     cep varchar(9),
     status boolean not null
     );
-create table usuario_endereco(
+create table tbl_usuario_endereco( 
 	id_usuario_endereco int not null primary key auto_increment,
     id_endereco int not null,
     id_usuario int not null,
     status boolean not null,
-    foreign key (id_endereco) references endereco (id_endereco),
-    foreign key (id_usuario) references usuario (id_usuario)
+    foreign key (id_endereco) references tbl_endereco (id_endereco),
+    foreign key (id_usuario) references tbl_usuario (id_usuario)
     );
     
