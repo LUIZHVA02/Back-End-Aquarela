@@ -11,7 +11,8 @@ create table usuario(
 	cpf varchar(11) not null,
     data_nascimento date not null,
 	telefone varchar(11) not null,
-    disponibilidade boolean not null
+    disponibilidade boolean not null,
+    status boolean not null 
     );
 create table endereco(
 	id_endereco int not null primary key auto_increment,
@@ -21,12 +22,14 @@ create table endereco(
 	bairro varchar(150) not null,
     estado varchar(20) not null,
     cidade varchar(100) not null,
-    cep varchar(9)
+    cep varchar(9),
+    status boolean not null
     );
 create table usuario_endereco(
 	id_usuario_endereco int not null primary key auto_increment,
     id_endereco int not null,
     id_usuario int not null,
+    status boolean not null,
     foreign key (id_endereco) references endereco (id_endereco),
     foreign key (id_usuario) references usuario (id_usuario)
     );
