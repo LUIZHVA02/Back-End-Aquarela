@@ -1,4 +1,4 @@
-const usuarioDAO = require('../model/DAO/usuario.js')
+const usuarioDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
 
 const setNovoUsuario = async (dadosUsuario, contentType) => {
@@ -6,6 +6,8 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
         if (String(contentType).toLowerCase() == 'application/json') {
 
             let resultDadosUsuario = {}
+            console.log(dadosUsuario);
+            
 
             if (
                 dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.lenght > 150 ||
@@ -16,7 +18,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.lenght > 16 ||
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.lenght != 11 ||
                 dadosUsuario.data_nascimento == '' || dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento != 10 ||
-                dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.lenght != 11 ||
+                dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.lenght > 11 ||
                 dadosUsuario.disponibilidade == '' || dadosUsuario.disponibilidade == undefined
             ) {
 
@@ -134,14 +136,74 @@ const setAtualizarUsuarioSenha = async(dadosUsuario, contentType, id_usuario) =>
 
 }
 
-// const setExcluirUsuario = async(id) => {
-//     try {
-//         let id_usuario = id 
-//         let validacaoUsuario = 
-//     } catch (error) {
+const getBuscarUsuario = async(id) => {
 
-//     }
-// }
+    try {
+    
+        let id_usuario = id
+        let usuarioJSON = {}
+
+        if(id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosUsuario = await usuarioDAO.selectByid_usuario(id_usuario)
+
+            if(dadosUsuario){
+
+                if(dadosUsuario.length > 0){
+                    
+                    usuarioJSON.usuario = dadosUsuario
+                    usuarioJSON.status_code = 200
+                    return usuarioJSON
+
+                }else{
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+const getListarUsuarios = async() => {
+
+    try {
+
+        let usuarioJSON = {}
+        let dadosUsuario = await usuarioDAO.selectAllUsuarios()
+
+        if(dadosUsuario){
+            
+            if(dadosUsuario.length > 0) {
+                
+                usuarioJSON.usuarios = dadosUsuario
+                usuarioJSON.quantidade = dadosUsuario.length
+                usuarioJSON.status_code = 200
+                return usuarioJSON
+            
+            }else{
+                return message.ERROR_NOT_FOUND // 404
+            }
+
+        }else{
+            return message.ERROR_INTERNAL_SERVER_DB // 500
+        }
+      
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 
 const getValidarUsuario = async (email, senha, contentType) => {
     try {
@@ -179,9 +241,22 @@ const getValidarUsuario = async (email, senha, contentType) => {
         return message.ERROR_INTERNAL_SERVER
     }
 }
+// const setExcluirUsuario = async(id) => {
+//     try {
+//         let id_usuario = id 
+//         let validacaoUsuario = 
+//     } catch (error) {
+
+//     }
+// }
+
 
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
+    setAtualizarUsuarioSenha,
+    getBuscarUsuario,
+    getBuscarUsuario,
+    getListarUsuarios,
     getValidarUsuario
 }
