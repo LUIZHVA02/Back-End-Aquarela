@@ -10,7 +10,8 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 
 /**************************** Imports de arquivos e bibliotecas do Projeto ******************************/
-const controllerUsuarios = require('./controller/controller-user')
+const controllerUsuarios = require('./controller/controller-user.js')
+const controllerAddress = require('./controller/controller-address.js')
 /********************************************************************************************************/
 
 const app = express()
@@ -63,7 +64,16 @@ app.put('/v1/aquarela/usuario/:id', cors(), bodyParserJson, async (request, resp
     response.json(resultDados)
 })
 
+
+app.post('/v1/aquarela/endereco', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
+    response.status(resultdataAddress.status_code)
+    response.json(resultdataAddress)
+})
+
+
 const port = process.env.PORT || 8080
-
-
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})
