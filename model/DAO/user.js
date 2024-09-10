@@ -5,32 +5,33 @@
 * Versão: 1.0
 ****************************************************************************************************************************************************/
 
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 // Inserir um novo usuário
 const insertUsuario = async (dadosUsuario) => {
 
     try {
-        let sql = `insert into tbl_usuario (nome, nome_usuario, foto_usuario, descricao, email, senha, cpf, data_nascimento, telefone, disponibilidade, status) values ('${dadosUsuario.id_usuario}','${dadosUsuario.nome}', '${dadosUsuario.nome_usuario}', '${dadosUsuario.foto_usuario}', '${dadosUsuario.descricao}','${dadosUsuario.email}', md5('${dadosUsuario.senha}'), '${dadosUsuario.cpf}', '${dadosUsuario.data_nascimento}', '${dadosUsuario.telefone}', '${dadosUsuario.disponibilidade}', true)`
+        let sql = `insert into tbl_usuario (nome, nome_usuario, foto_usuario, descricao, email, senha, cpf, data_nascimento, telefone, disponibilidade, status) values ('${dadosUsuario.nome}', '${dadosUsuario.nome_usuario}', '${dadosUsuario.foto_usuario}', '${dadosUsuario.descricao}','${dadosUsuario.email}', md5('${dadosUsuario.senha}'), '${dadosUsuario.cpf}', '${dadosUsuario.data_nascimento}', '${dadosUsuario.telefone}', '${dadosUsuario.disponibilidade}', true)`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if(resultStatus)
+        if (resultStatus)
             return true
         else
             return false
     } catch (error) {
+        console.error("Erro ao inserir usuário: ", error);
         return false
     }
-
+    
 }
 
 // Atualizar um usuário existente filtrando pelo ID
 const updateUsuario = async (dadosUsuario, idUsuario) => {
 
     try {
-        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}' where id = ${idUsuario}`           
+        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}' where id = ${idUsuario}`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if(resultStatus)
+        if (resultStatus)
             return true
         else
             return false
@@ -44,9 +45,9 @@ const updateUsuario = async (dadosUsuario, idUsuario) => {
 const updateUsuarioSenha = async (dadosUsuario, idUsuario) => {
 
     try {
-        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}', senha = md5('${dadosUsuario.senha}') where id = ${idUsuario}`   
+        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}', senha = md5('${dadosUsuario.senha}') where id = ${idUsuario}`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if(resultStatus)
+        if (resultStatus)
             return true
         else
             return false
@@ -70,7 +71,7 @@ const updateUsuarioSenha = async (dadosUsuario, idUsuario) => {
 // }
 
 // Listar todos os usuários existentes na tabela
-const selectAllUsuarios = async () => {   
+const selectAllUsuarios = async () => {
 
     try {
         let sql = 'select id, nome, email from tbl_usuario order by id desc'
@@ -101,7 +102,19 @@ const selectValidacaoUsuario = async (email, senha) => {
     try {
         let sql = `select tu.id, tu.nome, tu.email from tbl_usuario as tu where email = '${email}' and senha = md5('${senha}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario        
+        return rsUsuario
+    } catch (error) {
+        return false
+    }
+
+}
+
+const selectLastId = async () => {
+   
+    try {
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1'
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
     } catch (error) {
         return false
     }
@@ -110,9 +123,5 @@ const selectValidacaoUsuario = async (email, senha) => {
 
 module.exports = {
     insertUsuario,
-    updateUsuario,
-    updateUsuarioSenha,
-    selectAllUsuarios,
-    selectByIdUsuario,
-    selectValidacaoUsuario,
+    selectLastId
 }
