@@ -77,7 +77,9 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
         return result
 
     } catch (error) {
+        
         console.log(error);
+
         return false
     }
 

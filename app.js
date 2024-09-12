@@ -81,6 +81,21 @@ app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response
     }
 })
 
+app.get('/v1/aquarela/buscarUsuario/:id', cors(), async function (request, response, next) {
+
+    let id = request.params.id
+
+    let infoFilmes = await controllerUsuarios.getBuscarUsuario(id)
+
+    if (infoFilmes) {
+        response.json(infoFilmes)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
+})
+
 app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
@@ -92,16 +107,6 @@ app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request,
 
     response.json(resultDadosUsuario)
     
-})
-
-app.post('/v1/aquarela/usuario', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getValidarUsuario(dadosBody.email, dadosBody.senha, contentType)
-    response.status(dadosUsuario.status_code);
-    response.json(dadosUsuario)
-
 })
 
 app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -126,17 +131,40 @@ app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async funct
 
 // EndPoint Address
 
+app.get('/v1/aquarela/searchAddress', cors(), async function (request, response, next) {
+
+    let searchAddress = await controllerAddress.getListAddres()
+
+    if (searchAddress) {
+        response.json(searchAddress)
+        response.status(searchAddress.status_code)
+    } else {
+        response.status(searchAddress.status_code)
+        response.json(searchAddress)
+    }
+})
+
 app.post('/v1/aquarela/insertAddress', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
+    console.log(resultdataAddress)
     response.status(resultdataAddress.status_code)
     
-    console.log("Erro ao tentar inserir usuário: " + resultdataAddress);
 
     response.json(resultdataAddress)
     
+})
+
+app.put('/v1/aquarela/updateAddress/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_endereco = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerAddress.setUpdateAddress(dadosBody, contentType, id_endereco)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
 })
 
 

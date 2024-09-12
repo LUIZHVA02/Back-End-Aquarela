@@ -37,7 +37,7 @@ const insertAddress = async (dataAddress) => {
     } catch (error) {
         console.error("Erro ao inserir endereço: ", error);
         
-        console.log(error + "aqui");
+        console.log(error + "model/DAO/address.js");
 
         return false
     }
@@ -57,7 +57,7 @@ const updateAddress = async function (id, dataAddress) {
             }
         })
 
-        sql += ` WHERE id_usuario = ${id}`
+        sql += ` WHERE id_endereco = ${id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -70,7 +70,37 @@ const updateAddress = async function (id, dataAddress) {
 
 }
 
+// Buscar um usuário existente filtrando pelo ID
+const selectByIdAddress = async (id) => {
+
+    try {
+        let sql = `select * from tbl_endereco where id_endereco = ${id}`
+        let rsAddress = await prisma.$queryRawUnsafe(sql)
+        return rsAddress
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+
+}
+
+const selectAllAddress = async () => {
+
+    try {
+        let sql = `select * from tbl_endereco`
+        let rsAddress = await prisma.$queryRawUnsafe(sql)
+
+        return rsAddress
+
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
 module.exports = {
   insertAddress,
-  updateAddress
+  updateAddress,
+  selectByIdAddress,
+  selectAllAddress
 }
