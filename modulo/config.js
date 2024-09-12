@@ -36,7 +36,7 @@ const ERROR_CONTENT_TYPE = {
 const ERROR_INTERNAL_SERVER_DB = {
     status: false,
     status_code: 500,
-    message: 'Ocorrem erros internos no servidor do banco de dados, por favor contate o administrador do sistema'
+    message: 'Ocorreram erros internos no servidor do banco de dados, por favor contate o administrador do sistema'
 }
 
 const ERROR_INTERNAL_SERVER = {

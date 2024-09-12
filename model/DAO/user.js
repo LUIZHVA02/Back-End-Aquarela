@@ -12,30 +12,72 @@ const prisma = new PrismaClient();
 const insertUsuario = async (dadosUsuario) => {
 
     try {
-        let sql = `insert into tbl_usuario (nome, nome_usuario, foto_usuario, descricao, email, senha, cpf, data_nascimento, telefone, disponibilidade, status) values ('${dadosUsuario.nome}', '${dadosUsuario.nome_usuario}', '${dadosUsuario.foto_usuario}', '${dadosUsuario.descricao}','${dadosUsuario.email}', md5('${dadosUsuario.senha}'), '${dadosUsuario.cpf}', '${dadosUsuario.data_nascimento}', '${dadosUsuario.telefone}', '${dadosUsuario.disponibilidade}', true)`
+        let sql = `insert into tbl_usuario  (   nome, 
+                                                nome_usuario, 
+                                                foto_usuario, 
+                                                descricao, 
+                                                email, 
+                                                senha, 
+                                                cpf, 
+                                                data_nascimento, 
+                                                telefone, 
+                                                disponibilidade, 
+                                                status
+                                            ) 
+                                            values 
+                                            (
+                                                '${dadosUsuario.nome}', 
+                                                '${dadosUsuario.nome_usuario}', 
+                                                '${dadosUsuario.foto_usuario}', 
+                                                '${dadosUsuario.descricao}',
+                                                '${dadosUsuario.email}', 
+                                                '${dadosUsuario.senha}', 
+                                                '${dadosUsuario.cpf}', 
+                                                '${dadosUsuario.data_nascimento}', 
+                                                '${dadosUsuario.telefone}', 
+                                                '${dadosUsuario.disponibilidade}', 
+                                                true
+                                            )`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if (resultStatus)
+
+        if (resultStatus){
             return true
-        else
+        }
+        else{
             return false
+        }
+            
     } catch (error) {
         console.error("Erro ao inserir usuário: ", error);
+        
+        console.log(error + "aqui");
+
         return false
     }
     
 }
 
 // Atualizar um usuário existente filtrando pelo ID
-const updateUsuario = async (dadosUsuario, idUsuario) => {
-
+const updateUsuario = async function (id, dadosUsuarioUpdate) {
     try {
-        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}' where id = ${idUsuario}`
-        let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if (resultStatus)
-            return true
-        else
-            return false
+        let sql = `UPDATE tbl_usuario SET `
+        const keys = Object.keys(dadosUsuarioUpdate)
+
+        keys.forEach((key, index) => {
+            sql += `${key} = '${dadosUsuarioUpdate[key]}'`
+            if (index !== keys.length - 1) {
+                sql += `, `
+            }
+        })
+
+        sql += ` WHERE id_usuario = ${id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        return result
+
     } catch (error) {
+        console.log(error);
         return false
     }
 
@@ -57,40 +99,29 @@ const updateUsuarioSenha = async (dadosUsuario, idUsuario) => {
 
 }
 
-// Deletar um usuário existente filtrando pelo ID
-// const deleteUsuario = async (id) => {
-
-//     try {
-//         let sql = `delete from tbl_usuario where id = ${id}`
-//         let rsUsuario = await prisma.$executeRawUnsafe(sql)
-//         return rsUsuario
-//     } catch (error) {
-//         return false
-//     }
-
-// }
-
-// Listar todos os usuários existentes na tabela
 const selectAllUsuarios = async () => {
 
     try {
-        let sql = 'select id, nome, email from tbl_usuario order by id desc'
+        let sql = 'select * from tbl_usuario'
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
+        console.log(error);
         return false
     }
 
 }
 
+
 // Buscar um usuário existente filtrando pelo ID
 const selectByIdUsuario = async (id) => {
 
     try {
-        let sql = `select id, nome, email from tbl_usuario where id = ${id}`
+        let sql = `select * from tbl_usuario where id_usuario = ${id}`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
+        console.log(error);
         return false
     }
 
@@ -123,5 +154,8 @@ const selectLastId = async () => {
 
 module.exports = {
     insertUsuario,
-    selectLastId
+    selectAllUsuarios,
+    selectLastId,
+    selectByIdUsuario,
+    updateUsuario
 }

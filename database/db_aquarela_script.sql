@@ -1,5 +1,7 @@
 create database db_aquarela;
+
 use db_aquarela;
+
 create table tbl_usuario( 
 	id_usuario int not null primary key auto_increment,
     nome varchar(150) not null,
@@ -13,7 +15,8 @@ create table tbl_usuario(
 	telefone varchar(11) not null,
     disponibilidade boolean not null,
     status boolean not null 
-    );
+);
+
 create table tbl_endereco( 
 	id_endereco int not null primary key auto_increment,
     logradouro varchar(150) not null,
@@ -25,6 +28,7 @@ create table tbl_endereco(
     cep varchar(9),
     status boolean not null
     );
+
 create table tbl_usuario_endereco( 
 	id_usuario_endereco int not null primary key auto_increment,
     id_endereco int not null,
@@ -33,4 +37,8 @@ create table tbl_usuario_endereco(
     foreign key (id_endereco) references tbl_endereco (id_endereco),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
     );
+    
+select * from tbl_usuario where id = 5;
+
+desc tbl_usuario;
     
