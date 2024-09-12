@@ -37,7 +37,7 @@ const setNewAddress = async (dataAddress, contentType) => {
       return message.ERROR_CONTENT_TYPE
     }
   } catch (error) {
-    console.error("Erro ao inserir usuário: ", error);
+    console.error("Erro ao inserir endereço: ", error);
     return message.ERROR_INTERNAL_SERVER
   }
 }
@@ -48,7 +48,6 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
       let resultdataAddress = {}
 
       if (
-        dataAddress.id_endereco == '' || dataAddress.id_endereco == undefined ||
         dataAddress.logradouro == '' || dataAddress.logradouro == undefined || dataAddress.logradouro.lenght > 150 ||
         dataAddress.numero_casa == '' || dataAddress.numero_casa == undefined ||
         dataAddress.complemento == '' || dataAddress.complemento == undefined || dataAddress.complemento.lenght > 150 ||
@@ -59,7 +58,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
-        let updateUser = await addressDAO.updateUser(dataAddress, id_endereco)
+        let updateUser = await addressDAO.updateAddress(updateAddress, id_endereco)
 
         dataAddress.id = id_endereco
 

@@ -5,19 +5,72 @@ const prisma = new PrismaClient();
 const insertAddress = async (dataAddress) => {
 
     try {
-        let sql = `insert into tbl_endereco (logradouro, numero_casa, complemento, bairro, estado, cidade, cep, status) values ('${dataAddress.logradouro}, ${dataAddress.numero_casa}, ${dataAddress.complemento}, ${dataAddress.bairro}, ${dataAddress.estado}, ${dataAddress.cidade}, ${dataAddress.cep}, true)`
+        let sql = `insert into tbl_endereco  (   logradouro, 
+                                                numero_casa, 
+                                                complemento, 
+                                                bairro, 
+                                                estado, 
+                                                cidade, 
+                                                cep,  
+                                                status
+                                            ) 
+                                            values 
+                                            (
+                                                '${dataAddress.logradouro}', 
+                                                '${dataAddress.numero_casa}', 
+                                                '${dataAddress.complemento}', 
+                                                '${dataAddress.bairro}',
+                                                '${dataAddress.estado}', 
+                                                '${dataAddress.cidade}', 
+                                                '${dataAddress.cep}',  
+                                                true
+                                            )`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if (resultStatus)
+
+        if (resultStatus){
             return true
-        else
+        }
+        else{
             return false
+        }
+            
     } catch (error) {
-        console.error("Erro ao inserir usuário: ", error);
+        console.error("Erro ao inserir endereço: ", error);
+        
+        console.log(error + "aqui");
+
         return false
     }
     
+} 
+
+
+const updateAddress = async function (id, dataAddress) {
+    try {
+        let sql = `UPDATE tbl_endereco SET `
+        const keys = Object.keys(dataAddress)
+
+        keys.forEach((key, index) => {
+            sql += `${key} = '${dataAddress[key]}'`
+            if (index !== keys.length - 1) {
+                sql += `, `
+            }
+        })
+
+        sql += ` WHERE id_usuario = ${id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        return result
+
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+
 }
 
 module.exports = {
-  insertAddress
+  insertAddress,
+  updateAddress
 }
