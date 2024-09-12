@@ -114,13 +114,19 @@ app.post('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async functio
     response.json(dadosUsuario)
 })
 
-app.post('/v1/aquarela/endereco', cors(), bodyParserJson, async (request, response, next) => {
+// EndPoint Address
+
+app.post('/v1/aquarela/insertAddress', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
     response.status(resultdataAddress.status_code)
+    
+    console.log("Erro ao tentar inserir usuário: " + resultdataAddress);
+
     response.json(resultdataAddress)
+    
 })
 
 
