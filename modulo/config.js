@@ -45,6 +45,18 @@ const ERROR_INTERNAL_SERVER = {
     message: 'Ocorrem erros internos no servidor na camada de negócio da API, por favor contate o administrador do sistema'
 }
 
+const ERROR_UPDATED_ITEM = {
+    status: true, 
+    status_code: 400, 
+    message: 'As informações encaminhadas na requisição de update não são válidas!!!'
+}
+
+const ERROR_DELETED_ITEM = {
+    status: true, 
+    status_code: 400, 
+    message: 'Não foi possível fazer a exclusão!!!'
+}
+
 /****************************************************************************************************************************************************
 *                                                              Mensagens de Sucesso
 ****************************************************************************************************************************************************/
@@ -80,6 +92,8 @@ module.exports = {
     ERROR_INTERNAL_SERVER_DB,
     ERROR_INTERNAL_SERVER,
     ERROR_CONTENT_TYPE,
+    ERROR_DELETED_ITEM,
+    ERROR_UPDATED_ITEM,
     DELETED_ITEM,
     UPDATED_ITEM,
     CREATED_ITEM,

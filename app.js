@@ -81,7 +81,7 @@ app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response
     }
 })
 
-app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/insertUsuario', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -94,16 +94,6 @@ app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request,
     
 })
 
-app.post('/v1/aquarela/usuario', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getValidarUsuario(dadosBody.email, dadosBody.senha, contentType)
-    response.status(dadosUsuario.status_code);
-    response.json(dadosUsuario)
-
-})
-
 app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
@@ -114,7 +104,7 @@ app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async function (request, response, next) {
+app.post('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async function (request, response, next) {
 
     let idUsuario = request.params.id
 

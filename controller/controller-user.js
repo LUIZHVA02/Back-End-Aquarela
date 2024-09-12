@@ -8,20 +8,20 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
             let resultDadosUsuario = {}
 
             if (
-                dadosUsuario.nome               == '' || dadosUsuario.nome              == undefined || dadosUsuario.nome.length            > 150 ||
-                dadosUsuario.nome_usuario       == '' || dadosUsuario.nome_usuario      == undefined || dadosUsuario.nome_usuario.length    > 150 ||
-                dadosUsuario.foto_usuario.length    > 300 ||
-                dadosUsuario.descricao.length       > 300 ||
-                dadosUsuario.email              == '' || dadosUsuario.email             == undefined || dadosUsuario.email.length           > 50  ||
-                dadosUsuario.senha              == '' || dadosUsuario.senha             == undefined || dadosUsuario.senha.length           > 16  ||
-                dadosUsuario.cpf                == '' || dadosUsuario.cpf               == undefined || dadosUsuario.cpf.length             != 11 ||
-                dadosUsuario.data_nascimento    == '' || dadosUsuario.data_nascimento   == undefined || dadosUsuario.data_nascimento.length > 10  ||
-                dadosUsuario.telefone           == '' || dadosUsuario.telefone          == undefined || dadosUsuario.telefone.length        > 11  ||
-                dadosUsuario.disponibilidade    == '' || dadosUsuario.disponibilidade   == undefined
+                dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
+                dadosUsuario.nome_usuario == '' || dadosUsuario.nome_usuario == undefined || dadosUsuario.nome_usuario.length > 150 ||
+                dadosUsuario.foto_usuario.length > 300 ||
+                dadosUsuario.descricao.length > 300 ||
+                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 50 ||
+                dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 16 ||
+                dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length != 11 ||
+                dadosUsuario.data_nascimento == '' || dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento.length > 10 ||
+                dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 11 ||
+                dadosUsuario.disponibilidade == '' || dadosUsuario.disponibilidade == undefined
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                
+
                 let novoUsuario = await userDAO.insertUsuario(dadosUsuario)
 
                 let id = await userDAO.selectLastId()
@@ -33,7 +33,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                     resultDadosUsuario.status_code = message.CREATED_ITEM.status_code
                     resultDadosUsuario.status = message.CREATED_ITEM.message
                     resultDadosUsuario.usuario = dadosUsuario
-                    
+
                     return resultDadosUsuario
 
                 } else {
@@ -44,7 +44,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
             return message.ERROR_CONTENT_TYPE
         }
     } catch (error) {
-        console.error("Erro ao tentar inserir usuário: " + error); 
+        console.error("Erro ao tentar inserir usuário: " + error);
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -58,7 +58,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
             const validaId = await getBuscarUsuario(id_usuario)
 
             if (validaId) {
-                
+
                 let nome = dadosUsuario.nome
                 let nome_usuario = dadosUsuario.nome_usuario
                 let foto_usuario = dadosUsuario.foto_usuario
@@ -76,12 +76,12 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     nome != null &&
                     nome.length < 150
                 ) {
-                    updateUsuarioJson.nome = nome.replace(/'/g,"|")
+                    updateUsuarioJson.nome = nome.replace(/'/g, "|")
                 } else if (
                     nome == '' &&
                     nome == undefined &&
                     nome == null
-                ){}
+                ) { }
 
                 if (
                     nome_usuario != '' &&
@@ -90,12 +90,12 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     nome_usuario.length < 150
                 ) {
 
-                    updateUsuarioJson.nome_usuario = nome_usuario.replace(/'/g,"|")
+                    updateUsuarioJson.nome_usuario = nome_usuario.replace(/'/g, "|")
                 } else if (
                     nome_usuario == '' &&
                     nome_usuario == undefined &&
                     nome_usuario == null
-                ){}
+                ) { }
 
                 if (
                     foto_usuario != '' &&
@@ -108,7 +108,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     foto_usuario == '' &&
                     foto_usuario == undefined &&
                     foto_usuario == null
-                ){}
+                ) { }
 
                 if (
                     descricao != '' &&
@@ -121,20 +121,20 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     descricao == '' &&
                     descricao == undefined &&
                     descricao == null
-                ){}
+                ) { }
 
                 if (
                     email != '' &&
                     email != undefined &&
                     email != null &&
                     email.length == 50
-                ) {                   
+                ) {
                     updateUsuarioJson.email = email
                 } else if (
                     email == '' &&
                     email == undefined &&
                     email == null
-                ){}
+                ) { }
 
                 if (
                     senha != '' &&
@@ -147,7 +147,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     senha == '' &&
                     senha == undefined &&
                     senha == null
-                ){}
+                ) { }
 
                 if (
                     cpf != '' &&
@@ -160,19 +160,19 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     cpf == '' &&
                     cpf == undefined &&
                     cpf == null
-                ){}
+                ) { }
 
                 if (
                     data_nascimento != '' &&
                     data_nascimento != undefined &&
                     data_nascimento != 10
-                ) {                   
+                ) {
                     updateUsuarioJson.data_nascimento = data_nascimento
                 } else if (
                     data_nascimento == '' &&
                     data_nascimento == undefined &&
                     data_nascimento == null
-                ){}
+                ) { }
 
                 if (
                     telefone != '' &&
@@ -185,7 +185,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     telefone == '' &&
                     telefone == undefined &&
                     telefone == null
-                ){}
+                ) { }
 
                 if (
                     disponibilidade != '' &&
@@ -197,7 +197,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     disponibilidade == '' &&
                     disponibilidade == undefined &&
                     disponibilidade == null
-                ){}
+                ) { }
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_usuario, updateUsuarioJson)
 
@@ -235,24 +235,17 @@ const setExcluirUsuario = async function (id) {
 
         if (validaId) {
 
-            const apagarUsuario = await userDAO.setExcluirUsuario(id)
+            const apagarUsuario = await userDAO.updateUsuario(id)
 
             if (apagarUsuario) {
+                deleteUsuarioJson.status = message.DELETED_ITEM.status
+                deleteUsuarioJson.status_code = message.DELETED_ITEM.status_code
+                deleteUsuarioJson.message = message.DELETED_ITEM.message
+                deleteUsuarioJson.id = validaId
 
-                const apagarUsuario = await userDAO.deleteUsuarioJson(id)
-
-                if (apagarUsuario) {
-                    deleteUsuarioJson.status = message.SUCCES_DELETED_ITEM.status
-                    deleteUsuarioJson.status_code = message.SUCCES_DELETED_ITEM.status_code
-                    deleteUsuarioJson.message = message.SUCCES_DELETED_ITEM.message
-                    deleteUsuarioJson.id = validaId
-
-                    return deleteUsuarioJson
-                } else {
-                    return message.ERROR_INTERNAL_SERVER_DB
-                }
+                return deleteUsuarioJson
             } else {
-                return message.ERROR_INTERNAL_SERVER
+                return message.ERROR_INTERNAL_SERVER_DB
             }
 
         } else {
