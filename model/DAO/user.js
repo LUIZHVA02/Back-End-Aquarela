@@ -85,22 +85,6 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
 
 }
 
-// Atualizar um usuário existente filtrando pelo ID
-const updateUsuarioSenha = async (dadosUsuario, idUsuario) => {
-
-    try {
-        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}', senha = md5('${dadosUsuario.senha}') where id = ${idUsuario}`
-        let resultStatus = await prisma.$executeRawUnsafe(sql)
-        if (resultStatus)
-            return true
-        else
-            return false
-    } catch (error) {
-        return false
-    }
-
-}
-
 const selectAllUsuarios = async () => {
 
     try {
@@ -114,7 +98,6 @@ const selectAllUsuarios = async () => {
 
 }
 
-
 // Buscar um usuário existente filtrando pelo ID
 const selectByIdUsuario = async (id) => {
 
@@ -124,19 +107,6 @@ const selectByIdUsuario = async (id) => {
         return rsUsuario
     } catch (error) {
         console.log(error);
-        return false
-    }
-
-}
-
-// Validação de usuário 
-const selectValidacaoUsuario = async (email, senha) => {
-
-    try {
-        let sql = `select tu.id, tu.nome, tu.email from tbl_usuario as tu where email = '${email}' and senha = md5('${senha}')`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
         return false
     }
 

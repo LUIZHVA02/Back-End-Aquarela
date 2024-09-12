@@ -119,7 +119,7 @@ app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async function (request, response, next) {
+app.post('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async function (request, response, next) {
 
     let idUsuario = request.params.id
 

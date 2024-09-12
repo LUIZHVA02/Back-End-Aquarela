@@ -21,7 +21,6 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-
                 let novoUsuario = await userDAO.insertUsuario(dadosUsuario)
 
                 let id = await userDAO.selectLastId()
@@ -255,24 +254,17 @@ const setExcluirUsuario = async function (id) {
 
         if (validaId) {
 
-            const apagarUsuario = await userDAO.setExcluirUsuario(id)
+            const apagarUsuario = await userDAO.updateUsuario(id)
 
             if (apagarUsuario) {
+                deleteUsuarioJson.status = message.DELETED_ITEM.status
+                deleteUsuarioJson.status_code = message.DELETED_ITEM.status_code
+                deleteUsuarioJson.message = message.DELETED_ITEM.message
+                deleteUsuarioJson.id = validaId
 
-                const apagarUsuario = await userDAO.deleteUsuarioJson(id)
-
-                if (apagarUsuario) {
-                    deleteUsuarioJson.status = message.SUCCES_DELETED_ITEM.status
-                    deleteUsuarioJson.status_code = message.SUCCES_DELETED_ITEM.status_code
-                    deleteUsuarioJson.message = message.SUCCES_DELETED_ITEM.message
-                    deleteUsuarioJson.id = validaId
-
-                    return deleteUsuarioJson
-                } else {
-                    return message.ERROR_INTERNAL_SERVER_DB
-                }
+                return deleteUsuarioJson
             } else {
-                return message.ERROR_INTERNAL_SERVER
+                return message.ERROR_INTERNAL_SERVER_DB
             }
 
         } else {
