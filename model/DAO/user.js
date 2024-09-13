@@ -40,21 +40,21 @@ const insertUsuario = async (dadosUsuario) => {
                                             )`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-        if (resultStatus){
+        if (resultStatus) {
             return true
         }
-        else{
+        else {
             return false
         }
-            
+
     } catch (error) {
         console.error("Erro ao inserir usuário: ", error);
-        
+
         console.log(error + "aqui");
 
         return false
     }
-    
+
 }
 
 // Atualizar um usuário existente filtrando pelo ID
@@ -77,7 +77,7 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
         return result
 
     } catch (error) {
-        
+
         console.log(error);
 
         return false
@@ -113,7 +113,7 @@ const selectByIdUsuario = async (id) => {
 }
 
 const selectLastId = async () => {
-   
+
     try {
         let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1'
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
@@ -124,10 +124,22 @@ const selectLastId = async () => {
 
 }
 
+const deleteUsuarioById = async function (id) {
+    try {
+        let sql = `delete from tbl_usuario where id_usuario = ${ id }`
+
+        let rsUsuario = await prisma.$queryRawUnsafe(sql);
+        return rsUsuario;
+
+    } catch (error) {
+        return false
+    }
+}
 module.exports = {
     insertUsuario,
     selectAllUsuarios,
     selectLastId,
     selectByIdUsuario,
-    updateUsuario
+    updateUsuario,
+    deleteUsuarioById
 }

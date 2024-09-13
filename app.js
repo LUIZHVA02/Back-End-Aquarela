@@ -119,19 +119,19 @@ app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.post('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async function (request, response, next) {
+app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-    let idUsuario = request.params.id
+    let id_usuario = request.params.id
 
-    let dadosUsuario = await controllerUsuarios.setExcluirUsuario(idUsuario)
+    let resultDados = await controllerUsuarios.setExcluirUsuario(id_usuario);
 
-    response.status(dadosUsuario.status_code)
-    response.json(dadosUsuario)
+    response.status(resultDados.status_code);
+    response.json(resultDados);
 })
 
 // EndPoint Address
 
-app.get('/v1/aquarela/searchAddress', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchAddress = await controllerAddress.getListAddres()
 

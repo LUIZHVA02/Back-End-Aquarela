@@ -228,7 +228,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 } else {
 
                     console.log(dadosUsuario, "dados", validaId[0].id_usuario);
-                    
+
                     return message.ERROR_INTERNAL_SERVER_DB
                 }
             } else {
@@ -245,37 +245,6 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
         return message.ERROR_CONTENT_TYPE
     }
 }
-
-const setExcluirUsuario = async function (id) {
-    let deleteUsuarioJson = {}
-
-    try {
-        const validaId = await getBuscarUsuario(id)
-
-        if (validaId) {
-
-            const apagarUsuario = await userDAO.updateUsuario(id)
-
-            if (apagarUsuario) {
-                deleteUsuarioJson.status = message.DELETED_ITEM.status
-                deleteUsuarioJson.status_code = message.DELETED_ITEM.status_code
-                deleteUsuarioJson.message = message.DELETED_ITEM.message
-                deleteUsuarioJson.id = validaId
-
-                return deleteUsuarioJson
-            } else {
-                return message.ERROR_INTERNAL_SERVER_DB
-            }
-
-        } else {
-            return message.ERROR_NOT_FOUND
-        }
-
-    } catch (error) {
-        return message.ERROR_UPDATED_ITEM
-    }
-}
-
 
 const setAtualizarUsuarioSenha = async (dadosUsuario, contentType, id_usuario) => {
 
@@ -381,7 +350,7 @@ const getListarUsuarios = async () => {
             } else {
 
                 console.log(dadosUsuario);
-                
+
                 return message.ERROR_NOT_FOUND // 404
             }
 
@@ -432,6 +401,34 @@ const getValidarUsuario = async (email, senha, contentType) => {
     }
 }
 
+const setExcluirUsuario = async function (id) {
+    try {
+
+        let id_usuario = id;
+
+        if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            let user = await userDAO.selectByIdUsuario(id_usuario)
+
+            if (user.length > 0) {
+                let dadosUsuario = await userDAO.deleteUsuarioById(id)
+
+                if (dadosUsuario) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
