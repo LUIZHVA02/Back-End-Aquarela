@@ -382,6 +382,7 @@ const setExcluirUsuario = async function (id) {
     }
 
 }
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
