@@ -70,13 +70,12 @@ const updateAddress = async function (id, dataAddress) {
 
 }
 
-// Buscar um usuário existente filtrando pelo ID
 const selectByIdAddress = async (id) => {
 
     try {
         let sql = `select * from tbl_endereco where id_endereco = ${id}`
-        let rsAddress = await prisma.$queryRawUnsafe(sql)
-        return rsAddress
+        let rsAddres = await prisma.$queryRawUnsafe(sql)
+        return rsAddres
     } catch (error) {
         console.log(error);
         return false
