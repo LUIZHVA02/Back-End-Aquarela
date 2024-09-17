@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin"]
 }
 
 datasource db {
@@ -27,12 +28,12 @@ model tbl_usuario {
   foto_usuario         String?                @db.VarChar(300)
   descricao            String?                @db.VarChar(300)
   email                String                 @db.VarChar(50)
-  senha                String                 @db.VarChar(16)
+  senha                String                 @db.VarChar(50)
   cpf                  String                 @db.VarChar(11)
   data_nascimento      DateTime               @db.Date
   telefone             String                 @db.VarChar(11)
   disponibilidade      Boolean
-  status               Boolean
+  user_status          Boolean
   tbl_usuario_endereco tbl_usuario_endereco[]
 }
 
@@ -40,7 +41,7 @@ model tbl_usuario_endereco {
   id_usuario_endereco Int          @id @default(autoincrement())
   id_endereco         Int
   id_usuario          Int
-  status              Boolean
+  address_status      Boolean
   tbl_endereco        tbl_endereco @relation(fields: [id_endereco], references: [id_endereco], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_1")
   tbl_usuario         tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_2")
 

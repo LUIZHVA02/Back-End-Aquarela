@@ -17,7 +17,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length != 11 ||
                 dadosUsuario.data_nascimento == '' || dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento.length > 10 ||
                 dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 11 ||
-                dadosUsuario.user_status == '' || dadosUsuario.user_status == undefined
+                dadosUsuario.disponibilidade == '' || dadosUsuario.disponibilidade == undefined
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -267,6 +267,39 @@ const getBuscarUsuario = async (id) => {
 
                     usuarioJSON.usuario = dadosUsuario
                     usuarioJSON.status_code = 200
+
+                    
+
+                    // let arraysDadosTratado = []
+                    // let jsonDadosTratados = {}
+
+                    // let id_user = id
+                    // let nome = rsUsuario[0].nome
+                    // let nome_usuario = rsUsuario[0].nome_usuario
+                    // let foto_usuario = rsUsuario[0].foto_usuario
+                    // let descricao = rsUsuario[0].descricao
+                    // let email = rsUsuario[0].email
+                    // let senha = rsUsuario[0].senha
+                    // let cpf = rsUsuario[0].cpf
+                    // let data_nascimento = rsUsuario[0].data_nascimento
+                    // let telefone = rsUsuario[0].telefone
+                    // let disponibilidade = rsUsuario[0].disponibilidade
+                    // let user_status = rsUsuario[0].user_status
+
+
+                    // tratado = id_user
+                    // tratado = nome
+                    // tratado = nome_usuario
+                    // tratado = foto_usuario
+                    // tratado = descricao
+                    // tratado = email
+                    // tratado = senha
+                    // tratado = cpf
+                    // tratado = tratarDataBACK(data_nascimento)
+                    // tratado = telefone
+                    // tratado = disponibilidade
+                    // tratado = user_status
+
                     return usuarioJSON
 
                 } else {
@@ -387,7 +420,6 @@ module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
     setExcluirUsuario,
-    getBuscarUsuario,
     getBuscarUsuario,
     getListarUsuarios,
     getValidarUsuario

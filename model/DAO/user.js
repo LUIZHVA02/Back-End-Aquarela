@@ -94,34 +94,6 @@ const selectAllUsuarios = async () => {
         let sql = 'select * from tbl_usuario'
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
-        let tratado
-        const keys = Object.keys(rsUsuario)
-
-
-        keys.forEach((key, index) => {
-
-            console.log(rsUsuario[key]);
-
-            tratado += key = rsUsuario[key].id_usuario
-            tratado += key = rsUsuario[key].nome
-            tratado += key = rsUsuario[key].nome_usuario
-            tratado += key = rsUsuario[key].foto_usuario
-            tratado += key = rsUsuario[key].descricao
-            tratado += key = rsUsuario[key].email
-            tratado += key = rsUsuario[key].senha
-            tratado += key = rsUsuario[key].cpf
-            tratado += key = rsUsuario[key].tratarDataBACK(data_nascimento)
-            tratado += key = rsUsuario[key].telefone
-            tratado += key = rsUsuario[key].disponibilidade
-            tratado += key = rsUsuario[key].user_status
-
-            if (index !== keys.length - 1) {
-                tratado += `, `
-            }
-
-            console.log(tratado);
-        })
-
         return rsUsuario
 
     } catch (error) {
@@ -139,8 +111,10 @@ const selectByIdUsuario = async (id) => {
     try {
         let sql = `select * from tbl_usuario where id_usuario = ${id}`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
         return rsUsuario
     } catch (error) {
+        
         console.log(error);
         return false
     }

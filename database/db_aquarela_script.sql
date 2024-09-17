@@ -33,7 +33,7 @@ create table tbl_usuario_endereco(
 	id_usuario_endereco int not null primary key auto_increment,
     id_endereco int not null,
     id_usuario int not null,
-    status boolean not null,
+    address_status boolean not null,
     foreign key (id_endereco) references tbl_endereco (id_endereco),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
     );
