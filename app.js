@@ -167,6 +167,21 @@ app.put('/v1/aquarela/updateAddress/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
+app.get('/v1/aquarela/searchAddress/:id', cors(), async function (request, response, next) {
+
+    let id = request.params.id
+
+    let infoAddress = await controllerAddress.getSearchAddress(id)
+
+    if (infoAddress) {
+        response.json(infoAddress)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
+})
+
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

@@ -98,9 +98,22 @@ const selectAllAddress = async () => {
     }
 }
 
+const deleteAddressById = async function (id) {
+    try {
+        let sql = `delete from tbl_endereco where id_endereco = ${ id }`
+
+        let rsUsuario = await prisma.$queryRawUnsafe(sql);
+        return rsUsuario;
+
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
   insertAddress,
   updateAddress,
   selectByIdAddress,
-  selectAllAddress
+  selectAllAddress,
+  deleteAddressById
 }

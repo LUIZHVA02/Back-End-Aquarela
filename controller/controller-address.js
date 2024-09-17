@@ -224,43 +224,75 @@ const getSearchAddress = async (id) => {
 
   try {
 
-    let id_endereco = id
-    let addressJSON = {}
+      let id_address = id
+      let addressJSON = {}
 
-    if (id_endereco == '' || id_endereco == undefined || isNaN(id_endereco)) {
+      if (id_address == '' || id_address == undefined || isNaN(id_address)) {
 
-      return message.ERROR_INVALID_ID // 400
-
-    } else {
-
-      let dataAddress = await userDAO.selectByIdAddress(id_endereco)
-
-      if (dataAddress) {
-
-        if (dataAddress.length > 0) {
-
-          addressJSON.address = dataAddress
-          addressJSON.status_code = 200
-          return addressJSON
-
-        } else {
-          return message.ERROR_NOT_FOUND // 404
-        }
+          return message.ERROR_INVALID_ID // 400
 
       } else {
-        return message.ERROR_INTERNAL_SERVER_DB // 500
+
+          let dataAddress = await addressDAO.selectByIdAddress(id_address)
+
+          if (dataAddress) {
+
+              if (dataAddress.length > 0) {
+
+                  addressJSON.address = dataAddress
+                  addressJSON.status_code = 200
+                  return addressJSON
+
+              } else {
+                  return message.ERROR_NOT_FOUND // 404
+              }
+
+          } else {
+              return message.ERROR_INTERNAL_SERVER_DB // 500
+          }
       }
-    }
 
   } catch (error) {
-    message.ERROR_INTERNAL_SERVER // 500
+      message.ERROR_INTERNAL_SERVER // 500
   }
 
 }
+
+const setDeleteAddress = async function (id) {
+  try {
+
+      let id_address = id;
+
+      if (id_address == '' || id_address == undefined || isNaN(id_address)) {
+          return message.ERROR_INVALID_ID;
+      } else {
+          let data = await addressDAO.getSearchAddress(id_address)
+
+          if (data.length > 0) {
+              let dataAddress = await addressDAO.deleteAddressById(id)
+
+              if (dataAddress) {
+                  return message.DELETED_ITEM
+              } else {
+                  return message.ERROR_INTERNAL_SERVER_DB
+              }
+
+          } else {
+              return message.ERROR_NOT_FOUND
+          }
+      }
+  } catch (error) {
+      return message.ERROR_INTERNAL_SERVER
+  }
+
+}
+
+
 
 module.exports = {
   setNewAddress,
   setUpdateAddress,
   getListAddres,
-  getSearchAddress
+  getSearchAddress,
+  setDeleteAddress
 }
