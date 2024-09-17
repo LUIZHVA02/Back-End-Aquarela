@@ -22,7 +22,7 @@ const insertUsuario = async (dadosUsuario) => {
                                                 data_nascimento, 
                                                 telefone, 
                                                 disponibilidade, 
-                                                status
+                                                user_status
                                             ) 
                                             values 
                                             (
@@ -70,9 +70,11 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
             }
         })
 
-        sql += ` WHERE id_usuario = ${id}`
+        sql += ` WHERE id_usuario = ${id};`
 
         let result = await prisma.$executeRawUnsafe(sql)
+
+        console.log(result);
 
         return result
 

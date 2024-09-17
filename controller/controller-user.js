@@ -56,8 +56,9 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
 
             const validaId = await getBuscarUsuario(id_usuario)
 
-            if (validaId) {
+            if (validaId.status != false) {
 
+                let id_user = id_usuario
                 let nome = dadosUsuario.nome
                 let nome_usuario = dadosUsuario.nome_usuario
                 let foto_usuario = dadosUsuario.foto_usuario
@@ -211,14 +212,13 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     user_status == null
                 ) { }
 
-                const usuarioAtualizado = await userDAO.updateUsuario(id_usuario, updateUsuarioJson)
+                const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
 
                 let updatedUserJson = {}
 
                 if (usuarioAtualizado) {
-                    console.log(validaId.usuario[0].id_usuario);
 
-                    updatedUserJson.id = validaId.usuario[0].id_usuario
+                    updatedUserJson.id = id_user
                     updatedUserJson.status = message.UPDATED_ITEM.status
                     updatedUserJson.status_code = message.UPDATED_ITEM.status_code
                     updatedUserJson.message = message.UPDATED_ITEM.message
@@ -227,7 +227,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     return updatedUserJson
                 } else {
 
-                    console.log(dadosUsuario, "dados", validaId[0].id_usuario);
+                    console.log(usuarioAtualizado);
 
                     return message.ERROR_INTERNAL_SERVER_DB
                 }
@@ -244,53 +244,6 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
     } else {
         return message.ERROR_CONTENT_TYPE
     }
-}
-
-const setAtualizarUsuarioSenha = async (dadosUsuario, contentType, id_usuario) => {
-
-    try {
-
-        if (String(contentType).toLowerCase() == 'application/json') {
-
-            let resultDadosUsuario = {}
-
-            if (
-                id_usuario == '' || id_usuario == undefined ||
-                dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 100 ||
-                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 100 ||
-                dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 50
-            ) {
-
-                return message.ERROR_REQUIRED_FIELDS // 400
-
-            } else {
-
-                let usuarioAtualizado = await userDAO.updateUsuarioSenha(dadosUsuario, id_usuario)
-
-                dadosUsuario.id = id_usuario
-
-                if (usuarioAtualizado) {
-                    resultDadosUsuario.status = message.UPDATED_ITEM.status
-                    resultDadosUsuario.status_code = message.UPDATED_ITEM.status_code
-                    resultDadosUsuario.message = message.UPDATED_ITEM.message
-                    resultDadosUsuario.usuario = dadosUsuario
-                    return resultDadosUsuario
-                } else {
-
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
-
-                }
-
-            }
-
-        } else {
-            return message.ERROR_CONTENT_TYPE // 415
-        }
-
-    } catch (error) {
-        message.ERROR_INTERNAL_SERVER // 500
-    }
-
 }
 
 const getBuscarUsuario = async (id) => {
