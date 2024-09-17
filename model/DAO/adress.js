@@ -70,13 +70,12 @@ const updateAddress = async function (id, dataAddress) {
 
 }
 
-// Buscar um usuário existente filtrando pelo ID
 const selectByIdAddress = async (id) => {
 
     try {
         let sql = `select * from tbl_endereco where id_endereco = ${id}`
-        let rsAddress = await prisma.$queryRawUnsafe(sql)
-        return rsAddress
+        let rsAddres = await prisma.$queryRawUnsafe(sql)
+        return rsAddres
     } catch (error) {
         console.log(error);
         return false
@@ -98,9 +97,22 @@ const selectAllAddress = async () => {
     }
 }
 
+const deleteAddressById = async function (id) {
+    try {
+        let sql = `delete from tbl_endereco where id_endereco = ${ id }`
+
+        let rsUsuario = await prisma.$queryRawUnsafe(sql);
+        return rsUsuario;
+
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
   insertAddress,
   updateAddress,
   selectByIdAddress,
-  selectAllAddress
+  selectAllAddress,
+  deleteAddressById
 }

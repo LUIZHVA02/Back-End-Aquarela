@@ -9,12 +9,12 @@ create table tbl_usuario(
     foto_usuario varchar(300),
     descricao varchar(300),
 	email varchar(50) not null,
-    senha varchar(16) not null,
+    senha varchar(50) not null,
 	cpf varchar(11) not null,
     data_nascimento date not null,
 	telefone varchar(11) not null,
     disponibilidade boolean not null,
-    status boolean not null 
+    user_status boolean not null 
 );
 
 create table tbl_endereco( 
