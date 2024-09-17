@@ -385,7 +385,6 @@ const setExcluirUsuario = async function (id) {
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
-    setAtualizarUsuarioSenha,
     setExcluirUsuario,
     getBuscarUsuario,
     getBuscarUsuario,
