@@ -12,6 +12,7 @@ const prisma = new PrismaClient();
 const insertUsuario = async (dadosUsuario) => {
 
     try {
+
         let sql = `insert into tbl_usuario  (   nome, 
                                                 nome_usuario, 
                                                 foto_usuario, 
@@ -31,13 +32,14 @@ const insertUsuario = async (dadosUsuario) => {
                                                 '${dadosUsuario.foto_usuario}', 
                                                 '${dadosUsuario.descricao}',
                                                 '${dadosUsuario.email}', 
-                                                '${dadosUsuario.senha}', 
+                                                md5('${dadosUsuario.senha}'), 
                                                 '${dadosUsuario.cpf}', 
                                                 '${dadosUsuario.data_nascimento}', 
                                                 '${dadosUsuario.telefone}', 
                                                 '${dadosUsuario.disponibilidade}', 
                                                 true
                                             )`
+                                            console.log(sql)
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
         if (resultStatus) {
@@ -145,10 +147,22 @@ const deleteUsuarioById = async function (id) {
     }
 }
 
-const selectValidacaoUsuario = async (email, senha) => {
+const selectValidacaoUsuarioNome = async (nome_usuario, senha) => {
 
     try {
-        let sql = `select tu.id, tu.nome, tu.email from tbl_usuario as tu where email = '${email}' and senha = md5('${senha}')`
+        let sql = `select id_usuario, nome_usuario from tbl_usuario where nome_usuario = '${nome_usuario}' and senha = md5('${senha}')`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario        
+    } catch (error) {
+        return false
+    }
+
+}
+
+const selectValidacaoUsuarioEmail = async (email, senha) => {
+
+    try {
+        let sql = `select id_usuario, email from tbl_usuario where email = '${email}' and senha = md5('${senha}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario        
     } catch (error) {
@@ -164,5 +178,6 @@ module.exports = {
     selectByIdUsuario,
     updateUsuario,
     deleteUsuarioById,
-    selectValidacaoUsuario
+    selectValidacaoUsuarioNome,
+    selectValidacaoUsuarioEmail
 }
