@@ -129,6 +129,16 @@ app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (requ
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/validacao/usuario', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getValidarUsuario(dadosBody.email, dadosBody.senha, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 // EndPoint Address
 
 app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, response, next) => {

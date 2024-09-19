@@ -287,8 +287,6 @@ const setDeleteAddress = async function (id) {
 
 }
 
-
-
 module.exports = {
   setNewAddress,
   setUpdateAddress,

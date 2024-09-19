@@ -144,11 +144,25 @@ const deleteUsuarioById = async function (id) {
         return false
     }
 }
+
+const selectValidacaoUsuario = async (email, senha) => {
+
+    try {
+        let sql = `select tu.id, tu.nome, tu.email from tbl_usuario as tu where email = '${email}' and senha = md5('${senha}')`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario        
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     insertUsuario,
     selectAllUsuarios,
     selectLastId,
     selectByIdUsuario,
     updateUsuario,
-    deleteUsuarioById
+    deleteUsuarioById,
+    selectValidacaoUsuario
 }
