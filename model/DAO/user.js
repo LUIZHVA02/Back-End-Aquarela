@@ -147,10 +147,10 @@ const deleteUsuarioById = async function (id) {
     }
 }
 
-const selectValidacaoUsuarioNome = async (nome_usuario, senha) => {
+const selectValidacaoUsuarioNome = async (nome, senha) => {
 
     try {
-        let sql = `select id_usuario, nome_usuario from tbl_usuario where nome_usuario = '${nome_usuario}' and senha = md5('${senha}')`
+        let sql = `select id_usuario, nome_usuario from tbl_usuario where nome_usuario = '${nome}' and senha = md5('${senha}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario        
     } catch (error) {

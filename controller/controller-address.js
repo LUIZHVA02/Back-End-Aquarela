@@ -59,7 +59,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
         let estado = dataAddress.estado
         let cidade = dataAddress.cidade
         let cep = dataAddress.cep
-        let user_status = dataAddress.user_status
+        let address_status = dataAddress.address_status
 
         if (
           logradouro != '' &&
@@ -67,7 +67,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           logradouro != null &&
           logradouro.length < 150
         ) {
-          updateUsuarioJson.logradouro = logradouro.replace(/'/g, "|")
+          updateAddressJson.logradouro = logradouro.replace(/'/g, "|")
         } else if (
           logradouro == '' &&
           logradouro == undefined &&
@@ -80,7 +80,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           numero_casa != null
         ) {
 
-          updateUsuarioJson.numero_casa = numero_casa.replace(/'/g, "|")
+          updateAddressJson.numero_casa = numero_casa
         } else if (
           numero_casa == '' &&
           numero_casa == undefined &&
@@ -93,7 +93,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           complemento != null &&
           complemento.length == 300
         ) {
-          updateUsuarioJson.complemento = complemento
+          updateAddressJson.complemento = complemento
         } else if (
           complemento == '' &&
           complemento == undefined &&
@@ -106,7 +106,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           bairro != null &&
           bairro.length == 300
         ) {
-          updateUsuarioJson.bairro = bairro
+          updateAddressJson.bairro = bairro
         } else if (
           bairro == '' &&
           bairro == undefined &&
@@ -119,7 +119,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           estado != null &&
           estado.length == 50
         ) {
-          updateUsuarioJson.estado = estado
+          updateAddressJson.estado = estado
         } else if (
           estado == '' &&
           estado == undefined &&
@@ -132,7 +132,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           cidade != null &&
           cidade.length < 16
         ) {
-          updateUsuarioJson.cidade = cidade
+          updateAddressJson.cidade = cidade
         } else if (
           cidade == '' &&
           cidade == undefined &&
@@ -145,7 +145,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           cep != null &&
           cep.length < 11
         ) {
-          updateUsuarioJson.cep = cep
+          updateAddressJson.cep = cep
         } else if (
           cep == '' &&
           cep == undefined &&
@@ -153,20 +153,20 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
         ) { }
 
         if (
-          user_status != '' &&
-          user_status != undefined &&
-          user_status != null
+          address_status != '' &&
+          address_status != undefined &&
+          address_status != null
         ) {
-          updateUsuarioJson.user_status = user_status
+          updateAddressJson.address_status = address_status
         } else if (
-          user_status == '' &&
-          user_status == undefined &&
-          user_status == null
+          address_status == '' &&
+          address_status == undefined &&
+          address_status == null
         ) { }
 
-        const addressUpdate = await userDAO.updateAddress(id_endereco, updateAddressJson)
+        const addressUpdate = await addressDAO.updateAddress(id_endereco, updateAddressJson)
 
-        if (addressUpdate) {
+        if (addressUpdate != false) {
           updateAddressJson.id = validaId
           updateAddressJson.status = message.UPDATED_ITEM.status
           updateAddressJson.status_code = message.UPDATED_ITEM.status_code
@@ -175,6 +175,9 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
 
           return updateAddressJson
         } else {
+
+          console.log(addressUpdate);
+           
           return message.ERROR_INTERNAL_SERVER_DB
         }
       } else {
@@ -266,9 +269,9 @@ const setDeleteAddress = async function (id) {
       if (id_address == '' || id_address == undefined || isNaN(id_address)) {
           return message.ERROR_INVALID_ID;
       } else {
-          let data = await addressDAO.getSearchAddress(id_address)
+          let user = await addressDAO.selectByIdAddress(id_address)
 
-          if (data.length > 0) {
+          if (user.length > 0) {
               let dataAddress = await addressDAO.deleteAddressById(id)
 
               if (dataAddress) {

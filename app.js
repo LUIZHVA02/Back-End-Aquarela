@@ -202,6 +202,16 @@ app.get('/v1/aquarela/searchAddress/:id', cors(), async function (request, respo
     }
 })
 
+app.delete('/v1/aquarela/deleteAddress/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_address = request.params.id
+
+    let resultDados = await controllerAddress.setDeleteAddress(id_address);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
+
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

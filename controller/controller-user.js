@@ -399,7 +399,7 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
                 return message.ERROR_REQUIRED_FIELDS
             } else {
                 
-                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)                
+                let dadosUsuario = await userDAO.selectValidacaoUsuarioEmail(email, senha)                
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
@@ -422,6 +422,8 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
             return message.ERROR_CONTENT_TYPE
         }
     } catch (error) {
+        console.log(error);
+        
         return message.ERROR_INTERNAL_SERVER
     }
 }
