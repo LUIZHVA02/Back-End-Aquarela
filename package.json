@@ -1,8 +1,7 @@
 {
-  "scripts": {
-      "build": "yarn && npm install prisma --save && npx prisma db pull && npx prisma generate && npm install @prisma/client --save",
-      "start": "node app.js",
-      "dev": "nodemon app.js"
+ "scripts": {
+    "prisma": "npx prisma db pull && npx prisma generate",
+    "start": "node ./app.js"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
