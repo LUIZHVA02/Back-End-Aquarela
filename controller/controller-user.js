@@ -1,5 +1,6 @@
 const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
+const tratamento = require('../modulo/tratamento.js')
 
 const setNovoUsuario = async (dadosUsuario, contentType) => {
     try {
@@ -23,9 +24,9 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
             } else {
                 let novoUsuario = await userDAO.insertUsuario(dadosUsuario)
 
-                let id = await userDAO.selectLastId()
+                let lastId = await userDAO.selectLastId()
 
-                dadosUsuario.id = Number(id[0].id)
+                dadosUsuario.id = Number(lastId[0].id)
 
                 if (novoUsuario) {
                     resultDadosUsuario.status = message.CREATED_ITEM.status
@@ -44,6 +45,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
         }
     } catch (error) {
         console.error("Erro ao tentar inserir usuário: " + error);
+
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -265,40 +267,23 @@ const getBuscarUsuario = async (id) => {
 
                 if (dadosUsuario.length > 0) {
 
-                    usuarioJSON.usuario = dadosUsuario
+                    let jsonDadosTratados = {}
+
+                    jsonDadosTratados.id_usuario = dadosUsuario[0].id_usuario
+                    jsonDadosTratados.nome = dadosUsuario[0].nome
+                    jsonDadosTratados.nome_usuario = dadosUsuario[0].nome_usuario
+                    jsonDadosTratados.foto_usuario = dadosUsuario[0].foto_usuario
+                    jsonDadosTratados.descricao = dadosUsuario[0].descricao
+                    jsonDadosTratados.email = dadosUsuario[0].email
+                    jsonDadosTratados.senha = dadosUsuario[0].senha
+                    jsonDadosTratados.cpf = dadosUsuario[0].cpf
+                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(dadosUsuario[0].data_nascimento)
+                    jsonDadosTratados.telefone = dadosUsuario[0].telefone
+                    jsonDadosTratados.disponibilidade = dadosUsuario[0].disponibilidade
+                    jsonDadosTratados.user_status = dadosUsuario[0].user_status
+
+                    usuarioJSON.usuario = jsonDadosTratados
                     usuarioJSON.status_code = 200
-
-                    
-
-                    // let arraysDadosTratado = []
-                    // let jsonDadosTratados = {}
-
-                    // let id_user = id
-                    // let nome = rsUsuario[0].nome
-                    // let nome_usuario = rsUsuario[0].nome_usuario
-                    // let foto_usuario = rsUsuario[0].foto_usuario
-                    // let descricao = rsUsuario[0].descricao
-                    // let email = rsUsuario[0].email
-                    // let senha = rsUsuario[0].senha
-                    // let cpf = rsUsuario[0].cpf
-                    // let data_nascimento = rsUsuario[0].data_nascimento
-                    // let telefone = rsUsuario[0].telefone
-                    // let disponibilidade = rsUsuario[0].disponibilidade
-                    // let user_status = rsUsuario[0].user_status
-
-
-                    // tratado = id_user
-                    // tratado = nome
-                    // tratado = nome_usuario
-                    // tratado = foto_usuario
-                    // tratado = descricao
-                    // tratado = email
-                    // tratado = senha
-                    // tratado = cpf
-                    // tratado = tratarDataBACK(data_nascimento)
-                    // tratado = telefone
-                    // tratado = disponibilidade
-                    // tratado = user_status
 
                     return usuarioJSON
 
@@ -327,6 +312,18 @@ const getListarUsuarios = async () => {
         if (dadosUsuario) {
 
             if (dadosUsuario.length > 0) {
+
+                let dadosTratados = {}
+                
+                const keys = Object.keys(dadosUsuario)
+
+                keys.forEach((key, index) => {
+                    dadosTratados += `${key} = "${dadosUsuario[key]}"`
+                    if (index !== keys.length - 1) {
+                        dadosTratados += `, `
+                    }
+                    console.log(dadosUsuario, key);
+                })
 
                 usuarioJSON.usuarios = dadosUsuario
                 usuarioJSON.quantidade = dadosUsuario.length
@@ -360,8 +357,8 @@ const getValidarUsuarioNome = async (nomeUsuario, senhaUsuario, contentType) => 
             if (nome == '' || nome == undefined || senha == '' || senha == undefined) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                
-                let dadosUsuario = await userDAO.selectValidacaoUsuarioNome(nome, senha)                
+
+                let dadosUsuario = await userDAO.selectValidacaoUsuarioNome(nome, senha)
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
@@ -398,8 +395,8 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
             if (email == '' || email == undefined || senha == '' || senha == undefined) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                
-                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)                
+
+                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {

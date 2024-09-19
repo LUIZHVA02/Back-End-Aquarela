@@ -9,7 +9,7 @@ create table tbl_usuario(
     foto_usuario varchar(300),
     descricao varchar(300),
 	email varchar(50) not null,
-    senha varchar(50) not null,
+    senha varchar(32) not null,
 	cpf varchar(11) not null,
     data_nascimento date not null,
 	telefone varchar(11) not null,
@@ -26,7 +26,7 @@ create table tbl_endereco(
     estado varchar(20) not null,
     cidade varchar(100) not null,
     cep varchar(9),
-    status boolean not null
+    adress_status boolean not null
     );
 
 create table tbl_usuario_endereco( 
@@ -38,7 +38,7 @@ create table tbl_usuario_endereco(
     foreign key (id_usuario) references tbl_usuario (id_usuario)
     );
     
-select * from tbl_usuario where id = 5;
+select * from tbl_usuario where id_usuario = 5;
 
 desc tbl_usuario;
     
