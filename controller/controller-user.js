@@ -350,17 +350,56 @@ const getListarUsuarios = async () => {
 
 }
 
-const getValidarUsuario = async (email, senha, contentType) => {
+const getValidarUsuarioNome = async (nomeUsuario, senhaUsuario, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            let emailUsuario = email
-            let senhaUsuario = senha
+            let nome = nomeUsuario
+            let senha = senhaUsuario
             let usuarioJSON = {}
 
-            if (emailUsuario == '' || emailUsuario == undefined || senhaUsuario == '' || senhaUsuario == undefined) {
+            if (nome == '' || nome == undefined || senha == '' || senha == undefined) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                let dadosUsuario = await userDAO.selectValidacaoUsuario(emailUsuario, senhaUsuario)
+                
+                let dadosUsuario = await userDAO.selectValidacaoUsuarioNome(nome, senha)                
+
+                if (dadosUsuario) {
+                    if (dadosUsuario.length > 0) {
+                        let usuario = dadosUsuario
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
+                        usuarioJSON.message = message.VALIDATED_ITEM.message
+                        usuarioJSON.usuario = usuario
+
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND
+                    }
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+            }
+        } else {
+            return message.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) => {
+    try {
+        if (String(contentType).toLowerCase() == 'application/json') {
+            let email = emailUsuario
+            let senha = senhaUsuario
+            let usuarioJSON = {}
+
+            if (email == '' || email == undefined || senha == '' || senha == undefined) {
+                return message.ERROR_REQUIRED_FIELDS
+            } else {
+                
+                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)                
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
@@ -422,5 +461,6 @@ module.exports = {
     setExcluirUsuario,
     getBuscarUsuario,
     getListarUsuarios,
-    getValidarUsuario
+    getValidarUsuarioNome,
+    getValidarUsuarioEmail
 }

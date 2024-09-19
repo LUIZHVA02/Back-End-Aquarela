@@ -129,11 +129,21 @@ app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (requ
     response.json(resultDados);
 })
 
-app.post('/v1/aquarela/validacao/usuario', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/validacao/usuario/nome', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getValidarUsuario(dadosBody.email, dadosBody.senha, contentType)
+    let dadosUsuario = await controllerUsuarios.getValidarUsuarioNome(dadosBody.nome, dadosBody.senha, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
+app.post('/v1/aquarela/validacao/usuario/email', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getValidarUsuarioEmail(dadosBody.email, dadosBody.senha, contentType)
     response.status(dadosUsuario.status_code);
     response.json(dadosUsuario)
 
