@@ -73,6 +73,12 @@ const DELETED_ITEM = {
     message: 'Item deletado com sucesso'
 }
 
+const REACTIVATED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: 'Item reativado com sucesso'
+}
+
 const CREATED_ITEM = {
     status: true,
     status_code: 201,
@@ -95,6 +101,7 @@ module.exports = {
     ERROR_DELETED_ITEM,
     ERROR_UPDATED_ITEM,
     DELETED_ITEM,
+    REACTIVATED_ITEM,
     UPDATED_ITEM,
     CREATED_ITEM,
     VALIDATED_ITEM

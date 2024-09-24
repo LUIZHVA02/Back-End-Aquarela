@@ -93,7 +93,7 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
 const selectAllUsuarios = async () => {
 
     try {
-        let sql = 'select * from tbl_usuario'
+        let sql = `select * from tbl_usuario where user_status = "1"`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
         return rsUsuario
@@ -108,10 +108,25 @@ const selectAllUsuarios = async () => {
 }
 
 // Buscar um usuário existente filtrando pelo ID
-const selectByIdUsuario = async (id) => {
+const selectByIdUsuarioAtivo = async (id) => {
 
     try {
-        let sql = `select * from tbl_usuario where id_usuario = ${id}`
+        let sql = `select * from tbl_usuario where id_usuario = ${id} and user_status = "1"`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+    } catch (error) {
+        
+        console.log(error);
+        return false
+    }
+
+}
+
+const selectByIdUsuarioInativo = async (id) => {
+
+    try {
+        let sql = `select * from tbl_usuario where id_usuario = ${id} and user_status = "0"`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
         return rsUsuario
@@ -175,7 +190,8 @@ module.exports = {
     insertUsuario,
     selectAllUsuarios,
     selectLastId,
-    selectByIdUsuario,
+    selectByIdUsuarioAtivo,
+    selectByIdUsuarioInativo,
     updateUsuario,
     deleteUsuarioById,
     selectValidacaoUsuarioNome,
