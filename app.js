@@ -159,7 +159,8 @@ app.post('/v1/aquarela/validacao/usuario/email', cors(), bodyParserJson, async (
 
 })
 
-// EndPoint Address
+
+/******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, response, next) => {
 
