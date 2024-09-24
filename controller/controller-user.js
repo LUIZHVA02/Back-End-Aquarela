@@ -315,6 +315,7 @@ const getBuscarUsuario = async (id) => {
 
 }
 
+
 const getListarUsuarios = async () => {
 
     try {
@@ -397,7 +398,7 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
                 return message.ERROR_REQUIRED_FIELDS
             } else {
                 
-                let dadosUsuario = await userDAO.selectValidacaoUsuarioEmail(email, senha)                
+                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)                
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
@@ -420,8 +421,6 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
             return message.ERROR_CONTENT_TYPE
         }
     } catch (error) {
-        console.log(error);
-        
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -430,14 +429,24 @@ const setExcluirUsuario = async function (id) {
     try {
 
         let id_usuario = id;
+        let deleteUsuarioJson = {}
+
 
         if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
             return message.ERROR_INVALID_ID;
         } else {
-            let user = await userDAO.selectByIdUsuario(id_usuario)
+            const validaId = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
-            if (user.length > 0) {
-                let dadosUsuario = await userDAO.deleteUsuarioById(id)
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let user_status = "0"
+
+                deleteUsuarioJson.user_status = user_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, deleteUsuarioJson)
 
                 if (dadosUsuario) {
                     return message.DELETED_ITEM
@@ -450,6 +459,49 @@ const setExcluirUsuario = async function (id) {
             }
         }
     } catch (error) {
+        console.log(error);
+        
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setReativarUsuario = async function (id) {
+    try {
+
+        let id_usuario = id;
+        let reativarUsuarioJson = {}
+
+
+        if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
+
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let user_status = "1"
+
+                reativarUsuarioJson.user_status = user_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, reativarUsuarioJson)
+
+                if (dadosUsuario) {
+                    return message.REACTIVATED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        
         return message.ERROR_INTERNAL_SERVER
     }
 
@@ -462,5 +514,6 @@ module.exports = {
     getBuscarUsuario,
     getListarUsuarios,
     getValidarUsuarioNome,
-    getValidarUsuarioEmail
+    getValidarUsuarioEmail,
+    setReativarUsuario
 }
