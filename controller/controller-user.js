@@ -1,5 +1,6 @@
 const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
+const { tratarDataBACK } = require('../modulo/tratamento.js')
 
 const setNovoUsuario = async (dadosUsuario, contentType) => {
     try {
@@ -259,7 +260,7 @@ const getBuscarUsuario = async (id) => {
 
         } else {
 
-            let dadosUsuario = await userDAO.selectByIdUsuario(id_usuario)
+            let dadosUsuario = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
             if (dadosUsuario) {
 
@@ -269,16 +270,16 @@ const getBuscarUsuario = async (id) => {
 
                     let id_user = id
                     let nome = dadosUsuario[0].nome
-                    let nome_usuario = rsUsuario[0].nome_usuario
-                    let foto_usuario = rsUsuario[0].foto_usuario
-                    let descricao = rsUsuario[0].descricao
-                    let email = rsUsuario[0].email
-                    let senha = rsUsuario[0].senha
-                    let cpf = rsUsuario[0].cpf
-                    let data_nascimento = rsUsuario[0].data_nascimento
-                    let telefone = rsUsuario[0].telefone
-                    let disponibilidade = rsUsuario[0].disponibilidade
-                    let user_status = rsUsuario[0].user_status
+                    let nome_usuario = dadosUsuario[0].nome_usuario
+                    let foto_usuario = dadosUsuario[0].foto_usuario
+                    let descricao = dadosUsuario[0].descricao
+                    let email = dadosUsuario[0].email
+                    let senha = dadosUsuario[0].senha
+                    let cpf = dadosUsuario[0].cpf
+                    let data_nascimento = dadosUsuario[0].data_nascimento
+                    let telefone = dadosUsuario[0].telefone
+                    let disponibilidade = dadosUsuario[0].disponibilidade
+                    let user_status = dadosUsuario[0].user_status
 
 
                     jsonDadosTratados.id_usuario = id_user
@@ -310,11 +311,11 @@ const getBuscarUsuario = async (id) => {
         }
 
     } catch (error) {
+        console.log(error);
         message.ERROR_INTERNAL_SERVER // 500
     }
 
 }
-
 
 const getListarUsuarios = async () => {
 
