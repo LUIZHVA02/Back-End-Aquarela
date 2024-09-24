@@ -265,40 +265,38 @@ const getBuscarUsuario = async (id) => {
 
                 if (dadosUsuario.length > 0) {
 
-                    usuarioJSON.usuario = dadosUsuario
+                    let jsonDadosTratados = {}
+
+                    let id_user = id
+                    let nome = dadosUsuario[0].nome
+                    let nome_usuario = rsUsuario[0].nome_usuario
+                    let foto_usuario = rsUsuario[0].foto_usuario
+                    let descricao = rsUsuario[0].descricao
+                    let email = rsUsuario[0].email
+                    let senha = rsUsuario[0].senha
+                    let cpf = rsUsuario[0].cpf
+                    let data_nascimento = rsUsuario[0].data_nascimento
+                    let telefone = rsUsuario[0].telefone
+                    let disponibilidade = rsUsuario[0].disponibilidade
+                    let user_status = rsUsuario[0].user_status
+
+
+                    jsonDadosTratados.id_usuario = id_user
+                    jsonDadosTratados.nome = nome
+                    jsonDadosTratados.nome_usuario = nome_usuario
+                    jsonDadosTratados.foto_usuario = foto_usuario
+                    jsonDadosTratados.descricao = descricao
+                    jsonDadosTratados.email = email
+                    jsonDadosTratados.senha = senha
+                    jsonDadosTratados.cpf = cpf
+                    jsonDadosTratados.data_nascimento = tratarDataBACK(data_nascimento)
+                    jsonDadosTratados.telefone = telefone
+                    jsonDadosTratados.disponibilidade = disponibilidade
+                    jsonDadosTratados.user_status = user_status
+
+                    usuarioJSON.usuario = jsonDadosTratados
                     usuarioJSON.status_code = 200
-
                     
-
-                    // let arraysDadosTratado = []
-                    // let jsonDadosTratados = {}
-
-                    // let id_user = id
-                    // let nome = rsUsuario[0].nome
-                    // let nome_usuario = rsUsuario[0].nome_usuario
-                    // let foto_usuario = rsUsuario[0].foto_usuario
-                    // let descricao = rsUsuario[0].descricao
-                    // let email = rsUsuario[0].email
-                    // let senha = rsUsuario[0].senha
-                    // let cpf = rsUsuario[0].cpf
-                    // let data_nascimento = rsUsuario[0].data_nascimento
-                    // let telefone = rsUsuario[0].telefone
-                    // let disponibilidade = rsUsuario[0].disponibilidade
-                    // let user_status = rsUsuario[0].user_status
-
-
-                    // tratado = id_user
-                    // tratado = nome
-                    // tratado = nome_usuario
-                    // tratado = foto_usuario
-                    // tratado = descricao
-                    // tratado = email
-                    // tratado = senha
-                    // tratado = cpf
-                    // tratado = tratarDataBACK(data_nascimento)
-                    // tratado = telefone
-                    // tratado = disponibilidade
-                    // tratado = user_status
 
                     return usuarioJSON
 
