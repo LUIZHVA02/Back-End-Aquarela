@@ -9,7 +9,7 @@ create table tbl_usuario(
     foto_usuario varchar(300),
     descricao varchar(300),
 	email varchar(50) not null,
-    senha varchar(50) not null,
+    senha varchar(32) not null,
 	cpf varchar(11) not null,
     data_nascimento date not null,
 	telefone varchar(11) not null,
@@ -26,7 +26,11 @@ create table tbl_endereco(
     estado varchar(20) not null,
     cidade varchar(100) not null,
     cep varchar(9),
+<<<<<<< HEAD:database/db_aquarela_script.sql
+    adress_status boolean not null
+=======
     endereco_status boolean not null
+>>>>>>> aa18a5a3c91930d48a946908c8fcee3e48093aaa:database/db_aquarela_teste.sql
     );
 
 create table tbl_usuario_endereco( 
@@ -38,7 +42,7 @@ create table tbl_usuario_endereco(
     foreign key (id_usuario) references tbl_usuario (id_usuario)
     );
     
-select * from tbl_usuario where id = 5;
+select * from tbl_usuario where id_usuario = 5;
 
 desc tbl_usuario;
     
