@@ -66,6 +66,8 @@ const bodyParserJson = bodyParser.json()
 /**************************** Imports de arquivos e bibliotecas do Projeto ******************************/
 const controllerUsuarios = require('./controller/controller-user.js')
 const controllerAddress = require('./controller/controller-address.js')
+const controllerProduto = require('./controller/controller-produto.js')
+const controllerCategoria = require('./controller/controller-categoria.js')
 /********************************************************************************************************/
 
 app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
@@ -223,6 +225,59 @@ app.delete('/v1/aquarela/deleteAddress/:id', cors(), bodyParserJson, async (requ
     response.json(resultDados);
 })
 
+
+/******************************************************** Endpoints Produtos ********************************************************/
+
+app.get('/v1/aquarela/seachProducts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let seachProducts = await controllerProduto.getListProducts()
+
+    if (seachProducts) {
+        response.json(seachProducts)
+        response.status(seachProducts.status_code)
+    } else {
+        response.status(seachProducts.status_code)
+        response.json(seachProducts)
+    }
+})
+
+app.post('/v1/aquarela/insertNewProduct', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDataProduct = await controllerProduto.setNovoProduto(dadosBody, contentType)
+    console.log(resultDataProduct)
+    response.status(resultDataProduct.status_code)
+    
+
+    response.json(resultDataProduct)    
+    
+})
+
+app.put('/v1/aquarela/updateProduct/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_produto = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerProduto.setUpdateProducts(dadosBody, contentType, id_produto)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
+
+/******************************************************** Endpoints Categorias ********************************************************/
+
+app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
+    console.log(resultDataCategoria)
+    response.status(resultDataCategoria.status_code)
+    
+
+    response.json(resultDataCategoria)    
+    
+})
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

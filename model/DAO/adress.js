@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Inserir um novo usuário
+// Inserir um novo endereço
 const insertAddress = async (dataAddress) => {
 
     try {
