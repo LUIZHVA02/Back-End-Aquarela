@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const insertAddress = async (dataAddress) => {
 
     try {
-        let sql = `insert into tbl_endereco  (   logradouro, 
+        let sql = `insert into tbl_endereco (   logradouro, 
                                                 numero_casa, 
                                                 complemento, 
                                                 bairro, 
@@ -61,6 +61,9 @@ const updateAddress = async function (id, dataAddress) {
 
         let result = await prisma.$executeRawUnsafe(sql)
 
+        console.log(sql);
+        
+
         return result
 
     } catch (error) {
@@ -101,8 +104,8 @@ const deleteAddressById = async function (id) {
     try {
         let sql = `delete from tbl_endereco where id_endereco = ${ id }`
 
-        let rsUsuario = await prisma.$queryRawUnsafe(sql);
-        return rsUsuario;
+        let rsAddres = await prisma.$queryRawUnsafe(sql);
+        return rsAddres;
 
     } catch (error) {
         return false

@@ -71,7 +71,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 let data_nascimento = dadosUsuario.data_nascimento
                 let telefone = dadosUsuario.telefone
                 let disponibilidade = dadosUsuario.disponibilidade
-                let user_status = dadosUsuario.user_status
+                let usuario_status = dadosUsuario.usuario_status
 
                 if (
                     nome != '' &&
@@ -203,15 +203,15 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 ) { }
 
                 if (
-                    user_status != '' &&
-                    user_status != undefined &&
-                    user_status != null
+                    usuario_status != '' &&
+                    usuario_status != undefined &&
+                    usuario_status != null
                 ) {
-                    updateUsuarioJson.user_status = user_status
+                    updateUsuarioJson.usuario_status = usuario_status
                 } else if (
-                    user_status == '' &&
-                    user_status == undefined &&
-                    user_status == null
+                    usuario_status == '' &&
+                    usuario_status == undefined &&
+                    usuario_status == null
                 ) { }
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
@@ -261,7 +261,7 @@ const getBuscarUsuario = async (id) => {
 
         } else {
 
-            let dadosUsuario = await userDAO.selectByIdUsuario(id_usuario)
+            let dadosUsuario = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
             if (dadosUsuario) {
 
@@ -269,21 +269,36 @@ const getBuscarUsuario = async (id) => {
 
                     let jsonDadosTratados = {}
 
-                    jsonDadosTratados.id_usuario = dadosUsuario[0].id_usuario
-                    jsonDadosTratados.nome = dadosUsuario[0].nome
-                    jsonDadosTratados.nome_usuario = dadosUsuario[0].nome_usuario
-                    jsonDadosTratados.foto_usuario = dadosUsuario[0].foto_usuario
-                    jsonDadosTratados.descricao = dadosUsuario[0].descricao
-                    jsonDadosTratados.email = dadosUsuario[0].email
-                    jsonDadosTratados.senha = dadosUsuario[0].senha
-                    jsonDadosTratados.cpf = dadosUsuario[0].cpf
-                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(dadosUsuario[0].data_nascimento)
-                    jsonDadosTratados.telefone = dadosUsuario[0].telefone
-                    jsonDadosTratados.disponibilidade = dadosUsuario[0].disponibilidade
-                    jsonDadosTratados.user_status = dadosUsuario[0].user_status
+                    let id_user = id
+                    let nome = dadosUsuario[0].nome
+                    let nome_usuario = dadosUsuario[0].nome_usuario
+                    let foto_usuario = dadosUsuario[0].foto_usuario
+                    let descricao = dadosUsuario[0].descricao
+                    let email = dadosUsuario[0].email
+                    let senha = dadosUsuario[0].senha
+                    let cpf = dadosUsuario[0].cpf
+                    let data_nascimento = dadosUsuario[0].data_nascimento
+                    let telefone = dadosUsuario[0].telefone
+                    let disponibilidade = dadosUsuario[0].disponibilidade
+                    let usuario_status = dadosUsuario[0].usuario_status
+
+
+                    jsonDadosTratados.id_usuario = id_user
+                    jsonDadosTratados.nome = nome
+                    jsonDadosTratados.nome_usuario = nome_usuario
+                    jsonDadosTratados.foto_usuario = foto_usuario
+                    jsonDadosTratados.descricao = descricao
+                    jsonDadosTratados.email = email
+                    jsonDadosTratados.senha = senha
+                    jsonDadosTratados.cpf = cpf
+                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(data_nascimento)
+                    jsonDadosTratados.telefone = telefone
+                    jsonDadosTratados.disponibilidade = disponibilidade
+                    jsonDadosTratados.usuario_status = usuario_status
 
                     usuarioJSON.usuario = jsonDadosTratados
                     usuarioJSON.status_code = 200
+                    
 
                     return usuarioJSON
 
@@ -297,6 +312,7 @@ const getBuscarUsuario = async (id) => {
         }
 
     } catch (error) {
+        console.log(error);
         message.ERROR_INTERNAL_SERVER // 500
     }
 
@@ -427,14 +443,24 @@ const setExcluirUsuario = async function (id) {
     try {
 
         let id_usuario = id;
+        let deleteUsuarioJson = {}
+
 
         if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
             return message.ERROR_INVALID_ID;
         } else {
-            let user = await userDAO.selectByIdUsuario(id_usuario)
+            const validaId = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
-            if (user.length > 0) {
-                let dadosUsuario = await userDAO.deleteUsuarioById(id)
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let usuario_status = "0"
+
+                deleteUsuarioJson.usuario_status = usuario_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, deleteUsuarioJson)
 
                 if (dadosUsuario) {
                     return message.DELETED_ITEM
@@ -447,6 +473,90 @@ const setExcluirUsuario = async function (id) {
             }
         }
     } catch (error) {
+        console.log(error);
+        
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setReativarUsuario = async function (id) {
+    try {
+
+        let id_usuario = id;
+        let reativarUsuarioJson = {}
+
+
+        if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
+
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let usuario_status = "1"
+
+                reativarUsuarioJson.usuario_status = usuario_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, reativarUsuarioJson)
+
+                if (dadosUsuario) {
+                    return message.REACTIVATED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setAvaliacao = async function (id) {
+    try {
+
+        let id_usuario = id;
+        let reativarUsuarioJson = {}
+
+
+        if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
+
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let usuario_status = "1"
+
+                reativarUsuarioJson.usuario_status = usuario_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, reativarUsuarioJson)
+
+                if (dadosUsuario) {
+                    return message.REACTIVATED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        
         return message.ERROR_INTERNAL_SERVER
     }
 
@@ -459,5 +569,6 @@ module.exports = {
     getBuscarUsuario,
     getListarUsuarios,
     getValidarUsuarioNome,
-    getValidarUsuarioEmail
+    getValidarUsuarioEmail,
+    setReativarUsuario
 }

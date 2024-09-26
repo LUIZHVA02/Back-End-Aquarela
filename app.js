@@ -119,11 +119,21 @@ app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.delete('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
 
     let resultDados = await controllerUsuarios.setExcluirUsuario(id_usuario);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
+
+app.put('/v1/aquarela/reativarUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_usuario = request.params.id
+
+    let resultDados = await controllerUsuarios.setReativarUsuario(id_usuario);
 
     response.status(resultDados.status_code);
     response.json(resultDados);
@@ -149,7 +159,8 @@ app.post('/v1/aquarela/validacao/usuario/email', cors(), bodyParserJson, async (
 
 })
 
-// EndPoint Address
+
+/******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, response, next) => {
 
@@ -200,6 +211,16 @@ app.get('/v1/aquarela/searchAddress/:id', cors(), async function (request, respo
         response.status(404)
         response.json({ erro: 'Não foi possível encontrar um item!' })
     }
+})
+
+app.delete('/v1/aquarela/deleteAddress/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_address = request.params.id
+
+    let resultDados = await controllerAddress.setDeleteAddress(id_address);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
 })
 
 
