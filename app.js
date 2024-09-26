@@ -68,17 +68,17 @@ const controllerUsuarios = require('./controller/controller-user.js')
 const controllerAddress = require('./controller/controller-address.js')
 /********************************************************************************************************/
 
-app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response, next) {
+app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
 
-    let infoFilmes = await controllerUsuarios.getListarUsuarios()
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosUsuario = await controllerUsuarios.setNovoUsuario(dadosBody, contentType)
+    response.status(resultDadosUsuario.status_code)
+    
+    console.log(resultDadosUsuario);
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(resultDadosUsuario)
+    
 })
 
 app.get('/v1/aquarela/buscarUsuario/:id', cors(), async function (request, response, next) {
@@ -96,17 +96,17 @@ app.get('/v1/aquarela/buscarUsuario/:id', cors(), async function (request, respo
     }
 })
 
-app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response, next) {
 
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let resultDadosUsuario = await controllerUsuarios.setNovoUsuario(dadosBody, contentType)
-    response.status(resultDadosUsuario.status_code)
-    
-    console.log(resultDadosUsuario);
+    let infoFilmes = await controllerUsuarios.getListarUsuarios()
 
-    response.json(resultDadosUsuario)
-    
+    if (infoFilmes) {
+        response.json(infoFilmes)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
 })
 
 app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {

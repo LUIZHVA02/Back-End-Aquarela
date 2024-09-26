@@ -58,6 +58,42 @@ const insertUsuario = async (dadosUsuario) => {
     }
 
 }
+// Buscar um usuário existente filtrando pelo ID
+const selectByIdUsuarioAtivo = async (id) => {
+
+    try {
+        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+                    email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1" and id_usuario = ${id}`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+    } catch (error) {
+
+        console.log(error);
+        return false
+    }
+
+}
+
+const selectAllUsuarios = async () => {
+
+    try {
+        let sql = ` select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+                    email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+
+    } catch (error) {
+
+        console.log(error);
+
+        return false
+    }
+
+}
 
 // Atualizar um usuário existente filtrando pelo ID
 const updateUsuario = async function (id, dadosUsuarioUpdate) {
@@ -85,43 +121,6 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
 
         console.log(error);
 
-        return false
-    }
-
-}
-
-const selectAllUsuarios = async () => {
-
-    try {
-        let sql = ` select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
-                    email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-
-        return rsUsuario
-
-    } catch (error) {
-
-        console.log(error);
-
-        return false
-    }
-
-}
-
-// Buscar um usuário existente filtrando pelo ID
-const selectByIdUsuarioAtivo = async (id) => {
-
-    try {
-        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
-                    email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1" and id_usuario = ${id}`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-
-        return rsUsuario
-    } catch (error) {
-
-        console.log(error);
         return false
     }
 
