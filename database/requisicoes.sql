@@ -1,3 +1,9 @@
+
+## Listar usuários
+select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+email, cpf, date_format(data_nascimento, "%d %m %Y") as data_nascimento, telefone, 
+disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";
+
 ## Listar endereços de um usuário
 
 select tbl_usuario.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 

@@ -269,36 +269,22 @@ const getBuscarUsuario = async (id) => {
 
                     let jsonDadosTratados = {}
 
-                    let id_user = id
-                    let nome = dadosUsuario[0].nome
-                    let nome_usuario = dadosUsuario[0].nome_usuario
-                    let foto_usuario = dadosUsuario[0].foto_usuario
-                    let descricao = dadosUsuario[0].descricao
-                    let email = dadosUsuario[0].email
-                    let senha = dadosUsuario[0].senha
-                    let cpf = dadosUsuario[0].cpf
-                    let data_nascimento = dadosUsuario[0].data_nascimento
-                    let telefone = dadosUsuario[0].telefone
-                    let disponibilidade = dadosUsuario[0].disponibilidade
-                    let usuario_status = dadosUsuario[0].usuario_status
-
-
-                    jsonDadosTratados.id_usuario = id_user
-                    jsonDadosTratados.nome = nome
-                    jsonDadosTratados.nome_usuario = nome_usuario
-                    jsonDadosTratados.foto_usuario = foto_usuario
-                    jsonDadosTratados.descricao = descricao
-                    jsonDadosTratados.email = email
-                    jsonDadosTratados.senha = senha
-                    jsonDadosTratados.cpf = cpf
-                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(data_nascimento)
-                    jsonDadosTratados.telefone = telefone
-                    jsonDadosTratados.disponibilidade = disponibilidade
-                    jsonDadosTratados.usuario_status = usuario_status
+                    jsonDadosTratados.id_usuario = id
+                    jsonDadosTratados.nome = dadosUsuario[0].nome
+                    jsonDadosTratados.nome_usuario = dadosUsuario[0].nome_usuario
+                    jsonDadosTratados.foto_usuario = dadosUsuario[0].foto_usuario
+                    jsonDadosTratados.descricao = dadosUsuario[0].descricao
+                    jsonDadosTratados.email = dadosUsuario[0].email
+                    jsonDadosTratados.senha = dadosUsuario[0].senha
+                    jsonDadosTratados.cpf = dadosUsuario[0].cpf
+                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(dadosUsuario[0].data_nascimento)
+                    jsonDadosTratados.telefone = dadosUsuario[0].telefone
+                    jsonDadosTratados.disponibilidade = dadosUsuario[0].disponibilidade
+                    jsonDadosTratados.usuario_status = dadosUsuario[0].usuario_status
 
                     usuarioJSON.usuario = jsonDadosTratados
                     usuarioJSON.status_code = 200
-                    
+
 
                     return usuarioJSON
 
@@ -328,18 +314,7 @@ const getListarUsuarios = async () => {
         if (dadosUsuario) {
 
             if (dadosUsuario.length > 0) {
-
-                let dadosTratados = {}
-                
-                const keys = Object.keys(dadosUsuario)
-
-                keys.forEach((key, index) => {
-                    dadosTratados += `${key} = "${dadosUsuario[key]}"`
-                    if (index !== keys.length - 1) {
-                        dadosTratados += `, `
-                    }
-                    console.log(dadosUsuario, key);
-                })
+                console.log(dadosUsuario);
 
                 usuarioJSON.usuarios = dadosUsuario
                 usuarioJSON.quantidade = dadosUsuario.length
@@ -349,7 +324,6 @@ const getListarUsuarios = async () => {
             } else {
 
                 console.log(dadosUsuario);
-
                 return message.ERROR_NOT_FOUND // 404
             }
 
@@ -358,6 +332,7 @@ const getListarUsuarios = async () => {
         }
 
     } catch (error) {
+        console.log(error);
         message.ERROR_INTERNAL_SERVER // 500
     }
 
@@ -452,9 +427,9 @@ const setExcluirUsuario = async function (id) {
             const validaId = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
             console.log(validaId);
-            
 
-            if (validaId.length > 0) {                
+
+            if (validaId.length > 0) {
 
                 let usuario_status = "0"
 
@@ -474,7 +449,7 @@ const setExcluirUsuario = async function (id) {
         }
     } catch (error) {
         console.log(error);
-        
+
         return message.ERROR_INTERNAL_SERVER
     }
 
@@ -493,9 +468,9 @@ const setReativarUsuario = async function (id) {
             const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
 
             console.log(validaId);
-            
 
-            if (validaId.length > 0) {                
+
+            if (validaId.length > 0) {
 
                 let usuario_status = "1"
 
@@ -515,7 +490,7 @@ const setReativarUsuario = async function (id) {
         }
     } catch (error) {
         console.log(error);
-        
+
         return message.ERROR_INTERNAL_SERVER
     }
 
@@ -534,9 +509,9 @@ const setAvaliacao = async function (id) {
             const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
 
             console.log(validaId);
-            
 
-            if (validaId.length > 0) {                
+
+            if (validaId.length > 0) {
 
                 let usuario_status = "1"
 
@@ -556,7 +531,7 @@ const setAvaliacao = async function (id) {
         }
     } catch (error) {
         console.log(error);
-        
+
         return message.ERROR_INTERNAL_SERVER
     }
 
