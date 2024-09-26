@@ -525,9 +525,9 @@ const setAvaliacao = async function (id) {
 
             if (validaId.length > 0) {                
 
-                let user_status = "1"
+                let usuario_status = "1"
 
-                reativarUsuarioJson.user_status = user_status
+                reativarUsuarioJson.usuario_status = usuario_status
 
                 let dadosUsuario = await userDAO.updateUsuario(id_usuario, reativarUsuarioJson)
 

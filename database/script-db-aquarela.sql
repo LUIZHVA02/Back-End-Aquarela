@@ -16,7 +16,7 @@ create table tbl_usuario(
     data_nascimento date not null,
 	telefone varchar(11) not null,
     disponibilidade boolean not null,
-    avaliacao integer,
+    avaliacao float,
     usuario_status boolean not null 
 );
 
@@ -87,7 +87,7 @@ create table tbl_categoria(
     categoria_status boolean not null
 );
 
-create table categoria_produto (
+create table tbl_categoria_produto (
     id_categoria_produto int not null primary key auto_increment,
     id_produto integer not null,
     id_categoria integer not null,
@@ -96,7 +96,7 @@ create table categoria_produto (
     foreign key (id_categoria) references tbl_categoria(id_categoria)
 );
 
-create table categoria_postagem (
+create table tbl_categoria_postagem (
     id_categoria_postagem integer not null primary key auto_increment,
     id_postagem integer not null,
     id_categoria integer not null,
@@ -150,7 +150,7 @@ create table tbl_comentario_postagem (
 
 create table tbl_produto_favorito ( 
 	id_produto_favorito integer not null primary key auto_increment,
-    id_produto integer not null,
+    id_produto integer not null,    
     id_usuario integer not null,
     produto_favorito_status boolean not null,
     foreign key (id_produto) references tbl_produto (id_produto),

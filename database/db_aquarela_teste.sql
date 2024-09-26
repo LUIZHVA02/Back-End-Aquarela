@@ -14,7 +14,7 @@ create table tbl_usuario(
     data_nascimento date not null,
 	telefone varchar(11) not null,
     disponibilidade boolean not null,
-    user_status boolean not null 
+    usuario_status boolean not null 
 );
 
 create table tbl_endereco( 
