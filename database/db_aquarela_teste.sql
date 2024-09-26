@@ -1,6 +1,6 @@
-create database db_aquarela;
+create database db_aquarela_teste;
 
-use db_aquarela;
+use db_aquarela_teste;
 
 create table tbl_usuario( 
 	id_usuario int not null primary key auto_increment,
@@ -26,7 +26,7 @@ create table tbl_endereco(
     estado varchar(20) not null,
     cidade varchar(100) not null,
     cep varchar(9),
-    status boolean not null
+    endereco_status boolean not null
     );
 
 create table tbl_usuario_endereco( 

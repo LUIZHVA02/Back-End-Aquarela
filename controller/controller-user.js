@@ -70,7 +70,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 let data_nascimento = dadosUsuario.data_nascimento
                 let telefone = dadosUsuario.telefone
                 let disponibilidade = dadosUsuario.disponibilidade
-                let user_status = dadosUsuario.user_status
+                let usuario_status = dadosUsuario.usuario_status
 
                 if (
                     nome != '' &&
@@ -202,15 +202,15 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 ) { }
 
                 if (
-                    user_status != '' &&
-                    user_status != undefined &&
-                    user_status != null
+                    usuario_status != '' &&
+                    usuario_status != undefined &&
+                    usuario_status != null
                 ) {
-                    updateUsuarioJson.user_status = user_status
+                    updateUsuarioJson.usuario_status = usuario_status
                 } else if (
-                    user_status == '' &&
-                    user_status == undefined &&
-                    user_status == null
+                    usuario_status == '' &&
+                    usuario_status == undefined &&
+                    usuario_status == null
                 ) { }
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
@@ -279,7 +279,7 @@ const getBuscarUsuario = async (id) => {
                     let data_nascimento = dadosUsuario[0].data_nascimento
                     let telefone = dadosUsuario[0].telefone
                     let disponibilidade = dadosUsuario[0].disponibilidade
-                    let user_status = dadosUsuario[0].user_status
+                    let usuario_status = dadosUsuario[0].usuario_status
 
 
                     jsonDadosTratados.id_usuario = id_user
@@ -293,7 +293,7 @@ const getBuscarUsuario = async (id) => {
                     jsonDadosTratados.data_nascimento = tratarDataBACK(data_nascimento)
                     jsonDadosTratados.telefone = telefone
                     jsonDadosTratados.disponibilidade = disponibilidade
-                    jsonDadosTratados.user_status = user_status
+                    jsonDadosTratados.usuario_status = usuario_status
 
                     usuarioJSON.usuario = jsonDadosTratados
                     usuarioJSON.status_code = 200
@@ -443,9 +443,9 @@ const setExcluirUsuario = async function (id) {
 
             if (validaId.length > 0) {                
 
-                let user_status = "0"
+                let usuario_status = "0"
 
-                deleteUsuarioJson.user_status = user_status
+                deleteUsuarioJson.usuario_status = usuario_status
 
                 let dadosUsuario = await userDAO.updateUsuario(id_usuario, deleteUsuarioJson)
 
@@ -468,6 +468,47 @@ const setExcluirUsuario = async function (id) {
 }
 
 const setReativarUsuario = async function (id) {
+    try {
+
+        let id_usuario = id;
+        let reativarUsuarioJson = {}
+
+
+        if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await userDAO.selectByIdUsuarioInativo(id_usuario)
+
+            console.log(validaId);
+            
+
+            if (validaId.length > 0) {                
+
+                let usuario_status = "1"
+
+                reativarUsuarioJson.usuario_status = usuario_status
+
+                let dadosUsuario = await userDAO.updateUsuario(id_usuario, reativarUsuarioJson)
+
+                if (dadosUsuario) {
+                    return message.REACTIVATED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setAvaliacao = async function (id) {
     try {
 
         let id_usuario = id;

@@ -23,7 +23,7 @@ const insertUsuario = async (dadosUsuario) => {
                                                 data_nascimento, 
                                                 telefone, 
                                                 disponibilidade, 
-                                                user_status
+                                                usuario_status
                                             ) 
                                             values 
                                             (
@@ -93,7 +93,7 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
 const selectAllUsuarios = async () => {
 
     try {
-        let sql = `select * from tbl_usuario where user_status = "1"`
+        let sql = `select * from tbl_usuario where usuario_status = "1"`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
         return rsUsuario
@@ -111,7 +111,7 @@ const selectAllUsuarios = async () => {
 const selectByIdUsuarioAtivo = async (id) => {
 
     try {
-        let sql = `select * from tbl_usuario where id_usuario = ${id} and user_status = "1"`
+        let sql = `select * from tbl_usuario where id_usuario = ${id} and usuario_status = "1"`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
         return rsUsuario
@@ -126,7 +126,7 @@ const selectByIdUsuarioAtivo = async (id) => {
 const selectByIdUsuarioInativo = async (id) => {
 
     try {
-        let sql = `select * from tbl_usuario where id_usuario = ${id} and user_status = "0"`
+        let sql = `select * from tbl_usuario where id_usuario = ${id} and usuario_status = "0"`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
         return rsUsuario
