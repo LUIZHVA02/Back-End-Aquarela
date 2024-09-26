@@ -17,34 +17,407 @@ model tbl_endereco {
   estado               String                 @db.VarChar(20)
   cidade               String                 @db.VarChar(100)
   cep                  String?                @db.VarChar(9)
-  address_status       Boolean
+  endereco_status      Boolean
   tbl_usuario_endereco tbl_usuario_endereco[]
 }
 
 model tbl_usuario {
-  id_usuario           Int                    @id @default(autoincrement())
-  nome                 String                 @db.VarChar(150)
-  nome_usuario         String                 @db.VarChar(150)
-  foto_usuario         String?                @db.VarChar(300)
-  descricao            String?                @db.VarChar(300)
-  email                String                 @db.VarChar(50)
-  senha                String?                @db.VarChar(32)
-  cpf                  String                 @db.VarChar(11)
-  data_nascimento      DateTime               @db.Date
-  telefone             String                 @db.VarChar(11)
-  disponibilidade      Boolean
-  user_status          Boolean
-  tbl_usuario_endereco tbl_usuario_endereco[]
+  id_usuario                                             Int                         @id @default(autoincrement())
+  nome                                                   String                      @db.VarChar(150)
+  nome_usuario                                           String                      @db.VarChar(150)
+  foto_usuario                                           String?                     @db.VarChar(300)
+  descricao                                              String?                     @db.VarChar(300)
+  email                                                  String                      @db.VarChar(50)
+  senha                                                  String                      @db.VarChar(50)
+  cpf                                                    String                      @db.VarChar(11)
+  data_nascimento                                        DateTime                    @db.Date
+  telefone                                               String                      @db.VarChar(11)
+  disponibilidade                                        Boolean
+  avaliacao                                              Float?                      @db.Float
+  usuario_status                                         Boolean
+  tbl_carrinho_compra                                    tbl_carrinho_compra[]
+  tbl_comentario                                         tbl_comentario[]
+  tbl_conversa_tbl_conversa_id_usuario_1Totbl_usuario    tbl_conversa[]              @relation("tbl_conversa_id_usuario_1Totbl_usuario")
+  tbl_conversa_tbl_conversa_id_usuario_2Totbl_usuario    tbl_conversa[]              @relation("tbl_conversa_id_usuario_2Totbl_usuario")
+  tbl_curtida_postagem                                   tbl_curtida_postagem[]
+  tbl_curtida_produto                                    tbl_curtida_produto[]
+  tbl_mensagem                                           tbl_mensagem[]
+  tbl_pasta                                              tbl_pasta[]
+  tbl_postagem                                           tbl_postagem[]
+  tbl_postagem_favorita                                  tbl_postagem_favorita[]
+  tbl_preferencia                                        tbl_preferencia[]
+  tbl_produto                                            tbl_produto[]
+  tbl_produto_favorito                                   tbl_produto_favorito[]
+  tbl_seguidores_tbl_seguidores_id_seguidorTotbl_usuario tbl_seguidores[]            @relation("tbl_seguidores_id_seguidorTotbl_usuario")
+  tbl_seguidores_tbl_seguidores_id_seguindoTotbl_usuario tbl_seguidores[]            @relation("tbl_seguidores_id_seguindoTotbl_usuario")
+  tbl_usuario_endereco                                   tbl_usuario_endereco[]
+  tbl_visualizacao_postagem                              tbl_visualizacao_postagem[]
+  tbl_visualizacao_produto                               tbl_visualizacao_produto[]
 }
 
 model tbl_usuario_endereco {
-  id_usuario_endereco Int          @id @default(autoincrement())
-  id_endereco         Int
-  id_usuario          Int
-  status              Boolean
-  tbl_endereco        tbl_endereco @relation(fields: [id_endereco], references: [id_endereco], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_1")
-  tbl_usuario         tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_2")
+  id_usuario_endereco     Int          @id @default(autoincrement())
+  id_endereco             Int
+  id_usuario              Int
+  usuario_endereco_status Boolean
+  tbl_pedido              tbl_pedido[]
+  tbl_endereco            tbl_endereco @relation(fields: [id_endereco], references: [id_endereco], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_1")
+  tbl_usuario             tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuario_endereco_ibfk_2")
 
   @@index([id_endereco], map: "id_endereco")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_carrinho_compra {
+  id_carrinho_compra     Int                 @id @default(autoincrement())
+  id_usuario             Int
+  carrinho_compra_status Boolean
+  tbl_usuario            tbl_usuario         @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_carrinho_compra_ibfk_1")
+  tbl_item_carrinho      tbl_item_carrinho[]
+
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_categoria {
+  id_categoria           Int                      @id @default(autoincrement())
+  categoria              String?                  @db.VarChar(255)
+  categoria_status       Boolean
+  tbl_categoria_postagem tbl_categoria_postagem[]
+  tbl_categoria_produto  tbl_categoria_produto[]
+  tbl_preferencia        tbl_preferencia[]
+}
+
+model tbl_categoria_postagem {
+  id_categoria_postagem     Int           @id @default(autoincrement())
+  id_postagem               Int
+  id_categoria              Int
+  categoria_postagem_status Boolean
+  tbl_postagem              tbl_postagem  @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_categoria_postagem_ibfk_1")
+  tbl_categoria             tbl_categoria @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "tbl_categoria_postagem_ibfk_2")
+
+  @@index([id_categoria], map: "id_categoria")
+  @@index([id_postagem], map: "id_postagem")
+}
+
+model tbl_categoria_produto {
+  id_categoria_produto     Int           @id @default(autoincrement())
+  id_produto               Int
+  id_categoria             Int
+  categoria_produto_status Boolean
+  tbl_produto              tbl_produto   @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_categoria_produto_ibfk_1")
+  tbl_categoria            tbl_categoria @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "tbl_categoria_produto_ibfk_2")
+
+  @@index([id_categoria], map: "id_categoria")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_comentario {
+  id_comentario           Int                       @id @default(autoincrement())
+  mensagem                String?                   @db.VarChar(255)
+  id_usuario              Int
+  id_resposta             Int?
+  comentario_status       Boolean
+  tbl_usuario             tbl_usuario               @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_ibfk_1")
+  tbl_comentario          tbl_comentario?           @relation("tbl_comentarioTotbl_comentario", fields: [id_resposta], references: [id_comentario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_ibfk_2")
+  other_tbl_comentario    tbl_comentario[]          @relation("tbl_comentarioTotbl_comentario")
+  tbl_comentario_postagem tbl_comentario_postagem[]
+  tbl_comentario_produto  tbl_comentario_produto[]
+
+  @@index([id_resposta], map: "id_resposta")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_comentario_postagem {
+  id_comentario_postagem     Int            @id @default(autoincrement())
+  id_postagem                Int
+  id_comentario              Int
+  comentario_postagem_status Boolean
+  tbl_postagem               tbl_postagem   @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_postagem_ibfk_1")
+  tbl_comentario             tbl_comentario @relation(fields: [id_comentario], references: [id_comentario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_postagem_ibfk_2")
+
+  @@index([id_comentario], map: "id_comentario")
+  @@index([id_postagem], map: "id_postagem")
+}
+
+model tbl_comentario_produto {
+  id_comentario_produto     Int            @id @default(autoincrement())
+  id_produto                Int
+  id_comentario             Int
+  comentario_produto_status Boolean
+  tbl_produto               tbl_produto    @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_produto_ibfk_1")
+  tbl_comentario            tbl_comentario @relation(fields: [id_comentario], references: [id_comentario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_comentario_produto_ibfk_2")
+
+  @@index([id_comentario], map: "id_comentario")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_conversa {
+  id_conversa                                        Int            @id @default(autoincrement())
+  id_usuario_1                                       Int
+  id_usuario_2                                       Int
+  conversa_status                                    Boolean
+  tbl_usuario_tbl_conversa_id_usuario_1Totbl_usuario tbl_usuario    @relation("tbl_conversa_id_usuario_1Totbl_usuario", fields: [id_usuario_1], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_conversa_ibfk_1")
+  tbl_usuario_tbl_conversa_id_usuario_2Totbl_usuario tbl_usuario    @relation("tbl_conversa_id_usuario_2Totbl_usuario", fields: [id_usuario_2], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_conversa_ibfk_2")
+  tbl_mensagem                                       tbl_mensagem[]
+
+  @@index([id_usuario_1], map: "id_usuario_1")
+  @@index([id_usuario_2], map: "id_usuario_2")
+}
+
+model tbl_curtida_postagem {
+  id_curtidas_postagem     Int          @id @default(autoincrement())
+  id_postagem              Int
+  id_usuario               Int
+  curtidas_postagem_status Boolean
+  tbl_postagem             tbl_postagem @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_curtida_postagem_ibfk_1")
+  tbl_usuario              tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_curtida_postagem_ibfk_2")
+
+  @@index([id_postagem], map: "id_postagem")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_curtida_produto {
+  id_curtidas_produto     Int         @id @default(autoincrement())
+  id_produto              Int
+  id_usuario              Int
+  curtidas_produto_status Boolean
+  tbl_produto             tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_curtida_produto_ibfk_1")
+  tbl_usuario             tbl_usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_curtida_produto_ibfk_2")
+
+  @@index([id_produto], map: "id_produto")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_imagem {
+  id_imagem           Int                   @id @default(autoincrement())
+  url                 String                @db.VarChar(255)
+  imagem_status       Boolean
+  tbl_imagem_postagem tbl_imagem_postagem[]
+  tbl_imagem_produto  tbl_imagem_produto[]
+}
+
+model tbl_imagem_postagem {
+  id_imagem_postagem     Int          @id @default(autoincrement())
+  id_imagem              Int
+  id_postagem            Int
+  imagem_postagem_status Boolean
+  tbl_imagem             tbl_imagem   @relation(fields: [id_imagem], references: [id_imagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_imagem_postagem_ibfk_1")
+  tbl_postagem           tbl_postagem @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_imagem_postagem_ibfk_2")
+
+  @@index([id_imagem], map: "id_imagem")
+  @@index([id_postagem], map: "id_postagem")
+}
+
+model tbl_imagem_produto {
+  id_imagem_produto     Int         @id @default(autoincrement())
+  id_imagem             Int
+  id_produto            Int
+  imagem_produto_status Boolean
+  tbl_imagem            tbl_imagem  @relation(fields: [id_imagem], references: [id_imagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_imagem_produto_ibfk_1")
+  tbl_produto           tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_imagem_produto_ibfk_2")
+
+  @@index([id_imagem], map: "id_imagem")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_item_carrinho {
+  id_item_carrinho     Int                 @id @default(autoincrement())
+  quantidade           Int
+  id_produto           Int
+  id_carrinho_compra   Int
+  item_carrinho_status Boolean
+  tbl_produto          tbl_produto         @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_item_carrinho_ibfk_1")
+  tbl_carrinho_compra  tbl_carrinho_compra @relation(fields: [id_carrinho_compra], references: [id_carrinho_compra], onDelete: NoAction, onUpdate: NoAction, map: "tbl_item_carrinho_ibfk_2")
+
+  @@index([id_carrinho_compra], map: "id_carrinho_compra")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_item_pedido {
+  id_item_pedido     Int         @id @default(autoincrement())
+  quantidade         Int
+  id_pedido          Int
+  id_produto         Int
+  item_pedido_status Boolean
+  tbl_pedido         tbl_pedido  @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction, map: "tbl_item_pedido_ibfk_1")
+  tbl_produto        tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_item_pedido_ibfk_2")
+
+  @@index([id_pedido], map: "id_pedido")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_mensagem {
+  id_mensagem     Int          @id @default(autoincrement())
+  mensagem        String       @db.Text
+  id_usuario      Int
+  id_conversa     Int
+  mensagem_status Boolean
+  tbl_usuario     tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_mensagem_ibfk_1")
+  tbl_conversa    tbl_conversa @relation(fields: [id_conversa], references: [id_conversa], onDelete: NoAction, onUpdate: NoAction, map: "tbl_mensagem_ibfk_2")
+
+  @@index([id_conversa], map: "id_conversa")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_pasta {
+  id_pasta           Int                  @id @default(autoincrement())
+  nome               String?              @db.VarChar(100)
+  id_usuario         Int
+  pasta_status       Boolean
+  tbl_usuario        tbl_usuario          @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pasta_ibfk_1")
+  tbl_pasta_postagem tbl_pasta_postagem[]
+  tbl_pasta_produto  tbl_pasta_produto[]
+
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_pasta_postagem {
+  id_pasta_postagem     Int          @id @default(autoincrement())
+  id_postagem           Int
+  id_pasta              Int
+  pasta_postagem_status Boolean
+  tbl_postagem          tbl_postagem @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pasta_postagem_ibfk_1")
+  tbl_pasta             tbl_pasta    @relation(fields: [id_pasta], references: [id_pasta], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pasta_postagem_ibfk_2")
+
+  @@index([id_pasta], map: "id_pasta")
+  @@index([id_postagem], map: "id_postagem")
+}
+
+model tbl_pasta_produto {
+  id_pasta_produto     Int         @id @default(autoincrement())
+  id_produto           Int
+  id_pasta             Int
+  pasta_produto_status Boolean
+  tbl_produto          tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pasta_produto_ibfk_1")
+  tbl_pasta            tbl_pasta   @relation(fields: [id_pasta], references: [id_pasta], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pasta_produto_ibfk_2")
+
+  @@index([id_pasta], map: "id_pasta")
+  @@index([id_produto], map: "id_produto")
+}
+
+model tbl_pedido {
+  id_pedido            Int                  @id @default(autoincrement())
+  preco_total          Float                @db.Float
+  data_pedido          DateTime             @db.DateTime(0)
+  id_usuario_endereco  Int
+  codigo_entrega       String?              @db.VarChar(255)
+  pedido_status        Boolean
+  tbl_item_pedido      tbl_item_pedido[]
+  tbl_usuario_endereco tbl_usuario_endereco @relation(fields: [id_usuario_endereco], references: [id_usuario_endereco], onDelete: NoAction, onUpdate: NoAction, map: "tbl_pedido_ibfk_1")
+
+  @@index([id_usuario_endereco], map: "id_usuario_endereco")
+}
+
+model tbl_postagem {
+  id_postagem               Int                         @id @default(autoincrement())
+  nome                      String                      @db.VarChar(100)
+  descricao                 String?                     @db.VarChar(500)
+  id_usuario                Int
+  postagem_status           Boolean
+  tbl_categoria_postagem    tbl_categoria_postagem[]
+  tbl_comentario_postagem   tbl_comentario_postagem[]
+  tbl_curtida_postagem      tbl_curtida_postagem[]
+  tbl_imagem_postagem       tbl_imagem_postagem[]
+  tbl_pasta_postagem        tbl_pasta_postagem[]
+  tbl_usuario               tbl_usuario                 @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_postagem_ibfk_1")
+  tbl_postagem_favorita     tbl_postagem_favorita[]
+  tbl_visualizacao_postagem tbl_visualizacao_postagem[]
+
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_postagem_favorita {
+  id_postagem_favorita     Int          @id @default(autoincrement())
+  id_postagem              Int
+  id_usuario               Int
+  postagem_favorita_status Boolean
+  tbl_postagem             tbl_postagem @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_postagem_favorita_ibfk_1")
+  tbl_usuario              tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_postagem_favorita_ibfk_2")
+
+  @@index([id_postagem], map: "id_postagem")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_preferencia {
+  id_preferencia     Int           @id @default(autoincrement())
+  id_usuario         Int
+  id_categoria       Int
+  preferencia_status Boolean
+  tbl_usuario        tbl_usuario   @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_preferencia_ibfk_1")
+  tbl_categoria      tbl_categoria @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "tbl_preferencia_ibfk_2")
+
+  @@index([id_categoria], map: "id_categoria")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_produto {
+  id_produto               Int                        @id @default(autoincrement())
+  nome                     String                     @db.VarChar(100)
+  descricao                String                     @db.VarChar(500)
+  marca_dagua              Boolean
+  item_digital             Boolean
+  preco                    Float                      @db.Float
+  quantidade               Int
+  id_usuario               Int
+  produto_status           Boolean
+  tbl_categoria_produto    tbl_categoria_produto[]
+  tbl_comentario_produto   tbl_comentario_produto[]
+  tbl_curtida_produto      tbl_curtida_produto[]
+  tbl_imagem_produto       tbl_imagem_produto[]
+  tbl_item_carrinho        tbl_item_carrinho[]
+  tbl_item_pedido          tbl_item_pedido[]
+  tbl_pasta_produto        tbl_pasta_produto[]
+  tbl_usuario              tbl_usuario                @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_produto_ibfk_1")
+  tbl_produto_favorito     tbl_produto_favorito[]
+  tbl_visualizacao_produto tbl_visualizacao_produto[]
+
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_produto_favorito {
+  id_produto_favorito     Int         @id @default(autoincrement())
+  id_produto              Int
+  id_usuario              Int
+  produto_favorito_status Boolean
+  tbl_produto             tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_produto_favorito_ibfk_1")
+  tbl_usuario             tbl_usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_produto_favorito_ibfk_2")
+
+  @@index([id_produto], map: "id_produto")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_seguidores {
+  id_seguidores                                       Int         @id @default(autoincrement())
+  id_seguidor                                         Int
+  id_seguindo                                         Int
+  seguidores_status                                   Boolean
+  tbl_usuario_tbl_seguidores_id_seguidorTotbl_usuario tbl_usuario @relation("tbl_seguidores_id_seguidorTotbl_usuario", fields: [id_seguidor], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_seguidores_ibfk_1")
+  tbl_usuario_tbl_seguidores_id_seguindoTotbl_usuario tbl_usuario @relation("tbl_seguidores_id_seguindoTotbl_usuario", fields: [id_seguindo], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_seguidores_ibfk_2")
+
+  @@unique([id_seguidor, id_seguindo], map: "id_seguidor")
+  @@index([id_seguindo], map: "id_seguindo")
+}
+
+model tbl_visualizacao_postagem {
+  id_visualizacao_postagem     Int          @id @default(autoincrement())
+  id_postagem                  Int
+  id_usuario                   Int
+  visualizacao_postagem_status Boolean
+  tbl_postagem                 tbl_postagem @relation(fields: [id_postagem], references: [id_postagem], onDelete: NoAction, onUpdate: NoAction, map: "tbl_visualizacao_postagem_ibfk_1")
+  tbl_usuario                  tbl_usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_visualizacao_postagem_ibfk_2")
+
+  @@index([id_postagem], map: "id_postagem")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_visualizacao_produto {
+  id_visualizacao_produto     Int         @id @default(autoincrement())
+  id_produto                  Int
+  id_usuario                  Int
+  visualizacao_produto_status Boolean
+  tbl_produto                 tbl_produto @relation(fields: [id_produto], references: [id_produto], onDelete: NoAction, onUpdate: NoAction, map: "tbl_visualizacao_produto_ibfk_1")
+  tbl_usuario                 tbl_usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_visualizacao_produto_ibfk_2")
+
+  @@index([id_produto], map: "id_produto")
   @@index([id_usuario], map: "id_usuario")
 }
