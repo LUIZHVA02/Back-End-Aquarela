@@ -267,22 +267,7 @@ const getBuscarUsuario = async (id) => {
 
                 if (dadosUsuario.length > 0) {
 
-                    let jsonDadosTratados = {}
-
-                    jsonDadosTratados.id_usuario = id
-                    jsonDadosTratados.nome = dadosUsuario[0].nome
-                    jsonDadosTratados.nome_usuario = dadosUsuario[0].nome_usuario
-                    jsonDadosTratados.foto_usuario = dadosUsuario[0].foto_usuario
-                    jsonDadosTratados.descricao = dadosUsuario[0].descricao
-                    jsonDadosTratados.email = dadosUsuario[0].email
-                    jsonDadosTratados.senha = dadosUsuario[0].senha
-                    jsonDadosTratados.cpf = dadosUsuario[0].cpf
-                    jsonDadosTratados.data_nascimento = tratamento.tratarDataBACK(dadosUsuario[0].data_nascimento)
-                    jsonDadosTratados.telefone = dadosUsuario[0].telefone
-                    jsonDadosTratados.disponibilidade = dadosUsuario[0].disponibilidade
-                    jsonDadosTratados.usuario_status = dadosUsuario[0].usuario_status
-
-                    usuarioJSON.usuario = jsonDadosTratados
+                    usuarioJSON.usuario = dadosUsuario
                     usuarioJSON.status_code = 200
 
 
