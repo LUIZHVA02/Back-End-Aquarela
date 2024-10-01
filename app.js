@@ -34,7 +34,7 @@
  * 
  * instalação do PRISMA ORM
  *          npm install prisma --save (É quem realiza a conexão com o banco de dados)
- *          npm install @prisma/client --save (É quem executa os scripts SQL no BD)
+ *           npm install prisma --save(É quem executa os scripts SQL no BD)
  * 
  *      Após as intalações devemos rodar o comando:
  *          npx prisma init (Esse comando inicializa a utilização do projeto)

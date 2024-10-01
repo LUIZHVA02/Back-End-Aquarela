@@ -347,6 +347,5 @@ module.exports = {
   setNewAddress,
   setUpdateAddress,
   getListAddres,
-  getSearchAddress,
-  setDeleteAddress
+  getSearchAddress
 }
