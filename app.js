@@ -72,7 +72,7 @@ const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 /******************************************************** Endpoints Usuários ********************************************************/
 
-app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -85,7 +85,7 @@ app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request,
     
 })
 
-app.get('/v1/aquarela/buscarUsuario/:id', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next) {
 
     let id = request.params.id
 
@@ -100,7 +100,7 @@ app.get('/v1/aquarela/buscarUsuario/:id', cors(), async function (request, respo
     }
 })
 
-app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
     let infoFilmes = await controllerUsuarios.getListarUsuarios()
 
@@ -113,7 +113,7 @@ app.get('/v1/aquarela/buscarUsuarios', cors(), async function (request, response
     }
 })
 
-app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
     let contentType = request.headers['content-type']
@@ -123,7 +123,7 @@ app.put('/v1/aquarela/updateUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.put('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/delete/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
 
@@ -133,7 +133,7 @@ app.put('/v1/aquarela/deleteUsuario/:id', cors(), bodyParserJson, async (request
     response.json(resultDados);
 })
 
-app.put('/v1/aquarela/reativarUsuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/reactivate/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
 
@@ -143,7 +143,7 @@ app.put('/v1/aquarela/reativarUsuario/:id', cors(), bodyParserJson, async (reque
     response.json(resultDados);
 })
 
-app.post('/v1/aquarela/validacao/usuario/nome', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/authentication/user/name', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -153,7 +153,7 @@ app.post('/v1/aquarela/validacao/usuario/nome', cors(), bodyParserJson, async (r
 
 })
 
-app.post('/v1/aquarela/validacao/usuario/email', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -166,7 +166,7 @@ app.post('/v1/aquarela/validacao/usuario/email', cors(), bodyParserJson, async (
 
 /******************************************************** Endpoints Endereço ********************************************************/
 
-app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchAddress = await controllerAddress.getListAddres()
 
@@ -179,7 +179,7 @@ app.get('/v1/aquarela/searchAddress', cors(), bodyParserJson, async (request, re
     }
 })
 
-app.post('/v1/aquarela/insertAddress', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -187,12 +187,11 @@ app.post('/v1/aquarela/insertAddress', cors(), bodyParserJson, async (request, r
     console.log(resultdataAddress)
     response.status(resultdataAddress.status_code)
     
-
     response.json(resultdataAddress)
     
 })
 
-app.put('/v1/aquarela/updateAddress/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/address/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_endereco = request.params.id
     let contentType = request.headers['content-type']
@@ -202,7 +201,7 @@ app.put('/v1/aquarela/updateAddress/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
-app.get('/v1/aquarela/searchAddress/:id', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/address/:id', cors(), async function (request, response, next) {
 
     let id = request.params.id
 
@@ -217,11 +216,21 @@ app.get('/v1/aquarela/searchAddress/:id', cors(), async function (request, respo
     }
 })
 
-app.delete('/v1/aquarela/deleteAddress/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/delete/address/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-    let id_address = request.params.id
+    let id_usuario = request.params.id
 
-    let resultDados = await controllerAddress.setDeleteAddress(id_address);
+    let resultDados = await controllerUsuarios.setExcluirUsuario(id_usuario);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
+
+app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_usuario = request.params.id
+
+    let resultDados = await controllerUsuarios.setReativarUsuario(id_usuario);
 
     response.status(resultDados.status_code);
     response.json(resultDados);

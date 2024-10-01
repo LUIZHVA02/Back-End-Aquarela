@@ -76,7 +76,7 @@ const updateAddress = async function (id, dataAddress) {
 const selectByIdAddress = async (id) => {
 
     try {
-        let sql = `select * from tbl_endereco where id_endereco = ${id}`
+        let sql = `select * from tbl_endereco where id_endereco = ${id} and endereco_status = "1"`
         let rsAddres = await prisma.$queryRawUnsafe(sql)
         return rsAddres
     } catch (error) {
@@ -89,7 +89,7 @@ const selectByIdAddress = async (id) => {
 const selectAllAddress = async () => {
 
     try {
-        let sql = `select * from tbl_endereco`
+        let sql = `select * from tbl_endereco where endereco_status = "1"`
         let rsAddress = await prisma.$queryRawUnsafe(sql)
 
         return rsAddress
@@ -100,16 +100,16 @@ const selectAllAddress = async () => {
     }
 }
 
-const deleteAddressById = async function (id) {
+const selectLastId = async () => {
+
     try {
-        let sql = `delete from tbl_endereco where id_endereco = ${ id }`
-
-        let rsAddres = await prisma.$queryRawUnsafe(sql);
-        return rsAddres;
-
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_endereco limit 1'
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
     } catch (error) {
         return false
     }
+
 }
 
 module.exports = {
@@ -117,5 +117,5 @@ module.exports = {
   updateAddress,
   selectByIdAddress,
   selectAllAddress,
-  deleteAddressById
+  selectLastId
 }

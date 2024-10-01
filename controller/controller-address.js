@@ -26,7 +26,7 @@ const setNewAddress = async (dataAddress, contentType) => {
           resultdataAddress.status = message.CREATED_ITEM.status
           resultdataAddress.status_code = message.CREATED_ITEM.status_code
           resultdataAddress.status = message.CREATED_ITEM.message
-          resultdataAddress.usuario = dataAddress
+          resultdataAddress.endereco = dataAddress
           return resultdataAddress
 
         } else {
@@ -171,7 +171,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           updateAddressJson.status = message.UPDATED_ITEM.status
           updateAddressJson.status_code = message.UPDATED_ITEM.status_code
           updateAddressJson.message = message.UPDATED_ITEM.message
-          updateAddressJson.usuario = addressUpdate
+          updateAddressJson.endereco = addressUpdate
 
           return updateAddressJson
         } else {
@@ -261,20 +261,30 @@ const getSearchAddress = async (id) => {
 
 }
 
-const setDeleteAddress = async function (id) {
+const setExcluirendereco = async function (id) {
   try {
 
-      let id_address = id;
+      let id_endereco = id;
+      let deleteenderecoJson = {}
 
-      if (id_address == '' || id_address == undefined || isNaN(id_address)) {
+
+      if (id_endereco == '' || id_endereco == undefined || isNaN(id_endereco)) {
           return message.ERROR_INVALID_ID;
       } else {
-          let user = await addressDAO.selectByIdAddress(id_address)
+          const validaId = await userDAO.selectByIdenderecoAtivo(id_endereco)
 
-          if (user.length > 0) {
-              let dataAddress = await addressDAO.deleteAddressById(id)
+          console.log(validaId);
 
-              if (dataAddress) {
+
+          if (validaId.length > 0) {
+
+              let endereco_status = "0"
+
+              deleteenderecoJson.endereco_status = endereco_status
+
+              let dadosendereco = await userDAO.updateendereco(id_endereco, deleteenderecoJson)
+
+              if (dadosendereco) {
                   return message.DELETED_ITEM
               } else {
                   return message.ERROR_INTERNAL_SERVER_DB
@@ -285,6 +295,49 @@ const setDeleteAddress = async function (id) {
           }
       }
   } catch (error) {
+      console.log(error);
+
+      return message.ERROR_INTERNAL_SERVER
+  }
+
+}
+
+const setReativarEndereco = async function (id) {
+  try {
+
+      let id_endereco = id;
+      let reativarenderecoJson = {}
+
+
+      if (id_endereco == '' || id_endereco == undefined || isNaN(id_endereco)) {
+          return message.ERROR_INVALID_ID;
+      } else {
+          const validaId = await userDAO.selectByIdenderecoInativo(id_endereco)
+
+          console.log(validaId);
+
+
+          if (validaId.length > 0) {
+
+              let endereco_status = "1"
+
+              reativarenderecoJson.endereco_status = endereco_status
+
+              let dadosendereco = await userDAO.updateendereco(id_endereco, reativarenderecoJson)
+
+              if (dadosendereco) {
+                  return message.REACTIVATED_ITEM
+              } else {
+                  return message.ERROR_INTERNAL_SERVER_DB
+              }
+
+          } else {
+              return message.ERROR_NOT_FOUND
+          }
+      }
+  } catch (error) {
+      console.log(error);
+
       return message.ERROR_INTERNAL_SERVER
   }
 
