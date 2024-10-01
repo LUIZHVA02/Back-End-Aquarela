@@ -58,37 +58,30 @@ const getBuscarUsuario = async (id) => {
         let usuarioJSON = {}
 
         if (id_usuario == '' || id_usuario == undefined || isNaN(id_usuario)) {
-
             return message.ERROR_INVALID_ID // 400
-
         } else {
 
             let dadosUsuario = await userDAO.selectByIdUsuarioAtivo(id_usuario)
 
             if (dadosUsuario) {
-
                 if (dadosUsuario.length > 0) {
 
                     usuarioJSON.usuario = dadosUsuario
                     usuarioJSON.status_code = 200
-
 
                     return usuarioJSON
 
                 } else {
                     return message.ERROR_NOT_FOUND // 404
                 }
-
             } else {
                 return message.ERROR_INTERNAL_SERVER_DB // 500
             }
         }
-
     } catch (error) {
         console.log(error);
         message.ERROR_INTERNAL_SERVER // 500
     }
-
 }
 
 const getListarUsuarios = async () => {

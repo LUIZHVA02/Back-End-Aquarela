@@ -68,7 +68,9 @@ const controllerUsuarios = require('./controller/controller-user.js')
 const controllerAddress = require('./controller/controller-address.js')
 const controllerProduto = require('./controller/controller-produto.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
-/********************************************************************************************************/
+const controllerSeguidores = require('./controller/controller-seguidores.js')
+const controllerPostagem = require('./controller/controller-postagem.js')
+/******************************************************** Endpoints Usuários ********************************************************/
 
 app.post('/v1/aquarela/inserirUsuarios', cors(), bodyParserJson, async (request, response, next) => {
 
@@ -228,16 +230,16 @@ app.delete('/v1/aquarela/deleteAddress/:id', cors(), bodyParserJson, async (requ
 
 /******************************************************** Endpoints Produtos ********************************************************/
 
-app.get('/v1/aquarela/seachProducts', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/searchProducts', cors(), bodyParserJson, async (request, response, next) => {
 
-    let seachProducts = await controllerProduto.getListProducts()
+    let searchProducts = await controllerProduto.getListProducts()
 
-    if (seachProducts) {
-        response.json(seachProducts)
-        response.status(seachProducts.status_code)
+    if (searchProducts) {
+        response.json(searchProducts)
+        response.status(searchProducts.status_code)
     } else {
-        response.status(seachProducts.status_code)
-        response.json(seachProducts)
+        response.status(searchProducts.status_code)
+        response.json(searchProducts)
     }
 })
 
@@ -278,6 +280,88 @@ app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (reques
     response.json(resultDataCategoria)    
     
 })
+
+/******************************************************** Endpoints Seguidores ********************************************************/
+
+app.get('/v1/aquarela/searchFollowers', cors(), async function (request, response, next) {
+
+    let infoSeguidor = await controllerSeguidores.getListFollowers()
+
+    if (infoSeguidor) {
+        response.json(infoSeguidor)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
+})
+
+app.post('/v1/aquarela/insertNewFollower', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosSeguidores = await controllerSeguidores.setNovoSeguidor(dadosBody, contentType)
+    console.log(resultDadosSeguidores)
+    response.status(resultDadosSeguidores.status_code)
+    
+
+    response.json(resultDadosSeguidores)    
+    
+})
+
+/******************************************************** Endpoints Postagem ********************************************************/
+
+app.get('/v1/aquarela/searchPosts', cors(), async function (request, response, next) {
+
+    let searchPosts = await controllerPostagem.getListarPostagens()
+
+    if (searchPosts) {
+        response.json(searchPosts)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
+})
+
+app.post('/v1/aquarela/insertNewPost', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
+    console.log(resultDadosPostagem)
+    response.status(resultDadosPostagem.status_code)
+    
+
+    response.json(resultDadosPostagem)    
+    
+})
+
+app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, response, next) {
+
+    let id = request.params.id
+
+    let searchPosts = await controllerPostagem.getBuscarPostagem(id)
+
+    if (searchPosts) {
+        response.json(searchPosts)
+        response.status(200)
+    } else {
+        response.status(404)
+        response.json({ erro: 'Não foi possível encontrar um item!' })
+    }
+})
+
+app.put('/v1/aquarela/updatePosts/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_postagem = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerPostagem.setAtualizarPostagem(dadosBody, contentType, id_postagem)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
+
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

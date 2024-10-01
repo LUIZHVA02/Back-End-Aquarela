@@ -58,6 +58,7 @@ const insertUsuario = async (dadosUsuario) => {
     }
 
 }
+
 // Buscar um usuário existente filtrando pelo ID
 const selectByIdUsuarioAtivo = async (id) => {
 
