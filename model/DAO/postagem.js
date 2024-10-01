@@ -21,11 +21,10 @@ const insertNovaPostagem = async (dadosPostagem) => {
                                           values 
                                           (
                                               '${dadosPostagem.nome}',
-                                              '${dadosPostagem.seguidor}',
+                                              '${dadosPostagem.descricao}',
                                               '${dadosPostagem.id_usuario}',
                                               true
                                           )`
-    console.log(sql)
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
     if (resultStatus) {

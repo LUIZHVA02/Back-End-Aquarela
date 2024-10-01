@@ -190,6 +190,43 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
   }
 }
 
+const setCurtirPostagem = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+        let resultDadosPostagem = {}
+
+        if (
+            dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
+            dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null ||
+            dadosPostagem.curtidas_postagem_status == '' || dadosPostagem.curtidas_postagem_status == undefined == dadosPostagem.curtidas_postagem_status == null
+        ) {
+            return message.ERROR_REQUIRED_FIELDS
+        } else {
+            let novaPostagem = await postagemDAO.insertNovaPostagem(dadosPostagem)
+
+            if (novaPostagem) {
+                resultDadosPostagem.status = message.CREATED_ITEM.status
+                resultDadosPostagem.status_code = message.CREATED_ITEM.status_code
+                resultDadosPostagem.status = message.CREATED_ITEM.message
+                resultDadosPostagem.postagem = dadosPostagem
+
+                return resultDadosPostagem
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } else {
+        return message.ERROR_CONTENT_TYPE
+    }
+} catch (error) {
+    console.error("Erro ao tentar curtir postagem: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+}
+}
+
 module.exports = {
   setNovaPostagem,
   getListarPostagens,

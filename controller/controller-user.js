@@ -8,6 +8,10 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
 
             let resultDadosUsuario = {}
 
+            console.log(dadosUsuario.disponibilidade);
+            console.log(dadosUsuario.disponibilidade == '');
+            console.log(dadosUsuario.disponibilidade === '');
+
             if (
                 dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
                 dadosUsuario.nome_usuario == '' || dadosUsuario.nome_usuario == undefined || dadosUsuario.nome_usuario.length > 150 ||
@@ -18,7 +22,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length != 11 ||
                 dadosUsuario.data_nascimento == '' || dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento.length > 10 ||
                 dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 11 ||
-                dadosUsuario.disponibilidade == '' || dadosUsuario.disponibilidade == undefined
+                dadosUsuario.disponibilidade === '' || dadosUsuario.disponibilidade === undefined 
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -65,6 +69,8 @@ const getBuscarUsuario = async (id) => {
 
             if (dadosUsuario) {
                 if (dadosUsuario.length > 0) {
+
+
 
                     usuarioJSON.usuario = dadosUsuario
                     usuarioJSON.status_code = 200

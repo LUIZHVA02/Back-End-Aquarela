@@ -50,6 +50,7 @@ model tbl_usuario {
   tbl_produto_favorito                                   tbl_produto_favorito[]
   tbl_seguidores_tbl_seguidores_id_seguidorTotbl_usuario tbl_seguidores[]            @relation("tbl_seguidores_id_seguidorTotbl_usuario")
   tbl_seguidores_tbl_seguidores_id_seguindoTotbl_usuario tbl_seguidores[]            @relation("tbl_seguidores_id_seguindoTotbl_usuario")
+  tbl_tipo_perfil_usuario                                tbl_tipo_perfil_usuario[]
   tbl_usuario_endereco                                   tbl_usuario_endereco[]
   tbl_visualizacao_postagem                              tbl_visualizacao_postagem[]
   tbl_visualizacao_produto                               tbl_visualizacao_produto[]
@@ -80,7 +81,7 @@ model tbl_carrinho_compra {
 
 model tbl_categoria {
   id_categoria           Int                      @id @default(autoincrement())
-  categoria              String?                  @db.VarChar(255)
+  categoria              String                   @db.VarChar(255)
   categoria_status       Boolean
   tbl_categoria_postagem tbl_categoria_postagem[]
   tbl_categoria_produto  tbl_categoria_produto[]
@@ -419,5 +420,24 @@ model tbl_visualizacao_produto {
   tbl_usuario                 tbl_usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_visualizacao_produto_ibfk_2")
 
   @@index([id_produto], map: "id_produto")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_tipo_perfil {
+  id_tipo_perfil          Int                       @id @default(autoincrement())
+  nome                    String                    @db.VarChar(50)
+  tipo_perfil_status      Boolean
+  tbl_tipo_perfil_usuario tbl_tipo_perfil_usuario[]
+}
+
+model tbl_tipo_perfil_usuario {
+  id_tipo_perfil_usuario     Int             @id @default(autoincrement())
+  id_tipo_perfil             Int
+  id_usuario                 Int
+  tipo_perfil_usuario_status Boolean
+  tbl_usuario                tbl_usuario     @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_tipo_perfil_usuario_ibfk_1")
+  tbl_tipo_perfil            tbl_tipo_perfil @relation(fields: [id_tipo_perfil], references: [id_tipo_perfil], onDelete: NoAction, onUpdate: NoAction, map: "tbl_tipo_perfil_usuario_ibfk_2")
+
+  @@index([id_tipo_perfil], map: "id_tipo_perfil")
   @@index([id_usuario], map: "id_usuario")
 }
