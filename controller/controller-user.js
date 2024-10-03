@@ -371,10 +371,47 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
-                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)
+                let dadosUsuario = await userDAO.selectValidacaoUsuarioEmail(email, senha)
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
+                        let usuario = dadosUsuario
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
+                        usuarioJSON.message = message.VALIDATED_ITEM.message
+                        usuarioJSON.usuario = usuario
+
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND
+                    }
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+            }
+        } else {
+            return message.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const getEmailCadastrado = async (emailUsuario, contentType) => {
+    try {
+        if(String(contentType).toLowerCase() == 'application/json'){
+            let email = emailUsuario
+            let usuarioJSON = {}
+
+            if(email != '' || email == undefined) {
+                return message.ERROR_REQUIRED_FIELDS
+            } else {
+
+                let dadosUsuario = await userDAO.selectEmailCadastrado(email)
+
+                if(dadosUsuario) {
+                    if(dadosUsuario.length > 0) {
                         let usuario = dadosUsuario
 
                         usuarioJSON.status = message.VALIDATED_ITEM.status
@@ -488,5 +525,6 @@ module.exports = {
     getListarUsuarios,
     getValidarUsuarioNome,
     getValidarUsuarioEmail,
-    setReativarUsuario
+    setReativarUsuario,
+    getEmailCadastrado
 }

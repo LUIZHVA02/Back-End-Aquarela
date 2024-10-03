@@ -175,7 +175,17 @@ const selectValidacaoUsuarioEmail = async (email, senha) => {
     } catch (error) {
         return false
     }
+}
 
+const selectEmailCadastrado = async (email) => {
+    
+    try {
+        let sql = `select id_usuario, email from tbl_usuario where email = '${email}')`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+    } catch (error) {
+        return false
+    }
 }
 
 module.exports = {
@@ -186,5 +196,6 @@ module.exports = {
     selectByIdUsuarioInativo,
     updateUsuario,
     selectValidacaoUsuarioNome,
-    selectValidacaoUsuarioEmail
+    selectValidacaoUsuarioEmail,
+    selectEmailCadastrado
 }

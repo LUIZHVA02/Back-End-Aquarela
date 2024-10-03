@@ -8,10 +8,9 @@ const setNovoSeguidor = async (dadosSeguidores, contentType) => {
           let resultDadosSeguidores = {}
 
           if (
-              dadosSeguidores.id_seguidores == '' || dadosSeguidores.id_seguidores == undefined || dadosSeguidores.id_seguidores == null ||
               dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
               dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null ||
-              dadosSeguidores.seguidores_status == '' || dadosSeguidores.seguidores_status == undefined || dadosSeguidores.seguidores_status == null
+              dadosSeguidores.seguidores_status === '' || dadosSeguidores.seguidores_status === undefined || dadosSeguidores.seguidores_status === null
               
           ) {
               return message.ERROR_REQUIRED_FIELDS
@@ -68,48 +67,46 @@ const getListFollowers = async () => {
   }
 }
 
-const setExcluirSeguidor = async function (id) {
-  try {
-
-      let id_seguidor = id;
-      let deleteUsuarioJson = {}
 
 
-      if (id_seguidor == '' || id_seguidor == undefined || isNaN(id_seguidor)) {
-          return message.ERROR_INVALID_ID;
-      } else {
-          const validaId = await userDAO.selectByIdUsuarioAtivo(id_seguidor)
+// const setExcluirSeguidor = async function (id) {
+//   try {
 
-          console.log(validaId);
+//       let id_seguidor = id;
+//       let deleteSeguidorJSON = {}
 
 
-          if (validaId.length > 0) {
+//       if (id_seguidor == '' || id_seguidor == undefined || isNaN(id_seguidor)) {
+//           return message.ERROR_INVALID_ID;
+//       } else {
 
-              let usuario_status = "0"
+//         if (validaId.length > 0) {
 
-              deleteUsuarioJson.usuario_status = usuario_status
+//               let seguidores_status = "0"
 
-              let dadosUsuario = await userDAO.updateUsuario(id_seguidor, deleteUsuarioJson)
+//               deleteSeguidorJSON.seguidores_status = seguidores_status
 
-              if (dadosUsuario) {
-                  return message.DELETED_ITEM
-              } else {
-                  return message.ERROR_INTERNAL_SERVER_DB
-              }
+//               let dadosSeguidores = await seguidorDAO.updateSeguidores(id_seguidor, deleteSeguidorJSON)
 
-          } else {
-              return message.ERROR_NOT_FOUND
-          }
-      }
-  } catch (error) {
-      console.log(error);
+//               if (dadosSeguidores) {
+//                   return message.DELETED_ITEM
+//               } else {
+//                   return message.ERROR_INTERNAL_SERVER_DB
+//               }
 
-      return message.ERROR_INTERNAL_SERVER
-  }
+//           } else {
+//               return message.ERROR_NOT_FOUND
+//           }
+//       }
+//   } catch (error) {
+//       console.log(error);
 
-}
+//       return message.ERROR_INTERNAL_SERVER
+//   }
+
+// }
 
 module.exports = {
   setNovoSeguidor,
-  getListFollowers
+  getListFollowers,
 }

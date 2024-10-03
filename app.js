@@ -163,16 +163,27 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
 
 })
 
+<<<<<<< HEAD
 app.post('/v1/aquarela/user/preferences', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let dadosUsuario = await controllerUsuarios.getValidarUsuarioEmail(dadosBody, contentType)
+=======
+app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
+>>>>>>> 079f10bec5ab848eec721a63015c693f84a4a53f
     response.status(dadosUsuario.status_code);
     response.json(dadosUsuario)
 
 })
+<<<<<<< HEAD
 
+=======
+>>>>>>> 079f10bec5ab848eec721a63015c693f84a4a53f
 
 /******************************************************** Endpoints Endereço ********************************************************/
 
@@ -189,7 +200,7 @@ app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response
     }
 })
 
-app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/newAddress', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -327,6 +338,16 @@ app.post('/v1/aquarela/insertNewFollower', cors(), bodyParserJson, async (reques
     response.json(resultDadosSeguidores)    
     
 })
+
+// app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+//     let id_seguidores = request.params.id
+//     let contentType = request.headers['content-type']
+//     let dadosBody = request.body
+//     let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
+//     response.status(resultDados.status_code);
+//     response.json(resultDados)
+// })
 
 /******************************************************** Endpoints Postagem ********************************************************/
 
