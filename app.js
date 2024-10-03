@@ -34,7 +34,7 @@
  * 
  * instalação do PRISMA ORM
  *          npm install prisma --save (É quem realiza a conexão com o banco de dados)
- *           npm install prisma --save(É quem executa os scripts SQL no BD)
+ *          npm install @prisma/client --save (É quem executa os scripts SQL no BD)
  * 
  *      Após as intalações devemos rodar o comando:
  *          npx prisma init (Esse comando inicializa a utilização do projeto)
@@ -158,6 +158,16 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let dadosUsuario = await controllerUsuarios.getValidarUsuarioEmail(dadosBody.email, dadosBody.senha, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
+app.post('/v1/aquarela/user/preferences', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getValidarUsuarioEmail(dadosBody, contentType)
     response.status(dadosUsuario.status_code);
     response.json(dadosUsuario)
 

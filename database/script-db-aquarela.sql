@@ -86,6 +86,9 @@ create table tbl_categoria(
     categoria varchar(255),
     categoria_status boolean not null
 );
+SELECT *, COUNT(*) from tbl_categoria 
+GROUP BY categoria
+HAVING COUNT(*) > 1;
 
 create table tbl_categoria_produto (
     id_categoria_produto int not null primary key auto_increment,
