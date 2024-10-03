@@ -8,10 +8,6 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
 
             let resultDadosUsuario = {}
 
-            console.log(dadosUsuario.disponibilidade);
-            console.log(dadosUsuario.disponibilidade == '');
-            console.log(dadosUsuario.disponibilidade === '');
-
             if (
                 dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
                 dadosUsuario.nome_usuario == '' || dadosUsuario.nome_usuario == undefined || dadosUsuario.nome_usuario.length > 150 ||
@@ -287,6 +283,9 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     usuario_status == undefined &&
                     usuario_status == null
                 ) { }
+
+                console.log(id_user, updateUsuarioJson);
+                
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
 

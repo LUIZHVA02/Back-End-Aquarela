@@ -324,4 +324,6 @@ create table tbl_mensagem (
     foreign key (id_usuario) references tbl_usuario(id_usuario),
     foreign key (id_conversa) references tbl_conversa(id_conversa)
 );
+
+select * from tbl_categoria;
     

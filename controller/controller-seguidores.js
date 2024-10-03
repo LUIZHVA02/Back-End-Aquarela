@@ -9,8 +9,7 @@ const setNovoSeguidor = async (dadosSeguidores, contentType) => {
 
           if (
               dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
-              dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null ||
-              dadosSeguidores.seguidores_status === '' || dadosSeguidores.seguidores_status === undefined || dadosSeguidores.seguidores_status === null
+              dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null 
               
           ) {
               return message.ERROR_REQUIRED_FIELDS

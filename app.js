@@ -70,6 +70,7 @@ const controllerProduto = require('./controller/controller-produto.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
+const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
 /******************************************************** Endpoints Usuários ********************************************************/
 
 app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
@@ -163,27 +164,36 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
 
 })
 
-<<<<<<< HEAD
-app.post('/v1/aquarela/user/preferences', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getValidarUsuarioEmail(dadosBody, contentType)
-=======
 app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
->>>>>>> 079f10bec5ab848eec721a63015c693f84a4a53f
     response.status(dadosUsuario.status_code);
     response.json(dadosUsuario)
 
 })
-<<<<<<< HEAD
 
-=======
->>>>>>> 079f10bec5ab848eec721a63015c693f84a4a53f
+app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerPreferencias.adicionarPreferencias(dadosBody, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+})
+
+
+app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 
 /******************************************************** Endpoints Endereço ********************************************************/
 
@@ -200,7 +210,7 @@ app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response
     }
 })
 
-app.post('/v1/aquarela/newAddress', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -239,9 +249,9 @@ app.get('/v1/aquarela/address/:id', cors(), async function (request, response, n
 
 app.put('/v1/aquarela/delete/address/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-    let id_usuario = request.params.id
+    let id_address = request.params.id
 
-    let resultDados = await controllerUsuarios.setExcluirUsuario(id_usuario);
+    let resultDados = await controllerAddress.setExcluirEndereco(id_address);
 
     response.status(resultDados.status_code);
     response.json(resultDados);
@@ -260,7 +270,7 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
 
 /******************************************************** Endpoints Produtos ********************************************************/
 
-app.get('/v1/aquarela/searchProducts', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchProducts = await controllerProduto.getListProducts()
 
@@ -273,7 +283,7 @@ app.get('/v1/aquarela/searchProducts', cors(), bodyParserJson, async (request, r
     }
 })
 
-app.post('/v1/aquarela/insertNewProduct', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -313,7 +323,7 @@ app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (reques
 
 /******************************************************** Endpoints Seguidores ********************************************************/
 
-app.get('/v1/aquarela/searchFollowers', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/followers', cors(), async function (request, response, next) {
 
     let infoSeguidor = await controllerSeguidores.getListFollowers()
 
@@ -326,7 +336,7 @@ app.get('/v1/aquarela/searchFollowers', cors(), async function (request, respons
     }
 })
 
-app.post('/v1/aquarela/insertNewFollower', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body

@@ -107,14 +107,14 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
             if (index !== keys.length - 1) {
                 sql += `, `
             }
-            console.log(sql);
         })
 
         sql += ` WHERE id_usuario = ${id};`
 
-        let result = await prisma.$executeRawUnsafe(sql)
+        console.log(sql);
+        
 
-        console.log(result);
+        let result = await prisma.$executeRawUnsafe(sql)
 
         return result
 

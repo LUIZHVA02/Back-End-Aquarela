@@ -159,8 +159,12 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
           postagem_status == null
         ) { }
         
+        console.log(updatePostJSON);
+        
         const postUpdate = await postagemDAO.updatePosts(id_postagem, updatePostJSON)
 
+        console.log(postUpdate);
+        
         if (postUpdate != false) {
           updatePostJSON.id = validaId
           updatePostJSON.status = message.UPDATED_ITEM.status

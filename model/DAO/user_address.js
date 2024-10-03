@@ -13,7 +13,7 @@ const insertUserAddress = async(id_endereco, id_usuario) => {
         let sql = `INSERT INTO tbl_usuario_endereco (id_endereco, id_usuario, usuario_endereco_status) VALUES (${id_endereco}, ${id_usuario}, 1);`
 
         let rs = await prisma.$executeRawUnsafe(sql)
-
+        
         return rs
     } catch (error) {
         console.log(error);
