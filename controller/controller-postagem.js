@@ -231,9 +231,49 @@ const setCurtirPostagem = async (dadosPostagem, contentType) => {
 }
 }
 
+const setExcluirPostagem = async function (id) {
+  try {
+
+      let id_postagem = id;
+      let deletePostagemJSON = {}
+
+
+      if (id_postagem == '' || id_postagem == undefined || isNaN(id_postagem)) {
+          return message.ERROR_INVALID_ID;
+      } else {
+
+          let validaId = await postagemDAO.selectByIdPosts(id_postagem);
+
+          if (validaId.length > 0) {
+
+              let postagem_status = "0"
+
+              deletePostagemJSON.postagem_status = postagem_status
+
+              let dadosPostagem = await postagemDAO.updatePosts(id_postagem, deletePostagemJSON)
+
+              if (dadosPostagem) {
+                  return message.DELETED_ITEM
+              } else {
+                  return message.ERROR_INTERNAL_SERVER_DB
+              }
+
+          } else {
+              return message.ERROR_NOT_FOUND
+          }
+      }
+  } catch (error) {
+      console.log(error);
+
+      return message.ERROR_INTERNAL_SERVER
+  }
+
+}
+
 module.exports = {
   setNovaPostagem,
   getListarPostagens,
   getBuscarPostagem,
-  setAtualizarPostagem
+  setAtualizarPostagem,
+  setExcluirPostagem
 }

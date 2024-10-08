@@ -383,6 +383,7 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
     
 })
 
+
 // app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
 //     let id_seguidores = request.params.id
@@ -408,19 +409,6 @@ app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
     }
 })
 
-app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
-    console.log(resultDadosPostagem)
-    response.status(resultDadosPostagem.status_code)
-    
-
-    response.json(resultDadosPostagem)    
-    
-})
-
 app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next) {
 
     let id = request.params.id
@@ -436,6 +424,20 @@ app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next
     }
 })
 
+app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
+    console.log(resultDadosPostagem)
+    response.status(resultDadosPostagem.status_code)
+    
+
+    response.json(resultDadosPostagem)    
+    
+})
+
+
 app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
@@ -446,6 +448,15 @@ app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, respons
     response.json(resultDados)
 })
 
+app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_postagem = request.params.id
+
+    let resultDados = await controllerPostagem.setExcluirPostagem(id_postagem);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})
