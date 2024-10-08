@@ -174,6 +174,31 @@ app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJ
 
 })
 
+app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
+/******************************************************** Endpoints Preferência-Usuário ********************************************************/
+
+app.get('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let listarPreferencias = await controllerPreferencias.getListPreferences()
+
+    if (listarPreferencias) {
+        response.json(listarPreferencias)
+        response.status(listarPreferencias.status_code)
+    } else {
+        response.status(listarPreferencias.status_code)
+        response.json(listarPreferencias)
+    }
+})
+
 app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
@@ -183,15 +208,24 @@ app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request
     response.json(dadosUsuario)
 })
 
+app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
-
+    let id_preferencia = request.params.id
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
-    response.status(dadosUsuario.status_code);
-    response.json(dadosUsuario)
+    let resultDados = await controllerPreferencias.setExcluirPreferencias(dadosBody, contentType, id_preferencia)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
 
+app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_preferencia = request.params.id
+
+    let resultDados = await controllerPreferencias.setExcluirPreferencias(id_preferencia);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
 })
 
 
@@ -361,7 +395,7 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 
 /******************************************************** Endpoints Postagem ********************************************************/
 
-app.get('/v1/aquarela/searchPosts', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
 
     let searchPosts = await controllerPostagem.getListarPostagens()
 
@@ -374,7 +408,7 @@ app.get('/v1/aquarela/searchPosts', cors(), async function (request, response, n
     }
 })
 
-app.post('/v1/aquarela/insertNewPost', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -387,7 +421,7 @@ app.post('/v1/aquarela/insertNewPost', cors(), bodyParserJson, async (request, r
     
 })
 
-app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next) {
 
     let id = request.params.id
 
@@ -402,7 +436,7 @@ app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, respons
     }
 })
 
-app.put('/v1/aquarela/updatePosts/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
     let contentType = request.headers['content-type']

@@ -47,7 +47,68 @@ const selectLastId = async () => {
 
 }
 
+const selectByIdPreferences = async (id) => {
+
+    try {
+        let sql = `select * from tbl_preferencia where id_preferencia = ${id} and preferencia_status = "1"`
+        let rsPreferencias = await prisma.$queryRawUnsafe(sql)
+        return rsPreferencias
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+
+}
+
+const selectAllPreferences = async () => {
+
+    try {
+        let sql = `select * from tbl_preferencia where preferencia_status = "1"`
+        let rsAddress = await prisma.$queryRawUnsafe(sql)
+
+        return rsAddress
+
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
+// Atualizar um usuário existente filtrando pelo ID
+const updatePreferencias = async function (id, dadosPreferenciaUpdate) {
+    try {
+        let sql = `UPDATE tbl_preferencia SET `
+        const keys = Object.keys(dadosPreferenciaUpdate)
+
+        keys.forEach((key, index) => {
+            sql += `${key} = '${dadosPreferenciaUpdate[key]}'`
+            if (index !== keys.length - 1) {
+                sql += `, `
+            }
+        })
+
+        sql += ` WHERE id_preferencia = ${id};`
+
+        console.log(sql);
+        
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        return result
+
+    } catch (error) {
+
+        console.log(error);
+
+        return false
+    }
+
+}
+
 module.exports = {
     insertNovaPreferencia,
-    selectLastId
+    selectLastId,
+    selectAllPreferences,
+    selectByIdPreferences,
+    updatePreferencias
 }

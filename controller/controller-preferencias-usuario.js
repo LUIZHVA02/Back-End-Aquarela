@@ -45,7 +45,7 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
             return message.ERROR_CONTENT_TYPE
         }
     } catch (error) {
-        console.error("Erro ao tentar inserir usuário: " + error);
+        console.error("Erro ao tentar inserir preferências: " + error);
 
         console.log(error);
 
@@ -54,6 +54,75 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
     }
 }
 
+const getListPreferences = async () => {
+    try {
+      let preferenciasJSON = {};
+      let dadosPreferenciasUsuario = await userPreferencesDAO.selectAllPreferences();
+  
+      if (dadosPreferenciasUsuario) {
+        if (dadosPreferenciasUsuario.length > 0) {
+          preferenciasJSON.address = dadosPreferenciasUsuario;
+          preferenciasJSON.quantity = dadosPreferenciasUsuario.length;
+          preferenciasJSON.status_code = 200;
+          return preferenciasJSON;
+        } else {
+          console.log(dadosPreferenciasUsuario.length, "getListPreferences");
+  
+          return message.ERROR_NOT_FOUND;
+        }
+      } else {
+        return message.ERROR_INTERNAL_SERVER_DB;
+      }
+    } catch (error) {
+      console.log(error);
+  
+      message.ERROR_INTERNAL_SERVER;
+    }
+  };
+  
+
+const setExcluirPreferencias = async function (id) {
+    try {
+
+        let id_preferencia = id;
+        let deletePreferenciaJSON = {}
+
+
+        if (id_preferencia == '' || id_preferencia == undefined || isNaN(id_preferencia)) {
+            return message.ERROR_INVALID_ID;
+        } else {
+
+            let validaId = await userPreferencesDAO.selectByIdPreferences(id_preferencia);
+
+            if (validaId.length > 0) {
+
+                let preferencia_status = "0"
+
+                deletePreferenciaJSON.preferencia_status = preferencia_status
+
+                let dadosPreferenciasUsuario = await userPreferencesDAO.updatePreferencias(id_preferencia, deletePreferenciaJSON)
+
+                if (dadosPreferenciasUsuario) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        console.log(error);
+
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+
 module.exports = {
-    adicionarPreferencias
+    adicionarPreferencias,
+    getListPreferences,
+    setExcluirPreferencias
 }
