@@ -37,6 +37,36 @@ const setNovaCategoria = async (dadosCategoria, contentType) => {
     }
 }
 
+const getListCategories = async() => {
+    try {
+        
+        let categoriesJSON = {}
+        let categoriesData = await categoriaDAO.selectAllCategoriesByPostQuantity()
+
+        if(categoriesData){
+            if(categoriesData.length > 0) {
+                categoriesJSON.categorias = categoriesData
+                categoriesJSON.quantidade = categoriesData.length
+                categoriesJSON.status_code = 200
+                return categoriesJSON
+            
+            }else{
+
+                return message.ERROR_NOT_FOUND // 404
+
+            }
+        }else{
+            return message.ERROR_INTERNAL_SERVER_DB // 500
+        }
+
+
+    } catch (error) {
+        console.error("Erro ao tentar inserir categoria: " + error);
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
 module.exports = {
-    setNovaCategoria
+    setNovaCategoria,
+    getListCategories
 }

@@ -71,6 +71,9 @@ const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
+
+
+// #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
 
 app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
@@ -90,10 +93,10 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
 
     let id = request.params.id
 
-    let infoFilmes = await controllerUsuarios.getBuscarUsuario(id)
+    let userInfo = await controllerUsuarios.getBuscarUsuario(id)
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
+    if (userInfo) {
+        response.json(userInfo)
         response.status(200)
     } else {
         response.status(404)
@@ -103,10 +106,10 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
 
 app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
-    let infoFilmes = await controllerUsuarios.getListarUsuarios()
+    let userInfo = await controllerUsuarios.getListarUsuarios()
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
+    if (userInfo) {
+        response.json(userInfo)
         response.status(200)
     } else {
         response.status(404)
@@ -208,7 +211,7 @@ app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request
     response.json(dadosUsuario)
 })
 
-app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/preferences/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_preferencia = request.params.id
     let contentType = request.headers['content-type']
@@ -342,17 +345,23 @@ app.put('/v1/aquarela/updateProduct/:id', cors(), bodyParserJson, async (request
 
 /******************************************************** Endpoints Categorias ********************************************************/
 
-app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/category', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
     console.log(resultDataCategoria)
     response.status(resultDataCategoria.status_code)
-    
-
     response.json(resultDataCategoria)    
     
+})
+
+app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
+
+    let categoryData = await controllerCategoria.getListCategories()
+    response.status(categoryData.status_code)
+    response.json(categoryData)
+
 })
 
 /******************************************************** Endpoints Seguidores ********************************************************/

@@ -42,6 +42,53 @@ const insertNovaCategoria = async (dadosCategoria) => {
 
 }
 
+const selectAllCategoriesByPostQuantity = async() => {
+    try {
+
+        let sql = `
+        SELECT 
+            c.id_categoria AS id,
+            c.categoria AS nome
+        FROM 
+            tbl_categoria AS c
+        LEFT JOIN (
+        SELECT 
+                id_categoria,
+                COUNT(DISTINCT id_produto) AS quantidade_produtos
+        FROM 
+                tbl_categoria_produto
+        GROUP BY 
+                id_categoria
+            ) AS prod ON c.id_categoria = prod.id_categoria
+        LEFT JOIN (
+            SELECT 
+                id_categoria,
+                COUNT(DISTINCT id_postagem) AS quantidade_postagens
+            FROM 
+                tbl_categoria_postagem
+            GROUP BY 
+                id_categoria
+            ) AS post ON c.id_categoria = post.id_categoria
+        ORDER BY 
+            COALESCE(prod.quantidade_produtos, 0) + COALESCE(post.quantidade_postagens, 0) desc
+        `
+
+        let resultStatus = await prisma.$queryRawUnsafe(sql)
+        console.log(resultStatus);
+        if (resultStatus) {
+            return resultStatus
+        }
+        else {
+            return false
+        }
+
+    } catch (error) {
+        console.error("Erro ao listar categorias: ", error);
+        return false
+    }
+}
+
 module.exports = {
-    insertNovaCategoria
+    insertNovaCategoria,
+    selectAllCategoriesByPostQuantity
 }
