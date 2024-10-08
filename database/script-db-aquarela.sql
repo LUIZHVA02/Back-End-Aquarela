@@ -339,20 +339,5 @@ tipo_perfil_usuario_status boolean not null,
     foreign key (id_usuario) references tbl_usuario(id_usuario),
     foreign key (id_tipo_perfil) references tbl_tipo_perfil(id_tipo_perfil)
 );
-create table tbl_banco (
-	id_banco int not null primary key auto_increment,
-    banco text,
-    banco_status boolean not null
-);
-
-create table tbl_conta (
-	id_conta int not null primary key auto_increment, 
-    nome_completo text, 
-    nome_do_banco int, 
-    agencia text, 
-    numero_da_conta text, 
-    dv text, 
-    foreign key (nome_do_banco) references tbl_banco (id_banco)
-)
 select * from tbl_categoria;
     
