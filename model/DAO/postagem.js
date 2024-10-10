@@ -98,7 +98,6 @@ const updatePosts = async function (id, dadosPostagem) {
 
 }
 
-
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,

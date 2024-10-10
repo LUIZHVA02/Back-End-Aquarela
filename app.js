@@ -239,7 +239,7 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
 
 /******************************************************** Endpoints Produtos ********************************************************/
 
-app.get('/v1/aquarela/searchProducts', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchProducts = await controllerProduto.getListProducts()
 
@@ -252,7 +252,7 @@ app.get('/v1/aquarela/searchProducts', cors(), bodyParserJson, async (request, r
     }
 })
 
-app.post('/v1/aquarela/insertNewProduct', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -265,7 +265,7 @@ app.post('/v1/aquarela/insertNewProduct', cors(), bodyParserJson, async (request
     
 })
 
-app.put('/v1/aquarela/updateProduct/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/product/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_produto = request.params.id
     let contentType = request.headers['content-type']
@@ -273,6 +273,16 @@ app.put('/v1/aquarela/updateProduct/:id', cors(), bodyParserJson, async (request
     let resultDados = await controllerProduto.setUpdateProducts(dadosBody, contentType, id_produto)
     response.status(resultDados.status_code);
     response.json(resultDados)
+})
+
+app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_produto = request.params.id
+
+    let resultDados = await controllerProduto.setExcluirProduto(id_produto);
+    
+    response.status(resultDados.status_code);
+    response.json(resultDados);
 })
 
 /******************************************************** Endpoints Categorias ********************************************************/

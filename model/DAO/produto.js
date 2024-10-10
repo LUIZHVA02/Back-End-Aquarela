@@ -100,8 +100,21 @@ const updateProduct = async function (id, dataProductUpdate) {
 
 }
 
+const selectByIdProducts = async (id) => {
+
+    try {
+        let sql = `select * from tbl_produto where id_produto = ${id} and produto_status = "1"`
+        let rsProduto = await prisma.$queryRawUnsafe(sql)
+        return rsProduto
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
 module.exports = {
     insertNovoProduto,
     selectAllProducts,
-    updateProduct
+    updateProduct,
+    selectByIdProducts
 }

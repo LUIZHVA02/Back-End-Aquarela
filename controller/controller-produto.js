@@ -16,7 +16,7 @@ const setNovoProduto = async (dadosProduto, contentType) => {
                 dadosProduto.preco == '' || dadosProduto.preco == undefined || dadosProduto.preco == null ||
                 dadosProduto.quantidade == '' || dadosProduto.quantidade == undefined || dadosProduto.quantidade == null ||
                 dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null ||
-                dadosProduto.produto_status == '' || dadosProduto.produto_status == undefined || dadosProduto.produto_status == null
+                dadosProduto.produto_status === '' || dadosProduto.produto_status === undefined || dadosProduto.produto_status ==+ null
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -225,8 +225,48 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
     }
 }
 
+const setExcluirProduto = async function (id) {
+    try {
+
+        let id_produto = id;
+        let deleteProdutoJson = {}
+
+
+        if (id_produto == '' || id_produto == undefined) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await produtoDAO.selectByIdProducts(id_produto)
+
+            console.log(validaId);
+
+
+            if (validaId.length > 0) {
+
+                let produto_status = "0"
+
+                deleteProdutoJson.produto_status = produto_status
+
+                let dadosProduto = await produtoDAO.updateProduct(id_produto, deleteProdutoJson)
+
+                if (dadosProduto) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
 module.exports = {
     setNovoProduto,
     getListProducts,
-    setUpdateProducts
+    setUpdateProducts,
+    setExcluirProduto
 }
