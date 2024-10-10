@@ -16,37 +16,26 @@ const setNewAddress = async (dataAddress, contentType) => {
         dataAddress.estado == "" || dataAddress.estado == undefined || dataAddress.estado.length > 20 ||
         dataAddress.cidade == "" || dataAddress.cidade == undefined || dataAddress.cidade.length > 100 ||
         dataAddress.cep == "" || dataAddress.cep == undefined || dataAddress.cep.length > 9 ||
+        dataAddress.status == "" || dataAddress.status == undefined ||
         dataAddress.id_usuario == "" || dataAddress.id_usuario == undefined || isNaN(dataAddress.id_usuario)
-      ) {        
+      ) {
         return message.ERROR_REQUIRED_FIELDS;
       } else {
-        let correctDataAddress = {}
-
-        correctDataAddress.logradouro = dataAddress.logradouro
-        correctDataAddress.numero_casa = dataAddress.numero_casa
-        correctDataAddress.complemento = dataAddress.complemento
-        correctDataAddress.bairro = dataAddress.bairro
-        correctDataAddress.estado = dataAddress.estado
-        correctDataAddress.cidade = dataAddress.cidade
-        correctDataAddress.cep = dataAddress.cep
-
         
-
-
-        let newAddress = await addressDAO.insertAddress(correctDataAddress);
+        let newAddress = await addressDAO.insertAddress(dataAddress);
         let idU = dataAddress.id_usuario;
 
         if (newAddress) {
           let lastId = await addressDAO.selectLastId();
-          let idA = lastId[0].id;
-          
+          let idA = lastId[0].id_endereco;
+
           let connect = await userAddressDAO.insertUserAddress(idA, idU);
 
           if (connect) {
             resultdataAddress.status = message.CREATED_ITEM.status;
             resultdataAddress.status_code = message.CREATED_ITEM.status_code;
             resultdataAddress.status = message.CREATED_ITEM.message;
-            resultdataAddress.endereco = correctDataAddress;
+            resultdataAddress.endereco = dataAddress;
             return resultdataAddress;
           } else {
             return message.ERROR_INTERNAL_SERVER_DB;
@@ -59,8 +48,7 @@ const setNewAddress = async (dataAddress, contentType) => {
       return message.ERROR_CONTENT_TYPE;
     }
   } catch (error) {
-    console.log(error);
-    
+    console.error("Erro ao inserir endereço: ", error);
     return message.ERROR_INTERNAL_SERVER;
   }
 };
@@ -254,45 +242,43 @@ const getSearchAddress = async (id) => {
   }
 };
 
-const setExcluirEndereco = async function (id) {
+const setExcluirendereco = async function (id) {
   try {
+    let id_endereco = id;
+    let deleteenderecoJson = {};
 
-      let id_address = id;
-      let deleteAddressJSON = {}
+    if (id_endereco == "" || id_endereco == undefined || isNaN(id_endereco)) {
+      return message.ERROR_INVALID_ID;
+    } else {
+      const validaId = await userDAO.selectByIdenderecoAtivo(id_endereco);
 
+      console.log(validaId);
 
-      if (id_address == '' || id_address == undefined || isNaN(id_address)) {
-          return message.ERROR_INVALID_ID;
+      if (validaId.length > 0) {
+        let endereco_status = "0";
+
+        deleteenderecoJson.endereco_status = endereco_status;
+
+        let dadosendereco = await userDAO.updateendereco(
+          id_endereco,
+          deleteenderecoJson
+        );
+
+        if (dadosendereco) {
+          return message.DELETED_ITEM;
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB;
+        }
       } else {
-
-        let validaId = await addressDAO.selectByIdAddress(id_address);
-
-          if (validaId.length > 0) {
-
-              let address_status = "0"
-
-              deleteAddressJSON.endereco_status = address_status
-
-              let dataAddress = await addressDAO.updateAddress(id_address, deleteAddressJSON)
-
-              if (dataAddress) {
-                  return message.DELETED_ITEM
-              } else {
-                  return message.ERROR_INTERNAL_SERVER_DB
-              }
-
-          } else {
-              return message.ERROR_NOT_FOUND
-          }
+        return message.ERROR_NOT_FOUND;
       }
+    }
   } catch (error) {
-      console.log(error);
+    console.log(error);
 
-      return message.ERROR_INTERNAL_SERVER
+    return message.ERROR_INTERNAL_SERVER;
   }
-
-}
-
+};
 
 const setReativarEndereco = async function (id) {
   try {
@@ -337,5 +323,4 @@ module.exports = {
   setUpdateAddress,
   getListAddres,
   getSearchAddress,
-  setExcluirEndereco
 };

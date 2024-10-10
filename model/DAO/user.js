@@ -184,6 +184,7 @@ const selectEmailCadastrado = async (email) => {
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
+        console.log(error);
         return false
     }
 }

@@ -167,7 +167,7 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
 
 })
 
-app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/authentication/user/emai/registered', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -177,14 +177,14 @@ app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJ
 
 })
 
-app.post('/v1/aquarela/authentication/user/emailCadastrado', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/user/password', cors(), bodyParserJson, async (request, response, next) => {
 
+    let id_usuario = request.params.id
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
-    response.status(dadosUsuario.status_code);
-    response.json(dadosUsuario)
-
+    let resultDados = await controllerUsuarios.setAtualizarSenha(dadosBody, contentType, id_usuario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
 })
 
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/

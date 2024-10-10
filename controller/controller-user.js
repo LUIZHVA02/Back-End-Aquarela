@@ -403,7 +403,7 @@ const getEmailCadastrado = async (emailUsuario, contentType) => {
             let email = emailUsuario
             let usuarioJSON = {}
 
-            if(email != '' || email == undefined) {
+            if(!email || email === '') {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -516,6 +516,83 @@ const setReativarUsuario = async function (id) {
 
 }
 
+const setAtualizarSenha = async (dadosUsuario, contentType, senha) => {
+    if (String(contentType).toLowerCase() == 'application/json') {
+  
+      let updateSenhaJSON = {}
+      try {
+  
+        const validaId = await userDAO.updateUsuario(id_user)
+  
+        if (validaId) {
+  
+          let senha = dadosUsuario.senha
+          let usuario_status = dadosUsuario.usuario_status
+  
+          if (
+            senha != '' &&
+            senha != undefined &&
+            senha != null &&
+            senha.length < 100
+          ) {
+            updateSenhaJSON.senha = senha
+          } else if (
+            senha == '' &&
+            senha == undefined &&
+            senha == null
+          ) { }
+
+          if (
+            usuario_status != '' &&
+            usuario_status != undefined &&
+            usuario_status != null
+          ) {
+  
+            updateSenhaJSON.usuario_status = usuario_status
+  
+          } else if (
+            usuario_status == '' &&
+            usuario_status == undefined &&
+            usuario_status == null
+          ) { }
+  
+          
+          console.log(updateSenhaJSON);
+          
+          const senhaUpdate = await userDAO.updateUsuario(id_user, updateSenhaJSON)
+  
+          console.log(senhaUpdate);
+          
+          if (senhaUpdate != false) {
+            updateSenhaJSON.id = validaId
+            updateSenhaJSON.status = message.UPDATED_ITEM.status
+            updateSenhaJSON.status_code = message.UPDATED_ITEM.status_code
+            updateSenhaJSON.message = message.UPDATED_ITEM.message
+            updateSenhaJSON.senha = senhaUpdate
+  
+            return updateSenhaJSON
+          } else {
+  
+            console.log(senhaUpdate);
+             
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        } else {
+          return message.ERROR_NOT_FOUND
+        }
+  
+      } catch (error) {
+  
+        console.log(error, "model/DAO/controller-user.js => setAtualizarSenha");
+  
+        return message.ERROR_INTERNAL_SERVER_DB
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  }
+  
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
@@ -525,5 +602,6 @@ module.exports = {
     getValidarUsuarioNome,
     getValidarUsuarioEmail,
     setReativarUsuario,
-    getEmailCadastrado
+    getEmailCadastrado,
+    setAtualizarSenha
 }
