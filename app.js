@@ -34,7 +34,7 @@
  * 
  * instalação do PRISMA ORM
  *          npm install prisma --save (É quem realiza a conexão com o banco de dados)
- *           npm install prisma --save(É quem executa os scripts SQL no BD)
+ *          npm install @prisma/client --save (É quem executa os scripts SQL no BD)
  * 
  *      Após as intalações devemos rodar o comando:
  *          npx prisma init (Esse comando inicializa a utilização do projeto)
@@ -70,6 +70,10 @@ const controllerProduto = require('./controller/controller-produto.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
+const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
+
+
+// #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
 
 app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
@@ -89,10 +93,10 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
 
     let id = request.params.id
 
-    let infoFilmes = await controllerUsuarios.getBuscarUsuario(id)
+    let userInfo = await controllerUsuarios.getBuscarUsuario(id)
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
+    if (userInfo) {
+        response.json(userInfo)
         response.status(200)
     } else {
         response.status(404)
@@ -102,10 +106,10 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
 
 app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
-    let infoFilmes = await controllerUsuarios.getListarUsuarios()
+    let userInfo = await controllerUsuarios.getListarUsuarios()
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
+    if (userInfo) {
+        response.json(userInfo)
         response.status(200)
     } else {
         response.status(404)
@@ -163,6 +167,70 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
 
 })
 
+app.post('/v1/aquarela/authentication/user/emai/registered', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getEmailCadastrado(dadosBody.email, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
+app.put('/v1/aquarela/user/password', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_usuario = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerUsuarios.setAtualizarSenha(dadosBody, contentType, id_usuario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
+
+/******************************************************** Endpoints Preferência-Usuário ********************************************************/
+
+app.get('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let listarPreferencias = await controllerPreferencias.getListPreferences()
+
+    if (listarPreferencias) {
+        response.json(listarPreferencias)
+        response.status(listarPreferencias.status_code)
+    } else {
+        response.status(listarPreferencias.status_code)
+        response.json(listarPreferencias)
+    }
+})
+
+app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerPreferencias.adicionarPreferencias(dadosBody, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+})
+
+app.put('/v1/aquarela/preferences/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_preferencia = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerPreferencias.setExcluirPreferencias(dadosBody, contentType, id_preferencia)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
+
+app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_preferencia = request.params.id
+
+    let resultDados = await controllerPreferencias.setExcluirPreferencias(id_preferencia);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
+
 
 /******************************************************** Endpoints Endereço ********************************************************/
 
@@ -218,9 +286,9 @@ app.get('/v1/aquarela/address/:id', cors(), async function (request, response, n
 
 app.put('/v1/aquarela/delete/address/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-    let id_usuario = request.params.id
+    let id_address = request.params.id
 
-    let resultDados = await controllerUsuarios.setExcluirUsuario(id_usuario);
+    let resultDados = await controllerAddress.setExcluirEndereco(id_address);
 
     response.status(resultDados.status_code);
     response.json(resultDados);
@@ -287,22 +355,28 @@ app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, res
 
 /******************************************************** Endpoints Categorias ********************************************************/
 
-app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/category', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
     console.log(resultDataCategoria)
     response.status(resultDataCategoria.status_code)
-    
-
     response.json(resultDataCategoria)    
     
 })
 
+app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
+
+    let categoryData = await controllerCategoria.getListCategories()
+    response.status(categoryData.status_code)
+    response.json(categoryData)
+
+})
+
 /******************************************************** Endpoints Seguidores ********************************************************/
 
-app.get('/v1/aquarela/searchFollowers', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/followers', cors(), async function (request, response, next) {
 
     let infoSeguidor = await controllerSeguidores.getListFollowers()
 
@@ -315,7 +389,7 @@ app.get('/v1/aquarela/searchFollowers', cors(), async function (request, respons
     }
 })
 
-app.post('/v1/aquarela/insertNewFollower', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -328,9 +402,20 @@ app.post('/v1/aquarela/insertNewFollower', cors(), bodyParserJson, async (reques
     
 })
 
+
+// app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+//     let id_seguidores = request.params.id
+//     let contentType = request.headers['content-type']
+//     let dadosBody = request.body
+//     let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
+//     response.status(resultDados.status_code);
+//     response.json(resultDados)
+// })
+
 /******************************************************** Endpoints Postagem ********************************************************/
 
-app.get('/v1/aquarela/searchPosts', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
 
     let searchPosts = await controllerPostagem.getListarPostagens()
 
@@ -343,20 +428,7 @@ app.get('/v1/aquarela/searchPosts', cors(), async function (request, response, n
     }
 })
 
-app.post('/v1/aquarela/insertNewPost', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
-    console.log(resultDadosPostagem)
-    response.status(resultDadosPostagem.status_code)
-    
-
-    response.json(resultDadosPostagem)    
-    
-})
-
-app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, response, next) {
+app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next) {
 
     let id = request.params.id
 
@@ -371,7 +443,21 @@ app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, respons
     }
 })
 
-app.put('/v1/aquarela/updatePosts/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
+    console.log(resultDadosPostagem)
+    response.status(resultDadosPostagem.status_code)
+    
+
+    response.json(resultDadosPostagem)    
+    
+})
+
+
+app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
     let contentType = request.headers['content-type']
@@ -381,6 +467,15 @@ app.put('/v1/aquarela/updatePosts/:id', cors(), bodyParserJson, async (request, 
     response.json(resultDados)
 })
 
+app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_postagem = request.params.id
+
+    let resultDados = await controllerPostagem.setExcluirPostagem(id_postagem);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

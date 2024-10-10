@@ -8,10 +8,6 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
 
             let resultDadosUsuario = {}
 
-            console.log(dadosUsuario.disponibilidade);
-            console.log(dadosUsuario.disponibilidade == '');
-            console.log(dadosUsuario.disponibilidade === '');
-
             if (
                 dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
                 dadosUsuario.nome_usuario == '' || dadosUsuario.nome_usuario == undefined || dadosUsuario.nome_usuario.length > 150 ||
@@ -288,6 +284,9 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     usuario_status == null
                 ) { }
 
+                console.log(id_user, updateUsuarioJson);
+                
+
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
 
                 let updatedUserJson = {}
@@ -371,10 +370,47 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
-                let dadosUsuario = await userDAO.getValidarUsuarioEmail(email, senha)
+                let dadosUsuario = await userDAO.selectValidacaoUsuarioEmail(email, senha)
 
                 if (dadosUsuario) {
                     if (dadosUsuario.length > 0) {
+                        let usuario = dadosUsuario
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
+                        usuarioJSON.message = message.VALIDATED_ITEM.message
+                        usuarioJSON.usuario = usuario
+
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND
+                    }
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+            }
+        } else {
+            return message.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const getEmailCadastrado = async (emailUsuario, contentType) => {
+    try {
+        if(String(contentType).toLowerCase() == 'application/json'){
+            let email = emailUsuario
+            let usuarioJSON = {}
+
+            if(!email || email === '') {
+                return message.ERROR_REQUIRED_FIELDS
+            } else {
+
+                let dadosUsuario = await userDAO.selectEmailCadastrado(email)
+
+                if(dadosUsuario) {
+                    if(dadosUsuario.length > 0) {
                         let usuario = dadosUsuario
 
                         usuarioJSON.status = message.VALIDATED_ITEM.status
@@ -480,6 +516,83 @@ const setReativarUsuario = async function (id) {
 
 }
 
+const setAtualizarSenha = async (dadosUsuario, contentType, senha) => {
+    if (String(contentType).toLowerCase() == 'application/json') {
+  
+      let updateSenhaJSON = {}
+      try {
+  
+        const validaId = await userDAO.updateUsuario(id_user)
+  
+        if (validaId) {
+  
+          let senha = dadosUsuario.senha
+          let usuario_status = dadosUsuario.usuario_status
+  
+          if (
+            senha != '' &&
+            senha != undefined &&
+            senha != null &&
+            senha.length < 100
+          ) {
+            updateSenhaJSON.senha = senha
+          } else if (
+            senha == '' &&
+            senha == undefined &&
+            senha == null
+          ) { }
+
+          if (
+            usuario_status != '' &&
+            usuario_status != undefined &&
+            usuario_status != null
+          ) {
+  
+            updateSenhaJSON.usuario_status = usuario_status
+  
+          } else if (
+            usuario_status == '' &&
+            usuario_status == undefined &&
+            usuario_status == null
+          ) { }
+  
+          
+          console.log(updateSenhaJSON);
+          
+          const senhaUpdate = await userDAO.updateUsuario(id_user, updateSenhaJSON)
+  
+          console.log(senhaUpdate);
+          
+          if (senhaUpdate != false) {
+            updateSenhaJSON.id = validaId
+            updateSenhaJSON.status = message.UPDATED_ITEM.status
+            updateSenhaJSON.status_code = message.UPDATED_ITEM.status_code
+            updateSenhaJSON.message = message.UPDATED_ITEM.message
+            updateSenhaJSON.senha = senhaUpdate
+  
+            return updateSenhaJSON
+          } else {
+  
+            console.log(senhaUpdate);
+             
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        } else {
+          return message.ERROR_NOT_FOUND
+        }
+  
+      } catch (error) {
+  
+        console.log(error, "model/DAO/controller-user.js => setAtualizarSenha");
+  
+        return message.ERROR_INTERNAL_SERVER_DB
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  }
+  
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
@@ -488,5 +601,7 @@ module.exports = {
     getListarUsuarios,
     getValidarUsuarioNome,
     getValidarUsuarioEmail,
-    setReativarUsuario
+    setReativarUsuario,
+    getEmailCadastrado,
+    setAtualizarSenha
 }

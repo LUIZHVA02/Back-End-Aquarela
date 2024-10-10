@@ -107,14 +107,14 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
             if (index !== keys.length - 1) {
                 sql += `, `
             }
-            console.log(sql);
         })
 
         sql += ` WHERE id_usuario = ${id};`
 
-        let result = await prisma.$executeRawUnsafe(sql)
+        console.log(sql);
+        
 
-        console.log(result);
+        let result = await prisma.$executeRawUnsafe(sql)
 
         return result
 
@@ -175,7 +175,18 @@ const selectValidacaoUsuarioEmail = async (email, senha) => {
     } catch (error) {
         return false
     }
+}
 
+const selectEmailCadastrado = async (email) => {
+    
+    try {
+        let sql = `select id_usuario, email from tbl_usuario where email = '${email}')`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+    } catch (error) {
+        console.log(error);
+        return false
+    }
 }
 
 module.exports = {
@@ -186,5 +197,6 @@ module.exports = {
     selectByIdUsuarioInativo,
     updateUsuario,
     selectValidacaoUsuarioNome,
-    selectValidacaoUsuarioEmail
+    selectValidacaoUsuarioEmail,
+    selectEmailCadastrado
 }

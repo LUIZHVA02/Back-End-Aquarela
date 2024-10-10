@@ -12,7 +12,7 @@ const insertAddress = async (dataAddress) => {
                                                 estado, 
                                                 cidade, 
                                                 cep,  
-                                                status
+                                                endereco_status
                                             ) 
                                             values 
                                             (
@@ -34,16 +34,13 @@ const insertAddress = async (dataAddress) => {
             return false
         }
             
-    } catch (error) {
-        console.error("Erro ao inserir endereço: ", error);
-        
+    } catch (error) {        
         console.log(error + "model/DAO/address.js");
 
         return false
     }
     
 } 
-
 
 const updateAddress = async function (id, dataAddress) {
     try {

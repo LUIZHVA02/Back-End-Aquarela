@@ -153,10 +153,38 @@ END $$
 
 DELIMITER ;
 
-# Listar Produtos e Postagem
-use db_aquarela;
+select * from tbl_usuario;
+select * from tbl_preferencia where id_usuario = 12;
+select * from tbl_produto left join tbl_categoria_produto on tbl_produto.id_produto=tbl_categoria_produto.id_produto left join tbl_categoria on tbl_categoria.id_categoria=tbl_categoria_produto.id_categoria;
+select * from tbl_categoria;
 
-	SELECT 
+insert into tbl_categoria_produto (id_produto, id_categoria, categoria_produto_status) values 
+(4,133,true),
+(4,141,true),
+(4,208,true),
+(4,209,true),
+(4,220,true),
+(4,224,true),
+(4,225,true);
+
+insert into tbl_preferencia (id_usuario, id_categoria, preferencia_status) values 
+(12, 149,true),
+(12, 179,true),
+(12, 133,true),
+(12,133,true),
+(12,141,true),
+(12,208,true),
+(12,209,true),
+(12,220,true),
+(12,224,true),
+(12,225,true);
+
+
+call GetGerarFeed(12)
+
+# Listar postagem e produto
+
+SELECT 
     p.id_produto, 
     p.nome, 
     po.id_postagem, 

@@ -13,14 +13,12 @@ const insertNovoSeguidor = async (dadosSeguidores) => {
   try {
 
     let sql = `insert into tbl_seguidores  (   
-                                              id_seguidores,
                                               id_seguidor,
                                               id_seguindo,
                                               seguidores_status
                                           ) 
                                           values 
                                           (
-                                              '${dadosSeguidores.id_seguidores}',
                                               '${dadosSeguidores.id_seguidor}',
                                               '${dadosSeguidores.id_seguindo}',
                                               true
@@ -58,7 +56,37 @@ const selectAllFollowers = async () => {
     }
 }
 
+// const updateSeguidores = async function (id, dadosUsuarioUpdate) {
+//   try {
+//       let sql = `UPDATE tbl_seguidores SET `
+//       const keys = Object.keys(dadosUsuarioUpdate)
+
+//       keys.forEach((key, index) => {
+//           sql += `${key} = '${dadosUsuarioUpdate[key]}'`
+//           if (index !== keys.length - 1) {
+//               sql += `, `
+//           }
+//           console.log(sql);
+//       })
+
+//       sql += ` WHERE id_seguidores = ${id};`
+
+//       let result = await prisma.$executeRawUnsafe(sql)
+
+//       console.log(result);
+
+//       return result
+
+//   } catch (error) {
+
+//       console.log(error);
+
+//       return false
+//   }
+
+// }
+
 module.exports = {
   insertNovoSeguidor,
-  selectAllFollowers
+  selectAllFollowers,
 }

@@ -86,6 +86,9 @@ create table tbl_categoria(
     categoria varchar(255),
     categoria_status boolean not null
 );
+SELECT *, COUNT(*) from tbl_categoria 
+GROUP BY categoria
+HAVING COUNT(*) > 1;
 
 create table tbl_categoria_produto (
     id_categoria_produto int not null primary key auto_increment,
@@ -321,4 +324,36 @@ create table tbl_mensagem (
     foreign key (id_usuario) references tbl_usuario(id_usuario),
     foreign key (id_conversa) references tbl_conversa(id_conversa)
 );
+
+create table tbl_tipo_perfil (
+id_tipo_perfil integer not null primary key auto_increment,
+    nome varchar(50) not null,
+tipo_perfil_status boolean not null
+);
+
+create table tbl_tipo_perfil_usuario (
+id_tipo_perfil_usuario integer not null primary key auto_increment,
+    id_tipo_perfil integer not null,
+    id_usuario integer not null,
+tipo_perfil_usuario_status boolean not null,
+    foreign key (id_usuario) references tbl_usuario(id_usuario),
+    foreign key (id_tipo_perfil) references tbl_tipo_perfil(id_tipo_perfil)
+);
+
+create table tbl_banco (
+	id_banco int not null primary key auto_increment,
+    banco text,
+    banco_status boolean not null
+);
+
+create table tbl_conta (
+	id_conta int not null primary key auto_increment, 
+    nome_completo text, 
+    nome_do_banco int, 
+    agencia text, 
+    numero_da_conta text, 
+    dv text, 
+    foreign key (nome_do_banco) references tbl_banco (id_banco)
+)
+select * from tbl_categoria;
     
