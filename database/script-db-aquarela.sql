@@ -354,6 +354,12 @@ create table tbl_conta (
     numero_da_conta text, 
     dv text, 
     foreign key (nome_do_banco) references tbl_banco (id_banco)
-)
-select * from tbl_categoria;
-    
+);
+
+create table tbl_conta_usuario (
+	id_conta_usuario int not null primary key auto_increment,
+    id_usuario int,
+    id_conta int,
+    foreign key (id_conta) references tbl_conta (id_conta),
+    foreign key (id_usuario) references tbl_usuario (id_usuario)
+);

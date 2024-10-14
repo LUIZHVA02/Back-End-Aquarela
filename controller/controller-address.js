@@ -10,7 +10,7 @@ const setNewAddress = async (dataAddress, contentType) => {
 
       if (
         dataAddress.logradouro == "" || dataAddress.logradouro == undefined || dataAddress.logradouro.length > 150 ||
-        dataAddress.numero_casa == "" ||  dataAddress.numero_casa == undefined ||
+        dataAddress.numero_casa == "" || dataAddress.numero_casa == undefined ||
         dataAddress.complemento == "" || dataAddress.complemento == undefined || dataAddress.complemento.length > 150 ||
         dataAddress.bairro == "" || dataAddress.bairro == undefined || dataAddress.bairro.length > 150 ||
         dataAddress.estado == "" || dataAddress.estado == undefined || dataAddress.estado.length > 20 ||
@@ -21,7 +21,7 @@ const setNewAddress = async (dataAddress, contentType) => {
       ) {
         return message.ERROR_REQUIRED_FIELDS;
       } else {
-        
+
         let newAddress = await addressDAO.insertAddress(dataAddress);
         let idU = dataAddress.id_usuario;
 
@@ -242,6 +242,25 @@ const getSearchAddress = async (id) => {
   }
 };
 
+const getSearchUserAddresses = async (id_usuario) => {
+  try {
+    let id_user = id_usuario
+    let userAddressesJSON = {}
+
+    let validaId = await userDAO.selectByIdUsuarioAtivo(id_user)
+
+    if (id_user == null || id_user == undefined || isNaN(id_user)) {
+      return message.ERROR_INVALID_ID
+    } else {
+      let dataUserAdresses = await addressDAO.selectByIdAddress(id_user);
+      
+    }
+  } catch (error) {
+    console.log(error);
+    return false
+  }
+}
+
 const setExcluirendereco = async function (id) {
   try {
     let id_endereco = id;
@@ -323,4 +342,7 @@ module.exports = {
   setUpdateAddress,
   getListAddres,
   getSearchAddress,
+  setExcluirendereco,
+  setReativarEndereco,
+  getSearchUserAddresses
 };

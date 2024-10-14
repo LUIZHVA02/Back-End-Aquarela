@@ -71,7 +71,7 @@ const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
-
+const req = require('express/lib/request.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -167,7 +167,7 @@ app.post('/v1/aquarela/authentication/user/email', cors(), bodyParserJson, async
 
 })
 
-app.post('/v1/aquarela/authentication/user/emai/registered', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/authentication/user/email/registered', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -187,6 +187,7 @@ app.put('/v1/aquarela/user/password', cors(), bodyParserJson, async (request, re
     response.json(resultDados)
 })
 
+// #region Preferência-Usuário
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/
 
 app.get('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
@@ -231,9 +232,17 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
-
+// #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
 
+app.get('/v1/aquarela/address/user/id:', cors(), bodyParserJson, async (request, response, next) => {
+    
+    let id_usuario = request.params.id
+
+    let searchUserAddresses = controllerAddress.getSearchUserAddresses(id_usuario)
+
+
+})
 app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchAddress = await controllerAddress.getListAddres()
@@ -275,13 +284,8 @@ app.get('/v1/aquarela/address/:id', cors(), async function (request, response, n
 
     let infoAddress = await controllerAddress.getSearchAddress(id)
 
-    if (infoAddress) {
-        response.json(infoAddress)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.status(infoAddress.status_code);
+    response.json(infoAddress);
 })
 
 app.put('/v1/aquarela/delete/address/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -304,7 +308,7 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.json(resultDados);
 })
 
-
+// #region Produtos
 /******************************************************** Endpoints Produtos ********************************************************/
 
 app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
@@ -353,6 +357,7 @@ app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, res
     response.json(resultDados);
 })
 
+// #region Categorias
 /******************************************************** Endpoints Categorias ********************************************************/
 
 app.post('/v1/aquarela/category', cors(), bodyParserJson, async (request, response, next) => {
@@ -374,6 +379,7 @@ app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
 
 })
 
+// #region Seguidores
 /******************************************************** Endpoints Seguidores ********************************************************/
 
 app.get('/v1/aquarela/followers', cors(), async function (request, response, next) {
@@ -413,6 +419,7 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 //     response.json(resultDados)
 // })
 
+// #region Postagem
 /******************************************************** Endpoints Postagem ********************************************************/
 
 app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {

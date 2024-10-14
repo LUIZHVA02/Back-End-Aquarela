@@ -83,6 +83,15 @@ const selectByIdAddress = async (id) => {
 
 }
 
+const selectAllUserAdresses = async (id_usuario) => {
+    try {
+        let sql = ``
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
 const selectAllAddress = async () => {
 
     try {

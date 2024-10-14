@@ -68,6 +68,9 @@ const selectByIdUsuarioAtivo = async (id) => {
                     disponibilidade, avaliacao from tbl_usuario where usuario_status = "1" and id_usuario = ${id}`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
 
+        console.log(rsUsuario);
+        
+
         return rsUsuario
     } catch (error) {
 
