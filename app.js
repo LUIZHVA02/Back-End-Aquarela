@@ -235,25 +235,23 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
 // #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
 
-app.get('/v1/aquarela/address/user/id:', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
     
     let id_usuario = request.params.id
 
-    let searchUserAddresses = controllerAddress.getSearchUserAddresses(id_usuario)
+    let searchUserAddresses = await controllerAddress.getSearchUserAddresses(id_usuario)
 
-
+    response.json(searchUserAddresses)
+    response.status(searchUserAddresses.status_code)
 })
+
 app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
 
     let searchAddress = await controllerAddress.getListAddres()
 
-    if (searchAddress) {
-        response.json(searchAddress)
-        response.status(searchAddress.status_code)
-    } else {
-        response.status(searchAddress.status_code)
-        response.json(searchAddress)
-    }
+    response.json(searchAddress)
+    response.status(searchAddress.status_code)
+
 })
 
 app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {

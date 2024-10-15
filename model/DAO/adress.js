@@ -27,20 +27,20 @@ const insertAddress = async (dataAddress) => {
                                             )`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-        if (resultStatus){
+        if (resultStatus) {
             return true
         }
-        else{
+        else {
             return false
         }
-            
-    } catch (error) {        
+
+    } catch (error) {
         console.log(error + "model/DAO/address.js");
 
         return false
     }
-    
-} 
+
+}
 
 const updateAddress = async function (id, dataAddress) {
     try {
@@ -59,7 +59,7 @@ const updateAddress = async function (id, dataAddress) {
         let result = await prisma.$executeRawUnsafe(sql)
 
         console.log(sql);
-        
+
 
         return result
 
@@ -85,7 +85,17 @@ const selectByIdAddress = async (id) => {
 
 const selectAllUserAdresses = async (id_usuario) => {
     try {
-        let sql = ``
+        let sql = ` select tbl_usuario.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 
+                    tbl_usuario.email, tbl_endereco.id_endereco, tbl_endereco.logradouro, 
+                    tbl_endereco.numero_casa, tbl_endereco.complemento, tbl_endereco.bairro, 
+                    tbl_endereco.estado, tbl_endereco.cidade, tbl_endereco.cep from tbl_usuario
+                    inner join tbl_usuario_endereco on tbl_usuario.id_usuario = tbl_usuario_endereco.id_usuario
+                    inner join tbl_endereco on tbl_usuario_endereco.id_endereco = tbl_endereco.id_endereco 
+                    where tbl_usuario.usuario_status = 1 and tbl_usuario.id_usuario = ${id_usuario};`
+
+        let rsUserAdresses = await prisma.$queryRawUnsafe(sql)        
+
+        return rsUserAdresses
     } catch (error) {
         console.log(error);
         return false
@@ -119,9 +129,10 @@ const selectLastId = async () => {
 }
 
 module.exports = {
-  insertAddress,
-  updateAddress,
-  selectByIdAddress,
-  selectAllAddress,
-  selectLastId
+    insertAddress,
+    updateAddress,
+    selectByIdAddress,
+    selectAllAddress,
+    selectLastId,
+    selectAllUserAdresses
 }
