@@ -307,7 +307,7 @@ const getSearchUserAddresses = async (id_usuario) => {
   }
 }
 
-const setExcluirendereco = async function (id) {
+const setExcluirEndereco = async function (id) {
   try {
     let id_endereco = id;
     let deleteenderecoJson = {};
@@ -388,7 +388,7 @@ module.exports = {
   setUpdateAddress,
   getListAddres,
   getSearchAddress,
-  setExcluirendereco,
+  setExcluirEndereco,
   setReativarEndereco,
   getSearchUserAddresses
 };

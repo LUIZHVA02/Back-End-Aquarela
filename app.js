@@ -71,7 +71,6 @@ const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
-const req = require('express/lib/request.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -82,11 +81,11 @@ app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, 
     let dadosBody = request.body
     let resultDadosUsuario = await controllerUsuarios.setNovoUsuario(dadosBody, contentType)
     response.status(resultDadosUsuario.status_code)
-    
+
     console.log(resultDadosUsuario);
 
     response.json(resultDadosUsuario)
-    
+
 })
 
 app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next) {
@@ -95,26 +94,16 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
 
     let userInfo = await controllerUsuarios.getBuscarUsuario(id)
 
-    if (userInfo) {
-        response.json(userInfo)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(userInfo)
+    response.status(userInfo.status_code)
 })
 
 app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
     let userInfo = await controllerUsuarios.getListarUsuarios()
 
-    if (userInfo) {
-        response.json(userInfo)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(userInfo)
+    response.status(userInfo.status_code)
 })
 
 app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -194,13 +183,8 @@ app.get('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request,
 
     let listarPreferencias = await controllerPreferencias.getListPreferences()
 
-    if (listarPreferencias) {
-        response.json(listarPreferencias)
-        response.status(listarPreferencias.status_code)
-    } else {
-        response.status(listarPreferencias.status_code)
-        response.json(listarPreferencias)
-    }
+    response.json(listarPreferencias)
+    response.status(listarPreferencias.status_code)
 })
 
 app.post('/v1/aquarela/preferences/user', cors(), bodyParserJson, async (request, response, next) => {
@@ -236,7 +220,7 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
-    
+
     let id_usuario = request.params.id
 
     let searchUserAddresses = await controllerAddress.getSearchUserAddresses(id_usuario)
@@ -259,11 +243,9 @@ app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, respons
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
-    console.log(resultdataAddress)
     response.status(resultdataAddress.status_code)
-    
     response.json(resultdataAddress)
-    
+
 })
 
 app.put('/v1/aquarela/address/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -313,13 +295,9 @@ app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, respons
 
     let searchProducts = await controllerProduto.getListProducts()
 
-    if (searchProducts) {
-        response.json(searchProducts)
-        response.status(searchProducts.status_code)
-    } else {
-        response.status(searchProducts.status_code)
-        response.json(searchProducts)
-    }
+    response.json(searchProducts)
+    response.status(searchProducts.status_code)
+
 })
 
 app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
@@ -327,12 +305,9 @@ app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, respons
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDataProduct = await controllerProduto.setNovoProduto(dadosBody, contentType)
-    console.log(resultDataProduct)
     response.status(resultDataProduct.status_code)
-    
+    response.json(resultDataProduct)
 
-    response.json(resultDataProduct)    
-    
 })
 
 app.put('/v1/aquarela/product/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -350,7 +325,7 @@ app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, res
     let id_produto = request.params.id
 
     let resultDados = await controllerProduto.setExcluirProduto(id_produto);
-    
+
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
@@ -363,10 +338,9 @@ app.post('/v1/aquarela/category', cors(), bodyParserJson, async (request, respon
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
-    console.log(resultDataCategoria)
     response.status(resultDataCategoria.status_code)
-    response.json(resultDataCategoria)    
-    
+    response.json(resultDataCategoria)
+
 })
 
 app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
@@ -384,13 +358,8 @@ app.get('/v1/aquarela/followers', cors(), async function (request, response, nex
 
     let infoSeguidor = await controllerSeguidores.getListFollowers()
 
-    if (infoSeguidor) {
-        response.json(infoSeguidor)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(infoSeguidor)
+    response.status(infoSeguidor.status_code)
 })
 
 app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, response, next) => {
@@ -400,22 +369,20 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
     let resultDadosSeguidores = await controllerSeguidores.setNovoSeguidor(dadosBody, contentType)
     console.log(resultDadosSeguidores)
     response.status(resultDadosSeguidores.status_code)
-    
+    response.json(resultDadosSeguidores)
 
-    response.json(resultDadosSeguidores)    
-    
 })
 
 
-// app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-//     let id_seguidores = request.params.id
-//     let contentType = request.headers['content-type']
-//     let dadosBody = request.body
-//     let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
-//     response.status(resultDados.status_code);
-//     response.json(resultDados)
-// })
+    let id_seguidores = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
 
 // #region Postagem
 /******************************************************** Endpoints Postagem ********************************************************/
@@ -424,13 +391,8 @@ app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
 
     let searchPosts = await controllerPostagem.getListarPostagens()
 
-    if (searchPosts) {
-        response.json(searchPosts)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(searchPosts)
+    response.status(searchPosts.status_code)
 })
 
 app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next) {
@@ -439,13 +401,8 @@ app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next
 
     let searchPosts = await controllerPostagem.getBuscarPostagem(id)
 
-    if (searchPosts) {
-        response.json(searchPosts)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(searchPosts)
+    response.status(searchPosts.status_code)
 })
 
 app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
@@ -453,12 +410,10 @@ app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
-    console.log(resultDadosPostagem)
-    response.status(resultDadosPostagem.status_code)
-    
 
-    response.json(resultDadosPostagem)    
-    
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
 })
 
 
@@ -483,4 +438,4 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
 })
 
 const port = process.env.PORT || 8080
-app.listen(port, () => {console.log('API funcionando na porta ' + port)})
+app.listen(port, () => { console.log('API funcionando na porta ' + port) })
