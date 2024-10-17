@@ -1,58 +1,56 @@
 const userPreferencesDAO = require("../model/DAO/preferencias-usuario");
+const categoriesDAO = require("../model/DAO/categoria");
 const message = require("../modulo/config.js");
 
-const adicionarPreferencias = async function (
-  dadosPreferenciasUsuario,
-  contentType
-) {
-  try {
-    if (String(contentType).toLowerCase() == "application/json") {
-      let resultDadosPreferenciasUsuario = {};
+const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentType) {
+    try {
+        if (String(contentType).toLowerCase() === "application/json") {
+            let resultDadosPreferenciasUsuario = {};
 
-      if (
-        dadosPreferenciasUsuario.preferencias == "" ||
-        dadosPreferenciasUsuario.preferencias == undefined ||
-        dadosPreferenciasUsuario.id_usuario == "" ||
-        dadosPreferenciasUsuario.id_usuario == undefined ||
-        isNaN(dadosPreferenciasUsuario.id_usuario)
-      ) {
-        return message.ERROR_REQUIRED_FIELDS;
-      } else {
-        let indice = dadosPreferenciasUsuario.preferencias.length;
-        dadosPreferenciasUsuario.preferencias.forEach(
-          async (element, index) => {
-            let novoPreferenciasUsuario =
-              await userPreferencesDAO.insertNovaPreferencia(
-                dadosPreferenciasUsuario.id_usuario,
-                dadosPreferenciasUsuario.preferencias[index]
-              );
-          }
-        );
+            if (
+                !dadosPreferenciasUsuario.preferencias ||
+                !dadosPreferenciasUsuario.id_usuario ||
+                isNaN(dadosPreferenciasUsuario.id_usuario)
+            ) {
+                return message.ERROR_REQUIRED_FIELDS;
+            } else {
+                let categoriasArray = [];
 
-        let lastId = await userPreferencesDAO.selectLastId(indice);
+                // Inserir preferências e esperar todas as promessas serem resolvidas
+                await Promise.all(
+                    dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
+                        await userPreferencesDAO.insertNovaPreferencia(dadosPreferenciasUsuario.id_usuario, preferencia);
+                    })
+                );
 
-        if (indice) {
-          resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
-          resultDadosPreferenciasUsuario.status_code =
-            message.CREATED_ITEM.status_code;
-          resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.message;
-          resultDadosPreferenciasUsuario.usuario = dadosPreferenciasUsuario;
+                // Obter categorias
+                await Promise.all(
+                    dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
+                        let dadosCategoria = await categoriesDAO.selectCategoriesById(preferencia);
+                        if (dadosCategoria.length > 0) {
+                            categoriasArray.push({ categoria: dadosCategoria[0].categoria });
+                        }
+                    })
+                );
 
-          return resultDadosPreferenciasUsuario;
+                // Construir o resultado
+                resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
+                resultDadosPreferenciasUsuario.status_code = message.CREATED_ITEM.status_code;
+                resultDadosPreferenciasUsuario.message = message.CREATED_ITEM.message;
+                resultDadosPreferenciasUsuario.usuario = dadosPreferenciasUsuario.id_usuario;
+                resultDadosPreferenciasUsuario.preferencias = categoriasArray;
+
+                console.log(categoriasArray); // Log no terminal para debug
+
+                return resultDadosPreferenciasUsuario; // Retornar o resultado
+            }
         } else {
-          return message.ERROR_INTERNAL_SERVER_DB;
+            return message.ERROR_CONTENT_TYPE;
         }
-      }
-    } else {
-      return message.ERROR_CONTENT_TYPE;
+    } catch (error) {
+        console.error("Erro ao tentar inserir preferências: " + error);
+        return message.ERROR_INTERNAL_SERVER;
     }
-  } catch (error) {
-    console.error("Erro ao tentar inserir preferências: " + error);
-
-    console.log(error);
-
-    return message.ERROR_INTERNAL_SERVER;
-  }
 };
 
 const getListPreferences = async () => {

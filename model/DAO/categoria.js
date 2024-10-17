@@ -80,16 +80,17 @@ const selectAllCategoriesByPostQuantity = async () => {
   }
 };
 
-const selectCategoriesById = async () => {
+const selectCategoriesById = async (id) => {
   try {
     let sql = `
             SELECT 
                 categoria
             FROM 
-                tbl_categoria_postagem
+                tbl_categoria
+              
+              where id_categoria = ${id}
             `;
     let resultStatus = await prisma.$queryRawUnsafe(sql);
-    console.log(resultStatus);
 
     return resultStatus;
   } catch (error) {

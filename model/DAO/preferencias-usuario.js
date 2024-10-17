@@ -16,7 +16,6 @@ const insertNovaPreferencia = async (id_usuario, id_categoria) => {
                                                 '${id_categoria}',
                                                 true
                                             )`
-                                            console.log(sql)
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
         if (resultStatus) {
