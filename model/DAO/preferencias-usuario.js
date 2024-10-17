@@ -35,10 +35,10 @@ const insertNovaPreferencia = async (id_usuario, id_categoria) => {
 
 }
 
-const selectLastId = async () => {
+const selectLastId = async (indice) => {
 
     try {
-        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_preferencia limit 1'
+        let sql = `select cast(last_insert_id() as DECIMAL) as id from tbl_preferencia limit ${indice}`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
@@ -63,7 +63,7 @@ const selectByIdPreferences = async (id) => {
 const selectAllPreferences = async () => {
 
     try {
-        let sql = `select * from tbl_preferencia where preferencia_status = "1"`
+        let sql = `select id_categoria, id_usuario from tbl_preferencia where preferencia_status = "1"`
         let rsAddress = await prisma.$queryRawUnsafe(sql)
 
         return rsAddress

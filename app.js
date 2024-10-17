@@ -351,6 +351,14 @@ app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
 
 })
 
+app.get('/v1/aquarela/categorie/:id', cors(), async (request, response, next) => {
+
+    let categoryData = await controllerCategoria.getCategoriesById(id)
+    response.status(categoryData.status_code)
+    response.json(categoryData)
+
+})
+
 // #region Seguidores
 /******************************************************** Endpoints Seguidores ********************************************************/
 
