@@ -98,6 +98,17 @@ app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next
     response.status(userInfo.status_code)
 })
 
+app.get('/v1/aquarela/feed/:id', cors(), async function (request, response, next) {
+
+    let id = request.params.id
+
+    let userInfo = await controllerUsuarios.getFeed(id)
+
+    response.json(userInfo)
+    response.status(userInfo.status_code)
+})
+
+
 app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
     let userInfo = await controllerUsuarios.getListarUsuarios()

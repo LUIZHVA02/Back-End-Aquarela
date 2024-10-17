@@ -189,6 +189,143 @@ const selectEmailCadastrado = async (email) => {
     }
 }
 
+const selectFeed = async (id) => {
+
+    try {
+
+        let sql = `
+
+        SELECT
+            'produto' AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(1 AS DECIMAL) AS preferencia
+        FROM tbl_produto AS tp
+        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
+        WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+        GROUP BY tp.id_produto
+
+        UNION ALL
+
+        SELECT
+            'postagem' AS tipo,
+            tp.id_postagem AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            NULL AS item_digital,
+            NULL AS marca_dagua,
+            NULL AS preco,
+            NULL AS quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(1 AS DECIMAL) AS preferencia
+        FROM tbl_postagem AS tp
+        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
+        WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+        GROUP BY tp.id_postagem
+
+        UNION ALL
+
+        SELECT
+            'produto' AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(0 AS DECIMAL) AS preferencia
+        FROM tbl_produto AS tp
+        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
+        GROUP BY tp.id_produto
+        HAVING tp.id_produto NOT IN (
+            SELECT tp.id_produto FROM tbl_produto AS tp
+            LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto
+            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+        )
+
+        UNION ALL
+
+        SELECT
+            'postagem' AS tipo,
+            tp.id_postagem AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            NULL AS item_digital,
+            NULL AS marca_dagua,
+            NULL AS preco,
+            NULL AS quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(0 AS DECIMAL) AS preferencia
+        FROM tbl_postagem AS tp
+        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
+        GROUP BY tp.id_postagem
+        HAVING tp.id_postagem NOT IN (
+            SELECT tp.id_postagem FROM tbl_postagem AS tp
+            LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem
+            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+        )
+
+        ORDER BY 
+            CASE 
+                WHEN preferencia = 1 THEN 1 
+                ELSE 2 
+            END,
+            RAND();
+
+        `
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)        
+        return rsUsuario
+
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+
+} 
+
+const selectImages = async (id, postType) => {
+    try {
+        let sql = `
+            select ti.id_imagem, ti.url from tbl_imagem as ti
+            inner join tbl_imagem_${postType} as tip
+            on ti.id_imagem=tip.id_imagem
+            where tip.id_${postType} = ${id} and tip.imagem_${postType}_status = true
+        `        
+        let rsImagem = await prisma.$queryRawUnsafe(sql)        
+        return rsImagem
+    } catch (error) {
+        return error
+    }
+}
+
 module.exports = {
     insertUsuario,
     selectAllUsuarios,
@@ -198,5 +335,7 @@ module.exports = {
     updateUsuario,
     selectValidacaoUsuarioNome,
     selectValidacaoUsuarioEmail,
-    selectEmailCadastrado
+    selectEmailCadastrado,
+    selectFeed,
+    selectImages
 }
