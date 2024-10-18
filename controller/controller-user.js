@@ -590,7 +590,7 @@ const setAtualizarSenha = async (dadosUsuario, contentType, senha) => {
     } else {
       return message.ERROR_CONTENT_TYPE
     }
-  }
+}
   
 
 module.exports = {

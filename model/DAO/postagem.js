@@ -124,12 +124,8 @@ const updatePosts = async function (id, dadosPostagem) {
     console.log(error);
     return false;
   }
-<<<<<<< HEAD
 
 }
-=======
-};
->>>>>>> 583b4245ac1d369b25154ad2ca18f158eb3a1b91
 
 module.exports = {
   insertNovaPostagem,

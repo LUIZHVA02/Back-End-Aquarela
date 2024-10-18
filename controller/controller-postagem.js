@@ -158,13 +158,6 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
           postagem_status == undefined &&
           postagem_status == null
         ) { }
-<<<<<<< HEAD
-
-=======
-        
-        console.log(updatePostJSON);
-        
->>>>>>> 583b4245ac1d369b25154ad2ca18f158eb3a1b91
         const postUpdate = await postagemDAO.updatePosts(id_postagem, updatePostJSON)
 
         console.log(postUpdate);

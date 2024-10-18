@@ -231,7 +231,6 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
-
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address', cors(), bodyParserJson, async (request, response, next) => {
@@ -303,7 +302,6 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
-
 
 /******************************************************** Endpoints Produtos ********************************************************/
 
@@ -402,7 +400,6 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
     
 })
 
-
 // app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
 //     let id_seguidores = request.params.id
@@ -456,7 +453,6 @@ app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, 
     
 })
 
-
 app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
@@ -476,6 +472,8 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
+
+/************************************************************************************************************************************/
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})
