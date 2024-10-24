@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Grupo de Usuários JDBC">
+      <intProp name="ThreadGroup.num_threads">200</intProp>
+      <intProp name="ThreadGroup.ramp_time">1</intProp>
+      <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Controlador de Iteração">
+        <stringProp name="LoopController.loops">1</stringProp>
+        <boolProp name="LoopController.continue_forever">false</boolProp>
+      </elementProp>
+    </ThreadGroup>
+    <hashTree>
+      <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Requisição JDBC">
+        <stringProp name="dataSource">conexao</stringProp>
+        <stringProp name="query">SELECT
+            &apos;produto&apos; AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(1 AS DECIMAL) AS preferencia
+        FROM tbl_produto AS tp
+        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = 1
+        WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = 1 AND preferencia_status = true)
+        GROUP BY tp.id_produto
+
+        UNION ALL
+
+        SELECT
+            &apos;postagem&apos; AS tipo,
+            tp.id_postagem AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            NULL AS item_digital,
+            NULL AS marca_dagua,
+            NULL AS preco,
+            NULL AS quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(1 AS DECIMAL) AS preferencia
+        FROM tbl_postagem AS tp
+        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = 1
+        WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = 1 AND preferencia_status = true)
+        GROUP BY tp.id_postagem
+
+        UNION ALL
+
+        SELECT
+            &apos;produto&apos; AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(0 AS DECIMAL) AS preferencia
+        FROM tbl_produto AS tp
+        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = 1
+        GROUP BY tp.id_produto
+        HAVING tp.id_produto NOT IN (
+            SELECT tp.id_produto FROM tbl_produto AS tp
+            LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto
+            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = 1 AND preferencia_status = true)
+        )
+
+        UNION ALL
+
+        SELECT
+            &apos;postagem&apos; AS tipo,
+            tp.id_postagem AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            NULL AS item_digital,
+            NULL AS marca_dagua,
+            NULL AS preco,
+            NULL AS quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(0 AS DECIMAL) AS preferencia
+        FROM tbl_postagem AS tp
+        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = 1
+        GROUP BY tp.id_postagem
+        HAVING tp.id_postagem NOT IN (
+            SELECT tp.id_postagem FROM tbl_postagem AS tp
+            LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem
+            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = 1 AND preferencia_status = true)
+        )
+
+        ORDER BY 
+            CASE 
+                WHEN preferencia = 1 THEN 1 
+                ELSE 2 
+            END,
+            RAND();</stringProp>
+        <stringProp name="queryArguments"></stringProp>
+        <stringProp name="queryArgumentsTypes"></stringProp>
+        <stringProp name="queryTimeout"></stringProp>
+        <stringProp name="queryType">Select Statement</stringProp>
+        <stringProp name="resultSetHandler">Store as String</stringProp>
+        <stringProp name="resultSetMaxRows"></stringProp>
+        <stringProp name="resultVariable"></stringProp>
+        <stringProp name="variableNames"></stringProp>
+      </JDBCSampler>
+      <hashTree/>
+      <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="Configuração da Conexão JDBC">
+        <boolProp name="autocommit">true</boolProp>
+        <stringProp name="checkQuery"></stringProp>
+        <stringProp name="connectionAge">5000</stringProp>
+        <stringProp name="connectionProperties"></stringProp>
+        <stringProp name="dataSource">conexao</stringProp>
+        <stringProp name="dbUrl">jdbc:mysql://db-aquarela.mysql.database.azure.com:3306/db_aquarela?useTimezone=true&amp;serverTimezone=UTC</stringProp>
+        <stringProp name="driver">com.mysql.jdbc.Driver</stringProp>
+        <stringProp name="initQuery"></stringProp>
+        <boolProp name="keepAlive">true</boolProp>
+        <stringProp name="password">Ciprian0</stringProp>
+        <stringProp name="poolMax">0</stringProp>
+        <boolProp name="preinit">false</boolProp>
+        <stringProp name="timeout">10000</stringProp>
+        <stringProp name="transactionIsolation">DEFAULT</stringProp>
+        <stringProp name="trimInterval">60000</stringProp>
+        <stringProp name="username">apoloo</stringProp>
+      </JDBCDataSource>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Ver Árvore de Resultados">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Ver Resultados em Tabela">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

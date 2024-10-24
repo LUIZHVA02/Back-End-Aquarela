@@ -194,3 +194,4 @@ JOIN
     tbl_postagem po 
 ON 
     p.id_usuario = po.id_usuario;
+
