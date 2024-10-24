@@ -605,18 +605,18 @@ const setReativarUsuario = async function (id) {
 
 }
 
-const setAtualizarSenha = async (dadosUsuario, contentType, senha) => {
+const setAtualizarSenha = async (dadosUsuario, contentType, id_usuario) => {
     if (String(contentType).toLowerCase() == 'application/json') {
 
+        let id_user = id_usuario 
         let updateSenhaJSON = {}
         try {
 
-            const validaId = await userDAO.selectAtualizarSenha(id_user)
+            const validaId = await userDAO.selectByIdUsuarioAtivo(id_user)
 
             if (validaId) {
 
                 let senha = dadosUsuario.senha
-                let usuario_status = dadosUsuario.usuario_status
 
                 if (
                     senha != '' &&
@@ -631,24 +631,11 @@ const setAtualizarSenha = async (dadosUsuario, contentType, senha) => {
                     senha == null
                 ) { }
 
-                if (
-                    usuario_status != '' &&
-                    usuario_status != undefined &&
-                    usuario_status != null
-                ) {
-
-                    updateSenhaJSON.usuario_status = usuario_status
-
-                } else if (
-                    usuario_status == '' &&
-                    usuario_status == undefined &&
-                    usuario_status == null
-                ) { }
 
 
                 console.log(updateSenhaJSON);
 
-                const senhaUpdate = await userDAO.selectAtualizarSenha(id_user, updateSenhaJSON)
+                const senhaUpdate = await userDAO.updateUsuario(id_user, updateSenhaJSON)
 
                 console.log(senhaUpdate);
 

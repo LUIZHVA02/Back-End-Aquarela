@@ -177,7 +177,7 @@ app.post('/v1/aquarela/authentication/user/email/registered', cors(), bodyParser
 
 })
 
-app.put('/v1/aquarela/user/password', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
     let contentType = request.headers['content-type']

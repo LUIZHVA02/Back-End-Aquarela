@@ -326,18 +326,6 @@ const selectImages = async (id, postType) => {
     }
 }
 
-const selectAtualizarSenha = async (senha) => {
-    
-    try {
-        let sql = `select senha from tbl_usuario where senha = '${senha}')`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
-        console.log(error);
-        return false
-    }
-}
-
 module.exports = {
     insertUsuario,
     selectAllUsuarios,
@@ -350,5 +338,5 @@ module.exports = {
     selectEmailCadastrado,
     selectFeed,
     selectImages,
-    selectAtualizarSenha
+
 }
