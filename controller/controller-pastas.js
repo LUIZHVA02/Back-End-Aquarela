@@ -71,6 +71,7 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
     if (String(contentType).toLowerCase() == 'application/json') {
 
         let updatePastaJson = {}
+
         try {
             
             let id_pasta = id_folder
@@ -104,7 +105,7 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
                     updatePastaJson.status = message.UPDATED_ITEM.status
                     updatePastaJson.status_code = message.UPDATED_ITEM.status_code
                     updatePastaJson.message = message.UPDATED_ITEM.message
-                    updatePastaJson.usuario = pastaUpdate
+                    updatePastaJson.pasta = pastaUpdate
 
                     return updatePastaJson
                 } else {
