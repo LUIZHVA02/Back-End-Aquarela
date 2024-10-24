@@ -71,6 +71,7 @@ const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
+const controllerPasta = require('./controller/controller-pastas.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -454,6 +455,38 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
 
     response.status(resultDados.status_code);
     response.json(resultDados);
+})
+
+// #region Pastas
+/******************************************************** Endpoints Pasta ********************************************************/
+
+app.get('/v1/aquarela/folders', cors(), async function (request, response, next) {
+
+    let searchPastas = await controllerPasta.getListPastas()
+
+    response.json(searchPastas)
+    response.status(searchPastas.status_code)
+})
+
+app.post('/v1/aquarela/folder', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPasta = await controllerPasta.setNovaPasta(dadosBody, contentType)
+
+    response.status(resultDadosPasta.status_code)
+    response.json(resultDadosPasta)
+
+})
+
+app.put('/v1/aquarela/folder/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_pasta = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerPasta.setUpdatePasta(dadosBody, contentType, id_pasta)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
 })
 
 const port = process.env.PORT || 8080

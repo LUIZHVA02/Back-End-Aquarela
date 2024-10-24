@@ -337,6 +337,5 @@ module.exports = {
     selectValidacaoUsuarioEmail,
     selectEmailCadastrado,
     selectFeed,
-    selectImages,
-
+    selectImages
 }
