@@ -157,7 +157,9 @@ const selectLastId = async () => {
 const selectValidacaoUsuarioNome = async (nome, senha) => {
 
     try {
-        let sql = `select id_usuario, nome_usuario from tbl_usuario where nome_usuario = '${nome}' and senha = md5('${senha}')`
+        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+        email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+        disponibilidade, avaliacao from tbl_usuario where nome_usuario = '${nome}' and senha = md5('${senha}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
@@ -169,7 +171,9 @@ const selectValidacaoUsuarioNome = async (nome, senha) => {
 const selectValidacaoUsuarioEmail = async (email, senha) => {
 
     try {
-        let sql = `select id_usuario, email from tbl_usuario where email = '${email}' and senha = md5('${senha}')`
+        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+        email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+        disponibilidade, avaliacao from tbl_usuario where email = '${email}' and senha = md5('${senha}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
