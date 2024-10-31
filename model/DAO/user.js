@@ -39,7 +39,6 @@ const insertUsuario = async (dadosUsuario) => {
                                                 '${dadosUsuario.disponibilidade}', 
                                                 true
                                             )`
-        console.log(sql)
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
         if (resultStatus) {
@@ -52,7 +51,7 @@ const insertUsuario = async (dadosUsuario) => {
     } catch (error) {
         console.error("Erro ao inserir usuário: ", error);
 
-        console.log(error + "aqui");
+        console.log(error);
 
         return false
     }
