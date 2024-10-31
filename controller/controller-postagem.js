@@ -275,5 +275,6 @@ module.exports = {
   getListarPostagens,
   getBuscarPostagem,
   setAtualizarPostagem,
-  setExcluirPostagem
+  setExcluirPostagem,
+  setCurtirPostagem 
 }

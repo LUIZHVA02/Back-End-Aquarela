@@ -393,7 +393,6 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 
 })
 
-
 app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_seguidores = request.params.id
@@ -436,7 +435,6 @@ app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, 
 
 })
 
-
 app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
@@ -455,6 +453,17 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
 
     response.status(resultDados.status_code);
     response.json(resultDados);
+})
+
+app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setCurtirPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
 })
 
 // #region Pastas
@@ -487,6 +496,16 @@ app.put('/v1/aquarela/folder/:id', cors(), bodyParserJson, async (request, respo
     let resultDados = await controllerPasta.setUpdatePasta(dadosBody, contentType, id_pasta)
     response.status(resultDados.status_code);
     response.json(resultDados)
+})
+
+app.put('/v1/aquarela/folders/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_pasta = request.params.id
+
+    let resultDados = await controllerPasta.setExcluirPasta(id_pasta);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
 })
 
 const port = process.env.PORT || 8080

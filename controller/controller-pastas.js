@@ -101,7 +101,7 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
 
                 if (pastaUpdate) {
 
-                    updatePastaJson.id = id_produto
+                    updatePastaJson.id = id_pasta
                     updatePastaJson.status = message.UPDATED_ITEM.status
                     updatePastaJson.status_code = message.UPDATED_ITEM.status_code
                     updatePastaJson.message = message.UPDATED_ITEM.message
@@ -129,47 +129,48 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
     }
 }
 
-// const setExcluirProduto = async function (id) {
-//     try {
+const setExcluirPasta = async function (id) {
+    try {
 
-//         let id_produto = id;
-//         let deleteProdutoJson = {}
-
-
-//         if (id_produto == '' || id_produto == undefined) {
-//             return message.ERROR_INVALID_ID;
-//         } else {
-//             const validaId = await produtoDAO.selectByIdpastas(id_produto)
-
-//             console.log(validaId);
+        let id_pasta = id;
+        let deletePastaJson = {}
 
 
-//             if (validaId.length > 0) {
+        if (id_pasta == '' || id_pasta == undefined) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await pastasDAO.selectByIdPasta(id_pasta)
 
-//                 let produto_status = "0"
+            console.log(validaId);
 
-//                 deleteProdutoJson.produto_status = produto_status
 
-//                 let dadosPasta = await produtoDAO.updatepasta(id_produto, deleteProdutoJson)
+            if (validaId.length > 0) {
 
-//                 if (dadosPasta) {
-//                     return message.DELETED_ITEM
-//                 } else {
-//                     return message.ERROR_INTERNAL_SERVER_DB
-//                 }
+                let pasta_status = "0"
 
-//             } else {
-//                 return message.ERROR_NOT_FOUND
-//             }
-//         }
-//     } catch (error) {
-//         return message.ERROR_INTERNAL_SERVER
-//     }
+                deletePastaJson.pasta_status = pasta_status
 
-// }
+                let dadosPasta = await pastasDAO.updatePasta(id_pasta, deletePastaJson)
+
+                if (dadosPasta) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
 
 module.exports = {
     setNovaPasta,
     getListPastas,
-    setUpdatePasta
+    setUpdatePasta,
+    setExcluirPasta
 }
