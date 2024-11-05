@@ -37,6 +37,7 @@ model tbl_usuario {
   usuario_status                                         Boolean
   tbl_carrinho_compra                                    tbl_carrinho_compra[]
   tbl_comentario                                         tbl_comentario[]
+  tbl_conta_usuario                                      tbl_conta_usuario[]
   tbl_conversa_tbl_conversa_id_usuario_1Totbl_usuario    tbl_conversa[]              @relation("tbl_conversa_id_usuario_1Totbl_usuario")
   tbl_conversa_tbl_conversa_id_usuario_2Totbl_usuario    tbl_conversa[]              @relation("tbl_conversa_id_usuario_2Totbl_usuario")
   tbl_curtida_postagem                                   tbl_curtida_postagem[]
@@ -439,5 +440,36 @@ model tbl_tipo_perfil_usuario {
   tbl_tipo_perfil            tbl_tipo_perfil @relation(fields: [id_tipo_perfil], references: [id_tipo_perfil], onDelete: NoAction, onUpdate: NoAction, map: "tbl_tipo_perfil_usuario_ibfk_2")
 
   @@index([id_tipo_perfil], map: "id_tipo_perfil")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tbl_banco {
+  id_banco     Int         @id @default(autoincrement())
+  banco        String?     @db.Text
+  banco_status Boolean
+  tbl_conta    tbl_conta[]
+}
+
+model tbl_conta {
+  id_conta          Int                 @id @default(autoincrement())
+  nome_completo     String?             @db.Text
+  nome_do_banco     Int?
+  agencia           String?             @db.Text
+  numero_da_conta   String?             @db.Text
+  dv                String?             @db.Text
+  tbl_banco         tbl_banco?          @relation(fields: [nome_do_banco], references: [id_banco], onDelete: NoAction, onUpdate: NoAction, map: "tbl_conta_ibfk_1")
+  tbl_conta_usuario tbl_conta_usuario[]
+
+  @@index([nome_do_banco], map: "nome_do_banco")
+}
+
+model tbl_conta_usuario {
+  id_conta_usuario Int          @id @default(autoincrement())
+  id_usuario       Int?
+  id_conta         Int?
+  tbl_conta        tbl_conta?   @relation(fields: [id_conta], references: [id_conta], onDelete: NoAction, onUpdate: NoAction, map: "tbl_conta_usuario_ibfk_1")
+  tbl_usuario      tbl_usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tbl_conta_usuario_ibfk_2")
+
+  @@index([id_conta], map: "id_conta")
   @@index([id_usuario], map: "id_usuario")
 }
