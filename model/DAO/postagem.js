@@ -131,17 +131,26 @@ const updatePosts = async function (id, dadosPostagem) {
 
 const insertCurtidaPostagem = async (dadosPostagem) => {
   try {
-    let sql = `insert into tbl_postagem  (   
-                                              id_postagem,
-                                              id_usuario,
-                                              curtidas_postagem_status
-                                          ) 
-                                          values 
-                                          (
-                                              '${dadosPostagem.id_postagem}',
-                                              '${dadosPostagem.id_usuario}',
-                                              true
-                                          )`;
+    let sql = `call procCurtirPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao curtir postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
+const insertFavoritarPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `call procFavoritarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {
@@ -163,5 +172,6 @@ module.exports = {
   selectAllPosts,
   selectByIdPosts,
   updatePosts,
-  insertCurtidaPostagem
+  insertCurtidaPostagem,
+  insertFavoritarPostagem
 }

@@ -66,7 +66,41 @@ const getListFollowers = async () => {
   }
 }
 
+const setSeguir = async (dadosSeguidores, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
 
+      let resultDadosSeguidores = {}
+
+      if (
+        dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
+        dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let novoSeguidor = await seguidorDAO.insertSeguidor(dadosSeguidores)
+
+        if (novoSeguidor) {
+          resultDadosSeguidores.status = message.CREATED_ITEM.status
+          resultDadosSeguidores.status_code = message.CREATED_ITEM.status_code
+          resultDadosSeguidores.status = message.CREATED_ITEM.message
+          resultDadosSeguidores.seguidor = dadosSeguidores
+
+          return resultDadosSeguidores
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar seguir: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
 
 const setExcluirSeguidor = async function (id) {
   try {
@@ -107,5 +141,6 @@ const setExcluirSeguidor = async function (id) {
 module.exports = {
   setNovoSeguidor,
   getListFollowers,
-  setExcluirSeguidor
+  setExcluirSeguidor,
+  setSeguir
 }
