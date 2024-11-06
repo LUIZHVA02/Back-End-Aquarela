@@ -131,6 +131,7 @@ const updatePosts = async function (id, dadosPostagem) {
 
 const insertCurtidaPostagem = async (dadosPostagem) => {
   try {
+<<<<<<< HEAD
     let sql = `call procCurtirPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
@@ -151,6 +152,9 @@ const insertCurtidaPostagem = async (dadosPostagem) => {
 const insertFavoritarPostagem = async (dadosPostagem) => {
   try {
     let sql = `call procFavoritarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
+=======
+    let sql = `call procCurtirPostagem(${idPostagem}, ${idUsuario})`;
+>>>>>>> 1d01fd4564728fd919afdb731d77811aaacce5ec
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {

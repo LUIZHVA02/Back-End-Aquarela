@@ -230,7 +230,6 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
-// #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -302,7 +301,6 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.json(resultDados);
 })
 
-// #region Produtos
 /******************************************************** Endpoints Produtos ********************************************************/
 
 app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
@@ -416,6 +414,7 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 
 })
 
+
 app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_seguidores = request.params.id
@@ -494,17 +493,6 @@ app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, resp
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setCurtirPostagem(dadosBody, contentType)
-
-    response.status(resultDadosPostagem.status_code)
-    response.json(resultDadosPostagem)
-
-})
-
-app.post('/v1/aquarela/favorite/posts', cors(), bodyParserJson, async (request, response, next) => {
-
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let resultDadosPostagem = await controllerPostagem.setFavoritarPostagem(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
     response.json(resultDadosPostagem)

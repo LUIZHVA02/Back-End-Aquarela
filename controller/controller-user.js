@@ -667,7 +667,7 @@ const setAtualizarSenha = async (dadosUsuario, contentType, id_usuario) => {
         return message.ERROR_CONTENT_TYPE
     }
 }
-
+  
 
 module.exports = {
     setNovoUsuario,
