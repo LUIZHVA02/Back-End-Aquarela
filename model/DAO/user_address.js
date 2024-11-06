@@ -8,12 +8,15 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const insertUserAddress = async(id_endereco, id_usuario) => {
+const insertUserAddress = async (id_endereco, id_usuario) => {
     try {
         let sql = `INSERT INTO tbl_usuario_endereco (id_endereco, id_usuario, usuario_endereco_status) VALUES (${id_endereco}, ${id_usuario}, 1);`
-
+        console.log(sql);
         let rs = await prisma.$executeRawUnsafe(sql)
-        
+
+
+
+
         return rs
     } catch (error) {
         console.log(error);
@@ -21,6 +24,6 @@ const insertUserAddress = async(id_endereco, id_usuario) => {
     }
 }
 
-module.exports={
+module.exports = {
     insertUserAddress
 }

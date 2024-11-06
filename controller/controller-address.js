@@ -10,24 +10,23 @@ const setNewAddress = async (dataAddress, contentType) => {
 
       if (
         dataAddress.logradouro == "" || dataAddress.logradouro == undefined || dataAddress.logradouro.length > 150 ||
-        dataAddress.numero_casa == "" ||  dataAddress.numero_casa == undefined ||
+        dataAddress.numero_casa == "" || dataAddress.numero_casa == undefined ||
         dataAddress.complemento == "" || dataAddress.complemento == undefined || dataAddress.complemento.length > 150 ||
         dataAddress.bairro == "" || dataAddress.bairro == undefined || dataAddress.bairro.length > 150 ||
         dataAddress.estado == "" || dataAddress.estado == undefined || dataAddress.estado.length > 20 ||
         dataAddress.cidade == "" || dataAddress.cidade == undefined || dataAddress.cidade.length > 100 ||
         dataAddress.cep == "" || dataAddress.cep == undefined || dataAddress.cep.length > 9 ||
-        dataAddress.status == "" || dataAddress.status == undefined ||
         dataAddress.id_usuario == "" || dataAddress.id_usuario == undefined || isNaN(dataAddress.id_usuario)
       ) {
         return message.ERROR_REQUIRED_FIELDS;
       } else {
-        
+
         let newAddress = await addressDAO.insertAddress(dataAddress);
         let idU = dataAddress.id_usuario;
 
         if (newAddress) {
           let lastId = await addressDAO.selectLastId();
-          let idA = lastId[0].id_endereco;
+          let idA = lastId[0].id;
 
           let connect = await userAddressDAO.insertUserAddress(idA, idU);
 
@@ -242,7 +241,73 @@ const getSearchAddress = async (id) => {
   }
 };
 
-const setExcluirendereco = async function (id) {
+const getSearchUserAddresses = async (id_usuario) => {
+  try {
+    let id_user = id_usuario
+    let userAddressesJSON = {}
+    let userAddressesArray = []
+    let addressesUserJSON = {}
+
+
+    if (id_user == null || id_user == undefined || isNaN(id_user)) {
+      return message.ERROR_INVALID_ID
+    } else {
+
+      let validaId = await userDAO.selectByIdUsuarioAtivo(id_user)
+
+      if (validaId != false) {
+        let dataUserAdresses = await addressDAO.selectAllUserAdresses(id_user);
+
+        if (dataUserAdresses) {
+          if (dataUserAdresses.length > 0) {
+
+            const keys = Object.keys(dataUserAdresses)
+
+            keys.forEach((key, index) => {
+
+              addressesUserJSON = {
+                id_endereco: `${dataUserAdresses[key].id_endereco}`,
+                logradouro: `${dataUserAdresses[key].logradouro}`,
+                numero_casa: `${dataUserAdresses[key].numero_casa}`,
+                complemento: `${dataUserAdresses[key].complemento}`,
+                bairro: `${dataUserAdresses[key].bairro}`,
+                estado: `${dataUserAdresses[key].estado}`,
+                cidade: `${dataUserAdresses[key].cidade}`,
+                cep: `${dataUserAdresses[key].cep}`
+              }
+
+              userAddressesArray.push(addressesUserJSON)
+
+            })
+
+            userAddressesJSON.id_usuario = dataUserAdresses[0].id_usuario
+            userAddressesJSON.nome = dataUserAdresses[0].nome
+            userAddressesJSON.nome_usuario = dataUserAdresses[0].nome_usuario
+            userAddressesJSON.email = dataUserAdresses[0].email
+            userAddressesJSON.enderecos = userAddressesArray
+            userAddressesJSON.status_code = 200;
+
+            console.log(userAddressesJSON);
+            
+
+            return userAddressesJSON;
+          } else {
+            return message.ERROR_NOT_FOUND; // 404
+          }
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB; // 500
+        }
+      } else {
+        return message.ERROR_NOT_FOUND;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    message.ERROR_INTERNAL_SERVER
+  }
+}
+
+const setExcluirEndereco = async function (id) {
   try {
     let id_endereco = id;
     let deleteenderecoJson = {};
@@ -323,4 +388,7 @@ module.exports = {
   setUpdateAddress,
   getListAddres,
   getSearchAddress,
+  setExcluirEndereco,
+  setReativarEndereco,
+  getSearchUserAddresses
 };
