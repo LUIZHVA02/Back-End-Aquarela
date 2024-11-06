@@ -204,7 +204,7 @@ const setCurtirPostagem = async (dadosPostagem, contentType) => {
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
-        let novaPostagem = await postagemDAO.insertNovaPostagem(dadosPostagem)
+        let novaPostagem = await postagemDAO.insertCurtidaPostagem(dadosPostagem)
 
         if (novaPostagem) {
           resultDadosPostagem.status = message.CREATED_ITEM.status
@@ -272,5 +272,6 @@ module.exports = {
   getListarPostagens,
   getBuscarPostagem,
   setAtualizarPostagem,
-  setExcluirPostagem
+  setExcluirPostagem,
+  setCurtirPostagem 
 }

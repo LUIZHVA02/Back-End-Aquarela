@@ -19,6 +19,7 @@ select tbl_usuario.id_usuario, tbl_usuario.nome, tbl_postagem.id_postagem from t
 inner join tbl_curtida_postagem on tbl_usuario.id_usuario = tbl_curtida_postagem.id_usuario
 inner join tbl_postagem on tbl_curtida_postagem.id_usuario= tbl_postagem.id_postagem; 
 
+
 # Feed
 
 DELIMITER $$
@@ -178,7 +179,8 @@ insert into tbl_preferencia (id_usuario, id_categoria, preferencia_status) value
 (12,225,true);
 
 
-call GetGerarFeed(12)
+call GetGerarFeed(12);
+
 
 # Listar postagem e produto
 
@@ -194,3 +196,41 @@ JOIN
     tbl_postagem po 
 ON 
     p.id_usuario = po.id_usuario;
+
+
+select * from tbl_usuario;
+select * from tbl_seguidores;
+select * from tbl_endereco;
+select * from tbl_usuario_endereco;
+select * from tbl_postagem;
+select * from tbl_produto;
+select * from tbl_categoria;
+select * from tbl_categoria_produto;
+select * from tbl_categoria_postagem;
+select * from tbl_preferencia;
+select * from tbl_comentario;
+select * from tbl_comentario_produto;
+select * from tbl_comentario_postagem;
+select * from tbl_produto_favorito;
+select * from tbl_postagem_favorita;
+select * from tbl_curtida_postagem;
+select * from tbl_curtida_produto;
+select * from tbl_visualizacao_produto;
+select * from tbl_visualizacao_postagem;
+select * from tbl_imagem;
+select * from tbl_imagem_produto;
+select * from tbl_imagem_postagem;
+select * from tbl_pasta;
+select * from tbl_pasta_postagem;
+select * from tbl_pasta_produto;
+select * from tbl_carrinho_compra;
+select * from tbl_item_carrinho;
+select * from tbl_pedido;
+select * from tbl_item_pedido;
+select * from tbl_conversa;
+select * from tbl_mensagem;
+select * from tbl_tipo_perfil;
+select * from tbl_tipo_perfil_usuario;
+select * from tbl_banco;
+select * from tbl_conta;
+select * from tbl_conta_usuario;

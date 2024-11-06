@@ -43,6 +43,8 @@
  * 
  *      Caso ocorra algum problema, execute:
  *          npm i 
+ * 
+ * db-aquarela.mysql.database.azure.com
  */
 
 const express = require('express')
@@ -71,6 +73,7 @@ const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
+const controllerPasta = require('./controller/controller-pastas.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -177,7 +180,7 @@ app.post('/v1/aquarela/authentication/user/email/registered', cors(), bodyParser
 
 })
 
-app.put('/v1/aquarela/user/password', cors(), bodyParserJson, async (request, response, next) => {
+app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_usuario = request.params.id
     let contentType = request.headers['content-type']
@@ -227,10 +230,6 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
-<<<<<<< HEAD
-=======
-// #region Endereço
->>>>>>> 49331eb1c41b38b833d6c9dcc75f8ae2beeeefa9
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -302,10 +301,6 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.json(resultDados);
 })
 
-<<<<<<< HEAD
-=======
-// #region Produtos
->>>>>>> 49331eb1c41b38b833d6c9dcc75f8ae2beeeefa9
 /******************************************************** Endpoints Produtos ********************************************************/
 
 app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
@@ -398,12 +393,8 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 
 })
 
-<<<<<<< HEAD
-// app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
-=======
 
 app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
->>>>>>> 49331eb1c41b38b833d6c9dcc75f8ae2beeeefa9
 
     let id_seguidores = request.params.id
     let contentType = request.headers['content-type']
@@ -464,8 +455,6 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
-
-/************************************************************************************************************************************/
 
 const port = process.env.PORT || 8080
 app.listen(port, () => { console.log('API funcionando na porta ' + port) })

@@ -86,6 +86,8 @@ const selectAllPosts = async (id) => {
       return false;
     }
   } catch (error) {
+    console.log(error);
+    
     return false;
   }
 };
@@ -127,9 +129,29 @@ const updatePosts = async function (id, dadosPostagem) {
 
 }
 
+const insertCurtidaPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `call procCurtirPostagem(${idPostagem}, ${idUsuario})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao curtir postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,
   selectByIdPosts,
   updatePosts,
-};
+  insertCurtidaPostagem
+}
