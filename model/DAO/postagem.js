@@ -131,7 +131,6 @@ const updatePosts = async function (id, dadosPostagem) {
 
 const insertCurtidaPostagem = async (dadosPostagem) => {
   try {
-<<<<<<< HEAD
     let sql = `call procCurtirPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
@@ -152,9 +151,6 @@ const insertCurtidaPostagem = async (dadosPostagem) => {
 const insertFavoritarPostagem = async (dadosPostagem) => {
   try {
     let sql = `call procFavoritarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
-=======
-    let sql = `call procCurtirPostagem(${idPostagem}, ${idUsuario})`;
->>>>>>> 1d01fd4564728fd919afdb731d77811aaacce5ec
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {
@@ -171,11 +167,31 @@ const insertFavoritarPostagem = async (dadosPostagem) => {
   }
 };
 
+const insertVisualizarPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `call procVisualizarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao visualizar postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,
   selectByIdPosts,
   updatePosts,
   insertCurtidaPostagem,
-  insertFavoritarPostagem
+  insertFavoritarPostagem,
+  insertVisualizarPostagem
 }

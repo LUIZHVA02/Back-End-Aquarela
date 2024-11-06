@@ -150,10 +150,32 @@ const insertFavoritarProduto = async (dadosProduto) => {
     }
 };
 
+const insertVisualizarProduto = async (dadosProduto) => {
+    try {
+      let sql = `call procCurtirProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let resultStatus = await prisma.$executeRawUnsafe(sql);
+  
+      if (resultStatus) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao favoritar produto: ", error);
+  
+      console.log(error + "aqui");
+  
+      return false;
+    }
+};
+
+
 module.exports = {
     insertNovoProduto,
     selectAllProducts,
     updateProduct,
     selectByIdProducts,
-    insertCurtirProduto
+    insertCurtirProduto,
+    insertFavoritarProduto,
+    insertVisualizarProduto
 }

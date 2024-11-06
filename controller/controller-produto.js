@@ -273,7 +273,7 @@ const setFavoritarProduto = async (dadosProduto, contentType) => {
         ) {
           return message.ERROR_REQUIRED_FIELDS
         } else {
-          let favoritarProduto = await produtoDAO.insertCurtirProduto(dadosProduto)
+          let favoritarProduto = await produtoDAO.insertFavoritarProduto(dadosProduto)
   
           if (favoritarProduto) {
             resultDadosProduto.status = message.CREATED_ITEM.status
@@ -297,6 +297,41 @@ const setFavoritarProduto = async (dadosProduto, contentType) => {
     }
 }
 
+const setVisualizarProduto = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultDadosVisualizar = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let visualizarProduto = await produtoDAO.insertVisualizarProduto(dadosProduto)
+  
+          if (visualizarProduto) {
+            resultDadosVisualizar.status = message.CREATED_ITEM.status
+            resultDadosVisualizar.status_code = message.CREATED_ITEM.status_code
+            resultDadosVisualizar.status = message.CREATED_ITEM.message
+            resultDadosVisualizar.produto = dadosProduto
+  
+            return resultDadosVisualizar
+  
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar visualizar produto: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+  }
 
 const setExcluirProduto = async function (id) {
     try {

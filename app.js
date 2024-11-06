@@ -346,10 +346,10 @@ app.post('/v1/aquarela/like/product', cors(), bodyParserJson, async (request, re
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let resultDadosPostagem = await controllerProduto.setCurtirProduto(dadosBody, contentType)
+    let resultDadosProduto = await controllerProduto.setCurtirProduto(dadosBody, contentType)
 
-    response.status(resultDadosPostagem.status_code)
-    response.json(resultDadosPostagem)
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
 
 })
 
@@ -357,12 +357,24 @@ app.post('/v1/aquarela/favorite/product', cors(), bodyParserJson, async (request
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let resultDadosPostagem = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
 
-    response.status(resultDadosPostagem.status_code)
-    response.json(resultDadosPostagem)
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
 
 })
+
+app.post('/v1/aquarela/vizualizer/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
 // #region Categorias
 /******************************************************** Endpoints Categorias ********************************************************/
 
@@ -493,6 +505,17 @@ app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, resp
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setCurtirPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/vizualizer/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setVisualizarPostagem(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
     response.json(resultDadosPostagem)
