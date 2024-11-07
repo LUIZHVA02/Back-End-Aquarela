@@ -1,6 +1,5 @@
 const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
-const tratamento = require('../modulo/tratamento.js')
 
 const setNovoUsuario = async (dadosUsuario, contentType) => {
     try {
@@ -315,7 +314,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     cpf != '' &&
                     cpf != undefined &&
                     cpf != null &&
-                    cpf.length < 11
+                    cpf.length == 11
                 ) {
                     updateUsuarioJson.cpf = cpf
                 } else if (
@@ -340,7 +339,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     telefone != '' &&
                     telefone != undefined &&
                     telefone != null &&
-                    telefone.length < 11
+                    telefone.length == 11
                 ) {
                     updateUsuarioJson.telefone = telefone
                 } else if (
@@ -373,9 +372,6 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     usuario_status == null
                 ) { }
 
-                console.log(id_user, updateUsuarioJson);
-
-
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
 
                 let updatedUserJson = {}
@@ -386,12 +382,10 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     updatedUserJson.status = message.UPDATED_ITEM.status
                     updatedUserJson.status_code = message.UPDATED_ITEM.status_code
                     updatedUserJson.message = message.UPDATED_ITEM.message
-                    updatedUserJson.usuario = usuarioAtualizado
+                    updatedUserJson.usuario = id_user
 
                     return updatedUserJson
                 } else {
-
-                    console.log(usuarioAtualizado);
 
                     return message.ERROR_INTERNAL_SERVER_DB
                 }

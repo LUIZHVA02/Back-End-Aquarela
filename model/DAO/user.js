@@ -6,6 +6,7 @@
 ****************************************************************************************************************************************************/
 
 const { PrismaClient } = require('@prisma/client');
+const res = require('express/lib/response');
 const prisma = new PrismaClient();
 
 // Inserir um novo usuário
@@ -102,16 +103,20 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
         const keys = Object.keys(dadosUsuarioUpdate)
 
         keys.forEach((key, index) => {
-            sql += `${key} = '${dadosUsuarioUpdate[key]}'`
-            if (index !== keys.length - 1) {
-                sql += `, `
+            if (key == "senha") {
+                sql += `${key} = md5('${dadosUsuarioUpdate[key]}')`
+                if (index !== keys.length - 1) {
+                    sql += `, `
+                }
+            } else {
+                sql += `${key} = '${dadosUsuarioUpdate[key]}'`
+                if (index !== keys.length - 1) {
+                    sql += `, `
+                }
             }
         })
 
         sql += ` WHERE id_usuario = ${id};`
-
-        console.log(sql);
-        
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -158,7 +163,8 @@ const selectValidacaoUsuarioNome = async (nome, senha) => {
     try {
         let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-        disponibilidade, avaliacao from tbl_usuario where nome_usuario = '${nome}' and senha = md5('${senha}')`
+        disponibilidade, avaliacao from tbl_usuario where nome_usuario = '${nome}' and 
+        senha = md5('${senha}') and usuario_status = "1";`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
@@ -172,7 +178,8 @@ const selectValidacaoUsuarioEmail = async (email, senha) => {
     try {
         let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-        disponibilidade, avaliacao from tbl_usuario where email = '${email}' and senha = md5('${senha}')`
+        disponibilidade, avaliacao from tbl_usuario where email = '${email}' and 
+        senha = md5('${senha}') and usuario_status = "1";`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
@@ -181,7 +188,7 @@ const selectValidacaoUsuarioEmail = async (email, senha) => {
 }
 
 const selectEmailCadastrado = async (email) => {
-    
+
     try {
         let sql = `select id_usuario, email from tbl_usuario where email = '${email}')`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
@@ -304,7 +311,7 @@ const selectFeed = async (id) => {
             RAND();
 
         `
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)        
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
 
     } catch (error) {
@@ -312,7 +319,7 @@ const selectFeed = async (id) => {
         return false
     }
 
-} 
+}
 
 const selectImages = async (id, postType) => {
     try {
@@ -321,8 +328,8 @@ const selectImages = async (id, postType) => {
             inner join tbl_imagem_${postType} as tip
             on ti.id_imagem=tip.id_imagem
             where tip.id_${postType} = ${id} and tip.imagem_${postType}_status = true
-        `        
-        let rsImagem = await prisma.$queryRawUnsafe(sql)        
+        `
+        let rsImagem = await prisma.$queryRawUnsafe(sql)
         return rsImagem
     } catch (error) {
         return error

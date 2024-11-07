@@ -287,9 +287,6 @@ const getSearchUserAddresses = async (id_usuario) => {
             userAddressesJSON.enderecos = userAddressesArray
             userAddressesJSON.status_code = 200;
 
-            console.log(userAddressesJSON);
-            
-
             return userAddressesJSON;
           } else {
             return message.ERROR_NOT_FOUND; // 404

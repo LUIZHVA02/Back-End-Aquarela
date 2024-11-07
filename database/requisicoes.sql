@@ -23,7 +23,6 @@ inner join tbl_postagem on tbl_curtida_postagem.id_usuario= tbl_postagem.id_post
 # Feed
 
 DELIMITER $$
-
 CREATE PROCEDURE GetGerarFeed(IN userId INT)
 BEGIN
     SELECT * FROM (
@@ -149,7 +148,6 @@ BEGIN
         num_categorias DESC,  
         RAND();  
 END $$
-
 DELIMITER ;
 
 select * from tbl_usuario;
@@ -231,6 +229,10 @@ select * from tbl_conversa;
 select * from tbl_mensagem;
 select * from tbl_tipo_perfil;
 select * from tbl_tipo_perfil_usuario;
+
+select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+        email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+        disponibilidade, avaliacao from tbl_usuario where nome_usuario = 'matheus' and senha = md5('1533')
 select * from tbl_banco;
 select * from tbl_conta;
 select * from tbl_conta_usuario;

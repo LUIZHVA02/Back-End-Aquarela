@@ -44,7 +44,7 @@
  *      Caso ocorra algum problema, execute:
  *          npm i 
  * 
- * db-aquarela.mysql.database.azure.com
+ *
  */
 
 const express = require('express')
