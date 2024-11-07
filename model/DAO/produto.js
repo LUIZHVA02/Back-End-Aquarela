@@ -133,7 +133,7 @@ const insertCurtirProduto = async (dadosProduto) => {
 
 const insertFavoritarProduto = async (dadosProduto) => {
     try {
-      let sql = `call procCurtirProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let sql = `call procFavoritarProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
       let resultStatus = await prisma.$executeRawUnsafe(sql);
   
       if (resultStatus) {
@@ -152,7 +152,7 @@ const insertFavoritarProduto = async (dadosProduto) => {
 
 const insertVisualizarProduto = async (dadosProduto) => {
     try {
-      let sql = `call procCurtirProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let sql = `call procVisualizarProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
       let resultStatus = await prisma.$executeRawUnsafe(sql);
   
       if (resultStatus) {

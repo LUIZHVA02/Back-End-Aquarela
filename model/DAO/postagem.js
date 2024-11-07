@@ -186,6 +186,68 @@ const insertVisualizarPostagem = async (dadosPostagem) => {
   }
 };
 
+const insertNovoComentario = async (dadosComentario) => {
+  try {
+    let sql = `insert into tbl_comentario  (   
+                                              mensagem,
+                                              id_usuario,
+                                              id_resposta,
+                                              comentario_status
+                                          ) 
+                                          values 
+                                          (
+                                              '${dadosComentario.mensagem}',
+                                              '${dadosComentario.id_usuario}',
+                                              '${dadosComentario.id_resposta}',
+                                              true
+                                          )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao inserir comentario: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
+const insertComentarioPublicacao = async (idComentario, idPublicacao) => {
+  try {
+    let sql = `insert into tbl_comentario_publicacao  (   
+                                              mensagem,
+                                              id_usuario,
+                                              id_resposta,
+                                              comentario_status
+                                          ) 
+                                          values 
+                                          (
+                                              '${dadosComentario.mensagem}',
+                                              '${dadosComentario.id_usuario}',
+                                              '${dadosComentario.id_resposta}',
+                                              true
+                                          )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao inserir comentario: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,
@@ -193,5 +255,6 @@ module.exports = {
   updatePosts,
   insertCurtidaPostagem,
   insertFavoritarPostagem,
-  insertVisualizarPostagem
+  insertVisualizarPostagem,
+  insertNovoComentario
 }
