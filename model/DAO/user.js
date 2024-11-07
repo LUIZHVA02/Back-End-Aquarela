@@ -197,111 +197,130 @@ const selectFeed = async (id) => {
     try {
 
         let sql = `
-
         SELECT
-            'produto' AS tipo,
-            tp.id_produto AS id_publicacao,
-            tp.nome,
-            tp.descricao,
-            tp.item_digital,
-            tp.marca_dagua,
-            tp.preco,
-            tp.quantidade,
-            tp.id_usuario AS id_dono_publicacao,
-            CAST(CASE 
-                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
-                ELSE 0 
-            END AS DECIMAL) AS curtida,
-            CAST(1 AS DECIMAL) AS preferencia
-        FROM tbl_produto AS tp
-        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
-        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
+        'produto' AS tipo,
+        tp.id_produto AS id_publicacao,
+        tp.nome,
+        tp.descricao,
+        tp.item_digital,
+        tp.marca_dagua,
+        tp.preco,
+        tp.quantidade,
+        tp.id_usuario AS id_dono_publicacao,
+        CAST(CASE 
+        WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS curtida,
+        CAST(CASE 
+        WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS favorito,
+        CAST(1 AS DECIMAL) AS preferencia
+       FROM tbl_produto AS tp
+       LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+       LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
+       LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${id}
+       WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+       GROUP BY tp.id_produto
+       
+       UNION ALL
+       
+       SELECT
+        'postagem' AS tipo,
+        tp.id_postagem AS id_publicacao,
+        tp.nome,
+        tp.descricao,
+        NULL AS item_digital,
+        NULL AS marca_dagua,
+        NULL AS preco,
+        NULL AS quantidade,
+        tp.id_usuario AS id_dono_publicacao,
+        CAST(CASE 
+        WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS curtida,
+        CAST(CASE 
+        WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS favorito,
+        CAST(1 AS DECIMAL) AS preferencia
+       FROM tbl_postagem AS tp
+       LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+       LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
+       LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${id}
+       WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+       GROUP BY tp.id_postagem
+       
+       UNION ALL
+       
+       SELECT
+        'produto' AS tipo,
+        tp.id_produto AS id_publicacao,
+        tp.nome,
+        tp.descricao,
+        tp.item_digital,
+        tp.marca_dagua,
+        tp.preco,
+        tp.quantidade,
+        tp.id_usuario AS id_dono_publicacao,
+        CAST(CASE 
+        WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS curtida,
+        CAST(CASE 
+        WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS favorito,
+        CAST(0 AS DECIMAL) AS preferencia
+       FROM tbl_produto AS tp
+       LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
+       LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
+       LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${id}
+       GROUP BY tp.id_produto
+       HAVING tp.id_produto NOT IN (
+        SELECT tp.id_produto FROM tbl_produto AS tp
+        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto
         WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
-        GROUP BY tp.id_produto
-
-        UNION ALL
-
-        SELECT
-            'postagem' AS tipo,
-            tp.id_postagem AS id_publicacao,
-            tp.nome,
-            tp.descricao,
-            NULL AS item_digital,
-            NULL AS marca_dagua,
-            NULL AS preco,
-            NULL AS quantidade,
-            tp.id_usuario AS id_dono_publicacao,
-            CAST(CASE 
-                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
-                ELSE 0 
-            END AS DECIMAL) AS curtida,
-            CAST(1 AS DECIMAL) AS preferencia
-        FROM tbl_postagem AS tp
-        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
-        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
+       )
+       
+       UNION ALL
+       
+       SELECT
+        'postagem' AS tipo,
+        tp.id_postagem AS id_publicacao,
+        tp.nome,
+        tp.descricao,
+        NULL AS item_digital,
+        NULL AS marca_dagua,
+        NULL AS preco,
+        NULL AS quantidade,
+        tp.id_usuario AS id_dono_publicacao,
+        CAST(CASE 
+        WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS curtida,
+        CAST(CASE 
+        WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS favorito,
+        CAST(0 AS DECIMAL) AS preferencia
+       FROM tbl_postagem AS tp
+       LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
+       LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
+       LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${id}
+       GROUP BY tp.id_postagem
+       HAVING tp.id_postagem NOT IN (
+        SELECT tp.id_postagem FROM tbl_postagem AS tp
+        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem
         WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
-        GROUP BY tp.id_postagem
-
-        UNION ALL
-
-        SELECT
-            'produto' AS tipo,
-            tp.id_produto AS id_publicacao,
-            tp.nome,
-            tp.descricao,
-            tp.item_digital,
-            tp.marca_dagua,
-            tp.preco,
-            tp.quantidade,
-            tp.id_usuario AS id_dono_publicacao,
-            CAST(CASE 
-                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
-                ELSE 0 
-            END AS DECIMAL) AS curtida,
-            CAST(0 AS DECIMAL) AS preferencia
-        FROM tbl_produto AS tp
-        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
-        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
-        GROUP BY tp.id_produto
-        HAVING tp.id_produto NOT IN (
-            SELECT tp.id_produto FROM tbl_produto AS tp
-            LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto
-            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
-        )
-
-        UNION ALL
-
-        SELECT
-            'postagem' AS tipo,
-            tp.id_postagem AS id_publicacao,
-            tp.nome,
-            tp.descricao,
-            NULL AS item_digital,
-            NULL AS marca_dagua,
-            NULL AS preco,
-            NULL AS quantidade,
-            tp.id_usuario AS id_dono_publicacao,
-            CAST(CASE 
-                WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
-                ELSE 0 
-            END AS DECIMAL) AS curtida,
-            CAST(0 AS DECIMAL) AS preferencia
-        FROM tbl_postagem AS tp
-        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
-        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
-        GROUP BY tp.id_postagem
-        HAVING tp.id_postagem NOT IN (
-            SELECT tp.id_postagem FROM tbl_postagem AS tp
-            LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem
-            WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
-        )
-
-        ORDER BY 
-            CASE 
-                WHEN preferencia = 1 THEN 1 
-                ELSE 2 
-            END,
-            RAND();
+       )
+       
+       ORDER BY 
+        CASE 
+        WHEN preferencia = 1 THEN 1 
+        ELSE 2 
+        END,
+        RAND()
 
         `
         let rsUsuario = await prisma.$queryRawUnsafe(sql)        
@@ -329,6 +348,119 @@ const selectImages = async (id, postType) => {
     }
 }
 
+const selectUserByNickname = async (nickname) => {
+    try {
+        let sql = `
+                SELECT 
+                u.id_usuario AS id,
+                u.nome,
+                u.nome_usuario,
+                u.foto_usuario,
+                u.descricao,
+                u.email,
+                u.cpf,
+                u.data_nascimento,
+                u.telefone,
+                u.disponibilidade,
+                u.avaliacao,
+                (SELECT COUNT(*) FROM tbl_postagem p WHERE p.id_usuario = u.id_usuario) +
+                (SELECT COUNT(*) FROM tbl_produto pr WHERE pr.id_usuario = u.id_usuario) AS qnt_publicacoes,
+                (SELECT COUNT(*) FROM tbl_seguidores s WHERE s.id_seguindo = u.id_usuario) AS seguidores,
+                (SELECT COUNT(*) FROM tbl_seguidores s WHERE s.id_seguidor = u.id_usuario) AS seguindo
+            FROM 
+                tbl_usuario as u
+            WHERE 
+                u.nome_usuario = ${nickname} and u.usuario_status = true  
+        `        
+        let rsUser = await prisma.$queryRawUnsafe(sql)        
+        return rsUser
+    } catch (error) {
+        return error
+    }
+}
+
+const selectFoldersByUser = async (id) => {
+    try {
+        let sql = `
+            SELECT
+                id_pasta,
+                nome
+
+            FROM 
+                tbl_pasta 
+            WHERE 
+                id_usuario = ${id}
+        `        
+        let rsFolder = await prisma.$queryRawUnsafe(sql)        
+        return rsFolder
+    } catch (error) {
+        return error
+    }
+}
+
+const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
+    try {
+        let sql = `
+        SELECT
+            'produto' AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+            WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+            ELSE 0 
+            END AS DECIMAL) AS curtida,
+            CAST(CASE 
+            WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+            ELSE 0 
+            END AS DECIMAL) AS favorito
+       FROM tbl_produto AS tp
+       LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idUsuario}
+       LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idUsuario}
+       WHERE tp.id_usuario = ${idDonoPublicacao}
+       GROUP BY tp.id_produto
+       
+       UNION ALL
+       
+       SELECT
+        'postagem' AS tipo,
+        tp.id_postagem AS id_publicacao,
+        tp.nome,
+        tp.descricao,
+        NULL AS item_digital,
+        NULL AS marca_dagua,
+        NULL AS preco,
+        NULL AS quantidade,
+        tp.id_usuario AS id_dono_publicacao,
+        CAST(CASE 
+        WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS curtida,
+        CAST(CASE 
+        WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+        ELSE 0 
+        END AS DECIMAL) AS favorito
+       FROM tbl_postagem AS tp
+       LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${idUsuario}
+       LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idUsuario}
+       WHERE tp.id_usuario = ${idDonoPublicacao}
+       GROUP BY tp.id_postagem
+       
+       ORDER BY id_publicacao
+        `        
+        let rsPost = await prisma.$queryRawUnsafe(sql)        
+        return rsPost
+    } catch (error) {
+        return error
+    }
+}
+
+
 module.exports = {
     insertUsuario,
     selectAllUsuarios,
@@ -340,5 +472,8 @@ module.exports = {
     selectValidacaoUsuarioEmail,
     selectEmailCadastrado,
     selectFeed,
-    selectImages
+    selectImages,
+    selectUserByNickname,
+    selectFoldersByUser,
+    selectPostsByUserId
 }

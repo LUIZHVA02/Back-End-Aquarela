@@ -338,6 +338,44 @@ const setExcluirPostagem = async function (id) {
 
 }
 
+const setComentarPostagem = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultDadosVisualizar = {}
+
+      if (
+        dadosPostagem.mensagem == '' || dadosPostagem.mensagem == undefined || dadosPostagem.mensagem.length > 255 ||
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null || 
+        dadosPostagem.id_resposta == '' || dadosPostagem.id_resposta == undefined || dadosPostagem.id_resposta == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let visualizarPostagem = await postagemDAO.insertNovoComentario(dadosPostagem)
+
+        if (visualizarPostagem) {
+          resultDadosVisualizar.status = message.CREATED_ITEM.status
+          resultDadosVisualizar.status_code = message.CREATED_ITEM.status_code
+          resultDadosVisualizar.status = message.CREATED_ITEM.message
+          resultDadosVisualizar.postagem = dadosPostagem
+
+          return resultDadosVisualizar
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar visualizar postagem: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
+
+
 module.exports = {
   setNovaPostagem,
   getListarPostagens,
@@ -346,5 +384,6 @@ module.exports = {
   setExcluirPostagem,
   setCurtirPostagem,
   setFavoritarPostagem,
-  setVisualizarPostagem
+  setVisualizarPostagem,
+  setComentarPostagem
 }

@@ -500,6 +500,17 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/favorite/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setFavoritarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
 app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
@@ -516,6 +527,17 @@ app.post('/v1/aquarela/vizualizer/posts', cors(), bodyParserJson, async (request
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setVisualizarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/coment/post', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setComentarPostagem(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
     response.json(resultDadosPostagem)
