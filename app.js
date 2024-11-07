@@ -230,6 +230,8 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
+
+// #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -301,6 +303,7 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.json(resultDados);
 })
 
+// #region Produtos
 /******************************************************** Endpoints Produtos ********************************************************/
 
 app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {

@@ -261,6 +261,8 @@ const getSearchUserAddresses = async (id_usuario) => {
         if (dataUserAdresses) {
           if (dataUserAdresses.length > 0) {
 
+            console.log(dataUserAdresses);
+
             const keys = Object.keys(dataUserAdresses)
 
             keys.forEach((key, index) => {

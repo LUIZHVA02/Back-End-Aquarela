@@ -232,7 +232,12 @@ select * from tbl_tipo_perfil_usuario;
 
 select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-        disponibilidade, avaliacao from tbl_usuario where nome_usuario = 'matheus' and senha = md5('1533')
+        disponibilidade, avaliacao from tbl_usuario where nome_usuario = 'matheus' and senha = md5('1533');
+        
+select tbl_preferencia.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, tbl_preferencia.id_categoria from tbl_categoria
+inner join tbl_preferencia on tbl_preferencia.id_categoria = tbl_categoria.id_categoria 
+inner join tbl_usuario on tbl_usuario.id_usuario = tbl_preferencia.id_usuario where preferencia_status = "1";
+
 select * from tbl_banco;
 select * from tbl_conta;
 select * from tbl_conta_usuario;

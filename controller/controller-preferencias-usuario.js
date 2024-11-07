@@ -33,7 +33,6 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
           })
         );
 
-        // Construir o resultado
         resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
         resultDadosPreferenciasUsuario.status_code = message.CREATED_ITEM.status_code;
         resultDadosPreferenciasUsuario.message = message.CREATED_ITEM.message;
@@ -42,7 +41,7 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
 
         console.log(categoriasArray); // Log no terminal para debug
 
-        return resultDadosPreferenciasUsuario; // Retornar o resultado
+        return resultDadosPreferenciasUsuario;
       }
     } else {
       return message.ERROR_CONTENT_TYPE;
@@ -56,12 +55,14 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
 const getListPreferences = async () => {
   try {
     let preferenciasJSON = {};
+    let usersArray = []
     let userPreferencesJSON = {}
     let userPreferencesARRAY = []
 
     let dadosPreferenciasUsuario =
       await userPreferencesDAO.selectAllPreferences();
 
+    console.log(dadosPreferenciasUsuario);
 
 
     if (dadosPreferenciasUsuario) {
@@ -69,24 +70,29 @@ const getListPreferences = async () => {
 
         const keys = Object.keys(dadosPreferenciasUsuario)
 
-            keys.forEach((key, index) => {
+        keys.forEach(key => {
 
-              addressesUserJSON = {
-                id_endereco: `${dataUserAdresses[key].id_endereco}`,
-                logradouro: `${dataUserAdresses[key].logradouro}`,
-                numero_casa: `${dataUserAdresses[key].numero_casa}`,
-                complemento: `${dataUserAdresses[key].complemento}`,
-                bairro: `${dataUserAdresses[key].bairro}`,
-                estado: `${dataUserAdresses[key].estado}`,
-                cidade: `${dataUserAdresses[key].cidade}`,
-                cep: `${dataUserAdresses[key].cep}`
-              }
+          let usuarioExistente = usersArray.find(usuario => usuario.id_usuario === key.id_usuario);
 
-              userAddressesArray.push(addressesUserJSON)
+          if (!usuarioExistente) {
+            usuarioExistente = {
+              id_usuario: key.id_usuario,
+              nome: key.nome,
+              nome_usuario: key.nome_usuario,
+              preferencias: []
+            };
+            console.log(usuarioExistente);
+            
+            usersArray.push(usuarioExistente);
+          }
 
-            })
+          usuarioExistente.preferencias.push({
+            id_categoria: key.id_categoria,
+            categoria: key.categoria
+          });
+        });
 
-        preferenciasJSON.usuarios = dadosPreferenciasUsuario;
+        preferenciasJSON.usuarios = usersArray;
         preferenciasJSON.quantity = dadosPreferenciasUsuario.length;
         preferenciasJSON.status_code = 200;
         return preferenciasJSON;
