@@ -68,6 +68,96 @@ const getListPreferences = async () => {
     if (dadosPreferenciasUsuario) {
       if (dadosPreferenciasUsuario.length > 0) {
 
+        // Eu preciso que essas informações:
+
+        // [
+        //   {
+        //     id_usuario: 1,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 142,
+        //     categoria: 'Arte e Questões Sociais'
+        //   },
+        //   {
+        //     id_usuario: 1,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 141,
+        //     categoria: 'Arte e Política'
+        //   },
+        //   {
+        //     id_usuario: 1,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 142,
+        //     categoria: 'Arte e Questões Sociais'
+        //   },
+        //   {
+        //     id_usuario: 2,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 121,
+        //     categoria: 'Álbum de Fotos'
+        //   },
+        //   {
+        //     id_usuario: 2,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 121,
+        //     categoria: 'Álbum de Fotos'
+        //   },
+        //   {
+        //     id_usuario: 2,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     id_categoria: 121,
+        //     categoria: 'Álbum de Fotos'
+        //   }
+        // ];
+
+        // se organizem deste jeito:
+
+        // [
+        //   {
+        //     id_usuario: 1,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     preferencias: [
+        //       {
+        //         id_categoria: 142,
+        //         categoria: 'Arte e Questões Sociais'
+        //       },
+        //       {
+        //         id_categoria: 141,
+        //         categoria: 'Arte e Política'
+        //       },
+        //       {
+        //         id_categoria: 142,
+        //         categoria: 'Arte e Questões Sociais'
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     id_usuario: 2,
+        //     nome: 'mats',
+        //     nome_usuario: 'matheus',
+        //     preferencias: [
+        //       {
+        //         id_categoria: 121,
+        //         categoria: 'Álbum de Fotos'
+        //       },
+        //       {
+        //         id_categoria: 121,
+        //         categoria: 'Álbum de Fotos'
+        //       },
+        //       {
+        //         id_categoria: 121,
+        //         categoria: 'Álbum de Fotos'
+        //       }
+        //     ]
+        //   }
+        // ];
+
         const keys = Object.keys(dadosPreferenciasUsuario)
 
         keys.forEach(key => {
