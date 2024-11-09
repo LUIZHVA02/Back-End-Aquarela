@@ -190,6 +190,16 @@ app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
+app.post('/v1/aquarela/authentication/user/email/surname', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getBuscarApelido(dadosBody.email, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 // #region Preferência-Usuário
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/
 

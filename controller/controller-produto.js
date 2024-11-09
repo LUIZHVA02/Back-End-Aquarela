@@ -378,5 +378,6 @@ module.exports = {
     setUpdateProducts,
     setExcluirProduto,
     setCurtirProduto,
-    setFavoritarProduto
+    setFavoritarProduto,
+    setVisualizarProduto
 }

@@ -46,7 +46,7 @@ const selectAllCategoriesByPostQuantity = async () => {
     from 
       tbl_categoria as c
     order by 
-      rand();
+        rand();
         `;
 
     let resultStatus = await prisma.$queryRawUnsafe(sql);

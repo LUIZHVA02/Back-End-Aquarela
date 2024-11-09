@@ -662,6 +662,46 @@ const setAtualizarSenha = async (dadosUsuario, contentType, id_usuario) => {
     }
 }
   
+const getBuscarApelido = async (nomeUsuario, contentType) => {
+    try {
+        if (String(contentType).toLowerCase() == 'application/json') {
+            let nome_usuario = nomeUsuario
+            let usuarioJSON = {}
+
+            if (nome_usuario == '' || nome_usuario == undefined) {
+                console.log(nome_usuario);
+                return message.ERROR_REQUIRED_FIELDS
+                
+            } else {
+
+                let dadosUsuario = await userDAO.selectUserByNickname(nome_usuario)
+
+                if (dadosUsuario) {
+                    if (dadosUsuario.length > 0) {
+                        let usuario = dadosUsuario
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
+                        usuarioJSON.message = message.VALIDATED_ITEM.message
+                        usuarioJSON.usuario = usuario
+
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND
+                    }
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+            }
+        } else {
+            return message.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+
 
 module.exports = {
     setNovoUsuario,
@@ -674,5 +714,6 @@ module.exports = {
     setReativarUsuario,
     getEmailCadastrado,
     setAtualizarSenha,
-    getFeed
+    getFeed,
+    getBuscarApelido
 }

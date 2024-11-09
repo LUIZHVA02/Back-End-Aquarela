@@ -342,7 +342,7 @@ const setComentarPostagem = async (dadosPostagem, contentType) => {
   try {
     if (String(contentType).toLowerCase() == 'application/json') {
 
-      let resultDadosVisualizar = {}
+      let resultDadosComentar = {}
 
       if (
         dadosPostagem.mensagem == '' || dadosPostagem.mensagem == undefined || dadosPostagem.mensagem.length > 255 ||
@@ -354,13 +354,13 @@ const setComentarPostagem = async (dadosPostagem, contentType) => {
         let visualizarPostagem = await postagemDAO.insertNovoComentario(dadosPostagem)
 
         if (visualizarPostagem) {
-          resultDadosVisualizar.status = message.CREATED_ITEM.status
-          resultDadosVisualizar.status_code = message.CREATED_ITEM.status_code
-          resultDadosVisualizar.status = message.CREATED_ITEM.message
-          resultDadosVisualizar.postagem = dadosPostagem
+          resultDadosComentar.status = message.CREATED_ITEM.status
+          resultDadosComentar.status_code = message.CREATED_ITEM.status_code
+          resultDadosComentar.status = message.CREATED_ITEM.message
+          resultDadosComentar.postagem = dadosPostagem
 
-          return resultDadosVisualizar
-
+          return resultDadosComentar
+            
         } else {
           return message.ERROR_INTERNAL_SERVER_DB
         }
