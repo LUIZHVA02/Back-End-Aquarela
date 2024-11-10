@@ -349,15 +349,13 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 ) { }
 
                 if (
-                    disponibilidade != '' &&
-                    disponibilidade != undefined &&
-                    disponibilidade != null
+                    disponibilidade !== '' &&
+                    disponibilidade !== undefined 
                 ) {
                     updateUsuarioJson.disponibilidade = disponibilidade
                 } else if (
-                    disponibilidade == '' &&
-                    disponibilidade == undefined &&
-                    disponibilidade == null
+                    disponibilidade === '' &&
+                    disponibilidade === undefined 
                 ) { }
 
                 if (
