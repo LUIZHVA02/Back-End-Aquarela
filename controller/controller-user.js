@@ -262,7 +262,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     foto_usuario != '' &&
                     foto_usuario != undefined &&
                     foto_usuario != null &&
-                    foto_usuario.length == 300
+                    foto_usuario.length <= 300
                 ) {
                     updateUsuarioJson.foto_usuario = foto_usuario
                 } else if (
@@ -275,7 +275,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     descricao != '' &&
                     descricao != undefined &&
                     descricao != null &&
-                    descricao.length == 300
+                    descricao.length <= 300
                 ) {
                     updateUsuarioJson.descricao = descricao
                 } else if (
