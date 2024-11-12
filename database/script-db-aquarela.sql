@@ -363,3 +363,5 @@ create table tbl_conta_usuario (
     foreign key (id_conta) references tbl_conta (id_conta),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
 );
+
+call procCurtirProduto(1,2);
