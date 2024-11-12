@@ -355,33 +355,44 @@ const selectImages = async (id, postType) => {
     }
 }
 
-const selectUserByNickname = async (nickname) => {
+const selectUserByNickname = async (nickname, client) => {
     try {
         let sql = `
-                SELECT 
-                u.id_usuario AS id,
-                u.nome,
-                u.nome_usuario,
-                u.foto_usuario,
-                u.descricao,
-                u.email,
-                u.cpf,
-                u.data_nascimento,
-                u.telefone,
-                u.disponibilidade,
-                u.avaliacao,
-                (SELECT COUNT(*) FROM tbl_postagem p WHERE p.id_usuario = u.id_usuario) +
-                (SELECT COUNT(*) FROM tbl_produto pr WHERE pr.id_usuario = u.id_usuario) AS qnt_publicacoes,
-                (SELECT COUNT(*) FROM tbl_seguidores s WHERE s.id_seguindo = u.id_usuario) AS seguidores,
-                (SELECT COUNT(*) FROM tbl_seguidores s WHERE s.id_seguidor = u.id_usuario) AS seguindo
-            FROM 
-                tbl_usuario as u
-            WHERE 
-                u.nome_usuario = ${nickname} and u.usuario_status = true  
-        `        
-        let rsUser = await prisma.$queryRawUnsafe(sql)        
+                select 
+                    u.id_usuario as id,
+                    u.nome,
+                    u.nome_usuario,
+                    u.foto_usuario,
+                    u.descricao,
+                    u.email,
+                    u.cpf,
+                    u.data_nascimento,
+                    u.telefone,
+                    u.disponibilidade,
+                    u.avaliacao,
+                    cast((select count(*) from tbl_postagem p where p.id_usuario = u.id_usuario) as decimal) +
+                    cast((select count(*) from tbl_produto pr where pr.id_usuario = u.id_usuario) as decimal) as qnt_publicacoes,
+                    cast((select count(*) from tbl_seguidores s where s.id_seguindo = u.id_usuario) as decimal) as seguidores,
+                    cast((select count(*) from tbl_seguidores s where s.id_seguidor = u.id_usuario) as decimal) as seguindo,
+                    cast(
+                        exists (
+                            select 1 
+                            from tbl_seguidores s 
+                            where s.id_seguidor = ${client} 
+                            and s.id_seguindo = u.id_usuario 
+                            and s.seguidores_status = true
+                        ) as decimal
+                    ) as esta_seguindo
+                from 
+                    tbl_usuario as u
+                where 
+                    u.nome_usuario = "${nickname}" 
+                    and u.usuario_status = true;
+        `
+        let rsUser = await prisma.$queryRawUnsafe(sql)
         return rsUser
     } catch (error) {
+        console.log(error);
         return error
     }
 }
@@ -397,8 +408,8 @@ const selectFoldersByUser = async (id) => {
                 tbl_pasta 
             WHERE 
                 id_usuario = ${id}
-        `        
-        let rsFolder = await prisma.$queryRawUnsafe(sql)        
+        `
+        let rsFolder = await prisma.$queryRawUnsafe(sql)
         return rsFolder
     } catch (error) {
         return error
@@ -459,8 +470,8 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
        GROUP BY tp.id_postagem
        
        ORDER BY id_publicacao
-        `        
-        let rsPost = await prisma.$queryRawUnsafe(sql)        
+        `
+        let rsPost = await prisma.$queryRawUnsafe(sql)
         return rsPost
     } catch (error) {
         return error

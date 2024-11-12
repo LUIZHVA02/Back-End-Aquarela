@@ -157,30 +157,27 @@ const getListPreferences = async () => {
         //     ]
         //   }
         // ];
+        // no node.js
 
-        const keys = Object.keys(dadosPreferenciasUsuario)
-
-        keys.forEach(key => {
-
-          let usuarioExistente = usersArray.find(usuario => usuario.id_usuario === key.id_usuario);
-
-          if (!usuarioExistente) {
-            usuarioExistente = {
-              id_usuario: key.id_usuario,
-              nome: key.nome,
-              nome_usuario: key.nome_usuario,
-              preferencias: []
+        const usersArray = Object.values(dadosPreferenciasUsuario.reduce((acc, item) => {
+          
+          if (!acc[item.id_usuario]) {
+            acc[item.id_usuario] = {
+              id_usuario: item.id_usuario,
+              nome: item.nome,
+              nome_usuario: item.nome_usuario,
+              preferencias: [] 
             };
-            console.log(usuarioExistente);
-            
-            usersArray.push(usuarioExistente);
           }
-
-          usuarioExistente.preferencias.push({
-            id_categoria: key.id_categoria,
-            categoria: key.categoria
+        
+          
+          acc[item.id_usuario].preferencias.push({
+            id_categoria: item.id_categoria,
+            categoria: item.categoria
           });
-        });
+        
+          return acc;
+        }, {}));
 
         preferenciasJSON.usuarios = usersArray;
         preferenciasJSON.quantity = dadosPreferenciasUsuario.length;
