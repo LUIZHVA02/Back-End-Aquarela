@@ -158,9 +158,6 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
           postagem_status == undefined &&
           postagem_status == null
         ) { }
-        
-        console.log(updatePostJSON);
-        
         const postUpdate = await postagemDAO.updatePosts(id_postagem, updatePostJSON)
 
         console.log(postUpdate);
@@ -202,12 +199,11 @@ const setCurtirPostagem = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null ||
-        dadosPostagem.curtidas_postagem_status == '' || dadosPostagem.curtidas_postagem_status == undefined == dadosPostagem.curtidas_postagem_status == null
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
-        let novaPostagem = await postagemDAO.insertNovaPostagem(dadosPostagem)
+        let novaPostagem = await postagemDAO.insertCurtidaPostagem(dadosPostagem)
 
         if (novaPostagem) {
           resultDadosPostagem.status = message.CREATED_ITEM.status
@@ -226,6 +222,78 @@ const setCurtirPostagem = async (dadosPostagem, contentType) => {
     }
   } catch (error) {
     console.error("Erro ao tentar curtir postagem: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
+
+const setFavoritarPostagem = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultDadosFavoritar = {}
+
+      if (
+        dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let favoritarPostagem = await postagemDAO.insertFavoritarPostagem(dadosPostagem)
+
+        if (favoritarPostagem) {
+          resultDadosFavoritar.status = message.CREATED_ITEM.status
+          resultDadosFavoritar.status_code = message.CREATED_ITEM.status_code
+          resultDadosFavoritar.status = message.CREATED_ITEM.message
+          resultDadosFavoritar.postagem = dadosPostagem
+
+          return resultDadosFavoritar
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar favoritar postagem: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
+
+const setVisualizarPostagem = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultDadosVisualizar = {}
+
+      if (
+        dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let visualizarPostagem = await postagemDAO.insertVisualizarPostagem(dadosPostagem)
+
+        if (visualizarPostagem) {
+          resultDadosVisualizar.status = message.CREATED_ITEM.status
+          resultDadosVisualizar.status_code = message.CREATED_ITEM.status_code
+          resultDadosVisualizar.status = message.CREATED_ITEM.message
+          resultDadosVisualizar.postagem = dadosPostagem
+
+          return resultDadosVisualizar
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar visualizar postagem: " + error);
 
     return message.ERROR_INTERNAL_SERVER
   }
@@ -270,11 +338,52 @@ const setExcluirPostagem = async function (id) {
 
 }
 
+const setComentarPostagem = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultDadosComentar = {}
+
+      if (
+        dadosPostagem.mensagem == '' || dadosPostagem.mensagem == undefined || dadosPostagem.mensagem.length > 255 ||
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null || 
+        dadosPostagem.id_resposta == '' || dadosPostagem.id_resposta == undefined || dadosPostagem.id_resposta == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let visualizarPostagem = await postagemDAO.insertNovoComentario(dadosPostagem)
+
+        if (visualizarPostagem) {
+          resultDadosComentar.status = message.CREATED_ITEM.status
+          resultDadosComentar.status_code = message.CREATED_ITEM.status_code
+          resultDadosComentar.status = message.CREATED_ITEM.message
+          resultDadosComentar.postagem = dadosPostagem
+
+          return resultDadosComentar
+            
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar visualizar postagem: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
+
+
 module.exports = {
   setNovaPostagem,
   getListarPostagens,
   getBuscarPostagem,
   setAtualizarPostagem,
   setExcluirPostagem,
-  setCurtirPostagem 
+  setCurtirPostagem,
+  setFavoritarPostagem,
+  setVisualizarPostagem,
+  setComentarPostagem
 }

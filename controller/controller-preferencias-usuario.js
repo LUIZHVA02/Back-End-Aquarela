@@ -3,71 +3,93 @@ const categoriesDAO = require("../model/DAO/categoria");
 const message = require("../modulo/config.js");
 
 const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentType) {
-    try {
-        if (String(contentType).toLowerCase() === "application/json") {
-            let resultDadosPreferenciasUsuario = {};
+  try {
+    if (String(contentType).toLowerCase() === "application/json") {
+      let resultDadosPreferenciasUsuario = {};
 
-            if (
-                !dadosPreferenciasUsuario.preferencias ||
-                !dadosPreferenciasUsuario.id_usuario ||
-                isNaN(dadosPreferenciasUsuario.id_usuario)
-            ) {
-                return message.ERROR_REQUIRED_FIELDS;
-            } else {
-                let categoriasArray = [];
+      if (
+        !dadosPreferenciasUsuario.preferencias ||
+        !dadosPreferenciasUsuario.id_usuario ||
+        isNaN(dadosPreferenciasUsuario.id_usuario)
+      ) {
+        return message.ERROR_REQUIRED_FIELDS;
+      } else {
+        let categoriasArray = [];
 
-                // Inserir preferências e esperar todas as promessas serem resolvidas
-                await Promise.all(
-                    dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
-                        await userPreferencesDAO.insertNovaPreferencia(dadosPreferenciasUsuario.id_usuario, preferencia);
-                    })
-                );
+        // Inserir preferências e esperar todas as promessas serem resolvidas
+        await Promise.all(
+          dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
+            await userPreferencesDAO.insertNovaPreferencia(dadosPreferenciasUsuario.id_usuario, preferencia);
+          })
+        );
 
-                // Obter categorias
-                await Promise.all(
-                    dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
-                        let dadosCategoria = await categoriesDAO.selectCategoriesById(preferencia);
-                        if (dadosCategoria.length > 0) {
-                            categoriasArray.push({ categoria: dadosCategoria[0].categoria });
-                        }
-                    })
-                );
-
-                // Construir o resultado
-                resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
-                resultDadosPreferenciasUsuario.status_code = message.CREATED_ITEM.status_code;
-                resultDadosPreferenciasUsuario.message = message.CREATED_ITEM.message;
-                resultDadosPreferenciasUsuario.usuario = dadosPreferenciasUsuario.id_usuario;
-                resultDadosPreferenciasUsuario.preferencias = categoriasArray;
-
-                console.log(categoriasArray); // Log no terminal para debug
-
-                return resultDadosPreferenciasUsuario; // Retornar o resultado
+        // Obter categorias
+        await Promise.all(
+          dadosPreferenciasUsuario.preferencias.map(async (preferencia) => {
+            let dadosCategoria = await categoriesDAO.selectCategoriesById(preferencia);
+            if (dadosCategoria.length > 0) {
+              categoriasArray.push({ categoria: dadosCategoria[0].categoria });
             }
-        } else {
-            return message.ERROR_CONTENT_TYPE;
-        }
-    } catch (error) {
-        console.error("Erro ao tentar inserir preferências: " + error);
-        return message.ERROR_INTERNAL_SERVER;
+          })
+        );
+
+        resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
+        resultDadosPreferenciasUsuario.status_code = message.CREATED_ITEM.status_code;
+        resultDadosPreferenciasUsuario.message = message.CREATED_ITEM.message;
+        resultDadosPreferenciasUsuario.usuario = dadosPreferenciasUsuario.id_usuario;
+        resultDadosPreferenciasUsuario.preferencias = categoriasArray;
+
+        console.log(categoriasArray); // Log no terminal para debug
+
+        return resultDadosPreferenciasUsuario;
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE;
     }
+  } catch (error) {
+    console.error("Erro ao tentar inserir preferências: " + error);
+    return message.ERROR_INTERNAL_SERVER;
+  }
 };
 
 const getListPreferences = async () => {
   try {
-    let preferenciasJSON = {};
+    let preferenciasJSON = {}
+
     let dadosPreferenciasUsuario =
       await userPreferencesDAO.selectAllPreferences();
 
+    console.log(dadosPreferenciasUsuario);
+
+
     if (dadosPreferenciasUsuario) {
       if (dadosPreferenciasUsuario.length > 0) {
-        preferenciasJSON.usuarios = dadosPreferenciasUsuario;
+
+        const usersArray = Object.values(dadosPreferenciasUsuario.reduce((acc, item) => {
+
+          if (!acc[item.id_usuario]) {
+            acc[item.id_usuario] = {
+              id_usuario: item.id_usuario,
+              nome: item.nome,
+              nome_usuario: item.nome_usuario,
+              preferencias: []
+            };
+          }
+
+
+          acc[item.id_usuario].preferencias.push({
+            id_categoria: item.id_categoria,
+            categoria: item.categoria
+          });
+
+          return acc;
+        }, {}));
+
+        preferenciasJSON.usuarios = usersArray;
         preferenciasJSON.quantity = dadosPreferenciasUsuario.length;
         preferenciasJSON.status_code = 200;
         return preferenciasJSON;
       } else {
-        console.log(dadosPreferenciasUsuario.length, "getListPreferences");
-
         return message.ERROR_NOT_FOUND;
       }
     } else {

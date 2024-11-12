@@ -261,6 +261,8 @@ const getSearchUserAddresses = async (id_usuario) => {
         if (dataUserAdresses) {
           if (dataUserAdresses.length > 0) {
 
+            console.log(dataUserAdresses);
+
             const keys = Object.keys(dataUserAdresses)
 
             keys.forEach((key, index) => {
@@ -286,9 +288,6 @@ const getSearchUserAddresses = async (id_usuario) => {
             userAddressesJSON.email = dataUserAdresses[0].email
             userAddressesJSON.enderecos = userAddressesArray
             userAddressesJSON.status_code = 200;
-
-            console.log(userAddressesJSON);
-            
 
             return userAddressesJSON;
           } else {

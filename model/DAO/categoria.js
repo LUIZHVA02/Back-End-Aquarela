@@ -30,41 +30,22 @@ const insertNovaCategoria = async (dadosCategoria) => {
     }
   } catch (error) {
     console.error("Erro ao inserir categoria: ", error);
-
     console.log(error + "aqui");
 
     return false;
   }
 };
 
-const selectAllCategoriesByPostQuantity = async () => {
+const selectAllCategories = async () => {
   try {
     let sql = `
-        SELECT 
-            c.id_categoria AS id,
-            c.categoria AS nome
-        FROM 
-            tbl_categoria AS c
-        LEFT JOIN (
-        SELECT 
-                id_categoria,
-                COUNT(DISTINCT id_produto) AS quantidade_produtos
-        FROM 
-                tbl_categoria_produto
-        GROUP BY 
-                id_categoria
-            ) AS prod ON c.id_categoria = prod.id_categoria
-        LEFT JOIN (
-            SELECT 
-                id_categoria,
-                COUNT(DISTINCT id_postagem) AS quantidade_postagens
-            FROM 
-                tbl_categoria_postagem
-            GROUP BY 
-                id_categoria
-            ) AS post ON c.id_categoria = post.id_categoria
-        ORDER BY 
-            COALESCE(prod.quantidade_produtos, 0) + COALESCE(post.quantidade_postagens, 0) desc
+    select 
+      c.id_categoria as id,
+      c.categoria as nome
+    from 
+      tbl_categoria as c
+    order by 
+        rand();
         `;
 
     let resultStatus = await prisma.$queryRawUnsafe(sql);
@@ -101,6 +82,6 @@ const selectCategoriesById = async (id) => {
 
 module.exports = {
   insertNovaCategoria,
-  selectAllCategoriesByPostQuantity,
+  selectAllCategories,
   selectCategoriesById
 };

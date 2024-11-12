@@ -131,17 +131,7 @@ const updatePosts = async function (id, dadosPostagem) {
 
 const insertCurtidaPostagem = async (dadosPostagem) => {
   try {
-    let sql = `insert into tbl_postagem  (   
-                                              id_postagem,
-                                              id_usuario,
-                                              curtidas_postagem_status
-                                          ) 
-                                          values 
-                                          (
-                                              '${dadosPostagem.id_postagem}',
-                                              '${dadosPostagem.id_usuario}',
-                                              true
-                                          )`;
+    let sql = `call procCurtirPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {
@@ -158,10 +148,113 @@ const insertCurtidaPostagem = async (dadosPostagem) => {
   }
 };
 
+const insertFavoritarPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `call procFavoritarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao curtir postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
+const insertVisualizarPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `call procVisualizarPostagem(${dadosPostagem.id_postagem}, ${dadosPostagem.id_usuario})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao visualizar postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
+const insertNovoComentario = async (dadosComentario) => {
+  try {
+    let sql = `insert into tbl_comentario  (   
+                                              mensagem,
+                                              id_usuario,
+                                              id_resposta,
+                                              comentario_status
+                                          ) 
+                                          values 
+                                          (
+                                              '${dadosComentario.mensagem}',
+                                              '${dadosComentario.id_usuario}',
+                                              '${dadosComentario.id_resposta}',
+                                              true
+                                          )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao inserir comentario: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
+const insertComentarioPublicacao = async (idComentario, idPublicacao) => {
+  try {
+    let sql = `insert into tbl_comentario_publicacao  (   
+                                              mensagem,
+                                              id_usuario,
+                                              id_resposta,
+                                              comentario_status
+                                          ) 
+                                          values 
+                                          (
+                                              '${dadosComentario.mensagem}',
+                                              '${dadosComentario.id_usuario}',
+                                              '${dadosComentario.id_resposta}',
+                                              true
+                                          )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao inserir comentario: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,
   selectByIdPosts,
   updatePosts,
-  insertCurtidaPostagem
+  insertCurtidaPostagem,
+  insertFavoritarPostagem,
+  insertVisualizarPostagem,
+  insertNovoComentario
 }

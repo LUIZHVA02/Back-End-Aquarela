@@ -44,6 +44,7 @@
  *      Caso ocorra algum problema, execute:
  *          npm i 
  * 
+ *
  */
 
 const express = require('express')
@@ -189,6 +190,16 @@ app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
+app.get('/v1/aquarela/nickname/user/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let nickname = request.query.nickname
+    let userClient = request.query.client
+    let dadosUsuario = await controllerUsuarios.getBuscarApelido(nickname, userClient)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 // #region Preferência-Usuário
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/
 
@@ -228,6 +239,7 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
+
 
 // #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
@@ -343,6 +355,39 @@ app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, res
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/like/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setCurtirProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/favorite/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/vizualizer/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
 // #region Categorias
 /******************************************************** Endpoints Categorias ********************************************************/
 
@@ -364,7 +409,7 @@ app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
 
 })
 
-app.get('/v1/aquarela/categorie/:id', cors(), async (request, response, next) => {
+app.get('/v1/aquarela/category/:id', cors(), async (request, response, next) => {
 
     let categoryData = await controllerCategoria.getCategoriesById(id)
     response.status(categoryData.status_code)
@@ -394,6 +439,7 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
 
 })
 
+
 app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_seguidores = request.params.id
@@ -402,6 +448,17 @@ app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, res
     let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
     response.status(resultDados.status_code);
     response.json(resultDados)
+})
+
+app.post('/v1/aquarela/follower/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosSeguidores = await controllerSeguidores.setSeguir(dadosBody, contentType)
+
+    response.status(resultDadosSeguidores.status_code)
+    response.json(resultDadosSeguidores)
+
 })
 
 // #region Postagem
@@ -456,11 +513,44 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/favorite/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setFavoritarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
 app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setCurtirPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/vizualizer/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setVisualizarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/coment/post', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setComentarPostagem(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
     response.json(resultDadosPostagem)

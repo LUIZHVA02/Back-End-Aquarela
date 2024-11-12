@@ -62,10 +62,14 @@ const selectByIdPreferences = async (id) => {
 const selectAllPreferences = async () => {
 
     try {
-        let sql = `select id_categoria, id_usuario from tbl_preferencia where preferencia_status = "1"`
-        let rsAddress = await prisma.$queryRawUnsafe(sql)
+        let sql = `select tbl_preferencia.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 
+                    tbl_preferencia.id_categoria, tbl_categoria.categoria from tbl_categoria
+                    inner join tbl_preferencia on tbl_preferencia.id_categoria = tbl_categoria.id_categoria 
+                    inner join tbl_usuario on tbl_usuario.id_usuario = tbl_preferencia.id_usuario 
+                    where preferencia_status = "1" order by tbl_usuario.id_usuario;`
+        let rsPreferencias = await prisma.$queryRawUnsafe(sql)
 
-        return rsAddress
+        return rsPreferencias
 
     } catch (error) {
         console.log(error);

@@ -9,10 +9,7 @@ const setNovaCategoria = async (dadosCategoria, contentType) => {
       if (
         dadosCategoria.categoria == "" ||
         dadosCategoria.categoria == undefined ||
-        dadosCategoria.categoria.length > 255 ||
-        dadosCategoria.categoria_status == "" ||
-        dadosCategoria.categoria_status == undefined ||
-        dadosCategoria.categoria_status == null
+        dadosCategoria.categoria.length > 255 
       ) {
         return message.ERROR_REQUIRED_FIELDS;
       } else {
@@ -43,7 +40,7 @@ const setNovaCategoria = async (dadosCategoria, contentType) => {
 const getListCategories = async () => {
   try {
     let categoriesJSON = {};
-    let categoriesData = await categoriaDAO.selectAllCategoriesByPostQuantity();
+    let categoriesData = await categoriaDAO.selectAllCategories();
 
     if (categoriesData) {
       if (categoriesData.length > 0) {
