@@ -689,6 +689,15 @@ const getBuscarApelido = async (nomeUsuario, cliente) => {
                         dadosUsuario[0].pastas = pastasUsuario
                     }
 
+                    const promise = postagensUsuario.map(async (post) => {
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
                     usuarioJSON.status = message.VALIDATED_ITEM.status
                     usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
                     usuarioJSON.message = message.VALIDATED_ITEM.message
