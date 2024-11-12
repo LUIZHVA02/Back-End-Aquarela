@@ -36,7 +36,7 @@ const insertNovaCategoria = async (dadosCategoria) => {
   }
 };
 
-const selectAllCategoriesByPostQuantity = async () => {
+const selectAllCategories = async () => {
   try {
     let sql = `
     select 
@@ -82,6 +82,6 @@ const selectCategoriesById = async (id) => {
 
 module.exports = {
   insertNovaCategoria,
-  selectAllCategoriesByPostQuantity,
+  selectAllCategories,
   selectCategoriesById
 };

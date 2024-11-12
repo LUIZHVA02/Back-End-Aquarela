@@ -40,7 +40,7 @@ const setNovaCategoria = async (dadosCategoria, contentType) => {
 const getListCategories = async () => {
   try {
     let categoriesJSON = {};
-    let categoriesData = await categoriaDAO.selectAllCategoriesByPostQuantity();
+    let categoriesData = await categoriaDAO.selectAllCategories();
 
     if (categoriesData) {
       if (categoriesData.length > 0) {
