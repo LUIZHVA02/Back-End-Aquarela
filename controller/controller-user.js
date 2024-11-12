@@ -228,6 +228,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 let cpf = dadosUsuario.cpf
                 let data_nascimento = dadosUsuario.data_nascimento
                 let telefone = dadosUsuario.telefone
+                let avaliacao = dadosUsuario.avaliacao
                 let disponibilidade = dadosUsuario.disponibilidade
                 let usuario_status = dadosUsuario.usuario_status
 
@@ -359,15 +360,16 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 ) { }
 
                 if (
-                    usuario_status != '' &&
-                    usuario_status != undefined &&
-                    usuario_status != null
+                    avaliacao != '' &&
+                    avaliacao != undefined &&
+                    avaliacao != null
                 ) {
-                    updateUsuarioJson.usuario_status = usuario_status
+                    updateUsuarioJson.avaliacao = avaliacao
                 } else if (
-                    usuario_status == '' &&
-                    usuario_status == undefined &&
-                    usuario_status == null
+                    avaliacao == '' &&
+                    avaliacao == undefined &&
+                    avaliacao == null &&
+                    isNaN(avaliacao)
                 ) { }
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
