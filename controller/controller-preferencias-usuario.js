@@ -54,10 +54,7 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
 
 const getListPreferences = async () => {
   try {
-    let preferenciasJSON = {};
-    let usersArray = []
-    let userPreferencesJSON = {}
-    let userPreferencesARRAY = []
+    let preferenciasJSON = {}
 
     let dadosPreferenciasUsuario =
       await userPreferencesDAO.selectAllPreferences();
@@ -68,114 +65,23 @@ const getListPreferences = async () => {
     if (dadosPreferenciasUsuario) {
       if (dadosPreferenciasUsuario.length > 0) {
 
-        // Eu preciso que essas informações:
-
-        // [
-        //   {
-        //     id_usuario: 1,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 142,
-        //     categoria: 'Arte e Questões Sociais'
-        //   },
-        //   {
-        //     id_usuario: 1,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 141,
-        //     categoria: 'Arte e Política'
-        //   },
-        //   {
-        //     id_usuario: 1,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 142,
-        //     categoria: 'Arte e Questões Sociais'
-        //   },
-        //   {
-        //     id_usuario: 2,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 121,
-        //     categoria: 'Álbum de Fotos'
-        //   },
-        //   {
-        //     id_usuario: 2,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 121,
-        //     categoria: 'Álbum de Fotos'
-        //   },
-        //   {
-        //     id_usuario: 2,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     id_categoria: 121,
-        //     categoria: 'Álbum de Fotos'
-        //   }
-        // ];
-
-        // se organizem deste jeito:
-
-        // [
-        //   {
-        //     id_usuario: 1,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     preferencias: [
-        //       {
-        //         id_categoria: 142,
-        //         categoria: 'Arte e Questões Sociais'
-        //       },
-        //       {
-        //         id_categoria: 141,
-        //         categoria: 'Arte e Política'
-        //       },
-        //       {
-        //         id_categoria: 142,
-        //         categoria: 'Arte e Questões Sociais'
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     id_usuario: 2,
-        //     nome: 'mats',
-        //     nome_usuario: 'matheus',
-        //     preferencias: [
-        //       {
-        //         id_categoria: 121,
-        //         categoria: 'Álbum de Fotos'
-        //       },
-        //       {
-        //         id_categoria: 121,
-        //         categoria: 'Álbum de Fotos'
-        //       },
-        //       {
-        //         id_categoria: 121,
-        //         categoria: 'Álbum de Fotos'
-        //       }
-        //     ]
-        //   }
-        // ];
-        // no node.js
-
         const usersArray = Object.values(dadosPreferenciasUsuario.reduce((acc, item) => {
-          
+
           if (!acc[item.id_usuario]) {
             acc[item.id_usuario] = {
               id_usuario: item.id_usuario,
               nome: item.nome,
               nome_usuario: item.nome_usuario,
-              preferencias: [] 
+              preferencias: []
             };
           }
-        
-          
+
+
           acc[item.id_usuario].preferencias.push({
             id_categoria: item.id_categoria,
             categoria: item.categoria
           });
-        
+
           return acc;
         }, {}));
 

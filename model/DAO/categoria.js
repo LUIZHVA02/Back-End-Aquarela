@@ -30,7 +30,6 @@ const insertNovaCategoria = async (dadosCategoria) => {
     }
   } catch (error) {
     console.error("Erro ao inserir categoria: ", error);
-
     console.log(error + "aqui");
 
     return false;

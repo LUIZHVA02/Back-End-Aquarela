@@ -366,7 +366,7 @@ const selectUserByNickname = async (nickname, client) => {
                     u.descricao,
                     u.email,
                     u.cpf,
-                    u.data_nascimento,
+                    date_format(u.data_nascimento, "%d-%m-%Y") as data_nascimento,
                     u.telefone,
                     u.disponibilidade,
                     u.avaliacao,
