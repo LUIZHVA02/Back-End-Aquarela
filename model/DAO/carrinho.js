@@ -31,7 +31,6 @@ const insertNovoCarrinho = async (dadosCarrinho) => {
 const insertNovoItemCarrinho = async (dadosItemCarrinho) => {
     try {
         let sql = `insert into tbl_item_carrinho (   
-                                                id_item_carrinho,
                                                 quantidade,
                                                 id_produto,
                                                 id_carrinho_compra
@@ -39,7 +38,6 @@ const insertNovoItemCarrinho = async (dadosItemCarrinho) => {
                                             ) 
                                             values 
                                             (   
-                                                '${dadosItemCarrinho.id_item_carrinho}',
                                                 '${dadosItemCarrinho.quantidade}',
                                                 '${dadosItemCarrinho.id_produto}',
                                                 '${dadosItemCarrinho.id_carrinho_compra}',
@@ -79,7 +77,7 @@ const selectAllCarrinhos = async () => {
 };
 
 
-const selectAllItensCarrinhos = async () => {
+const selectAllItensCarrinho = async (id) => {
     try {
         let sql = ``;
 
@@ -96,9 +94,35 @@ const selectAllItensCarrinhos = async () => {
     }
 };
 
+const selectLastIdCarrinho = async () => {
+
+    try {
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_carrinho_compra limit 1'
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+    } catch (error) {
+        return false
+    }
+
+}
+
+const selectLastIdItemCarrinho = async () => {
+
+    try {
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_item_carrinho limit 1'
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     insertNovoCarrinho,
     insertNovoItemCarrinho,
     selectAllCarrinhos,
-    selectAllItensCarrinhos
+    selectAllItensCarrinho,
+    selectLastIdCarrinho,
+    selectLastIdItemCarrinho
 }

@@ -229,6 +229,13 @@ select * from tbl_mensagem;
 select * from tbl_tipo_perfil;
 select * from tbl_tipo_perfil_usuario;
 
+select 	tbl_usuario.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 
+		tbl_usuario.foto_usuario, tbl_carrinho_compra.id_carrinho_compra 
+        from tbl_usuario inner join tbl_carrinho_compra on 
+        tbl_carrinho_compra.id_usuario = tbl_usuario.id_usuario
+        inner join tbl_item_carrinho on tbl_item_carrinho.id_carrinho_compra 
+        = tbl_carrinho_compra.id_carrinho_compra;
+
 select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
         disponibilidade, avaliacao from tbl_usuario where nome_usuario = 'matheus' and senha = md5('1533');

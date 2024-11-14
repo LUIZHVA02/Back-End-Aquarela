@@ -230,7 +230,6 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 let telefone = dadosUsuario.telefone
                 let avaliacao = dadosUsuario.avaliacao
                 let disponibilidade = dadosUsuario.disponibilidade
-                let usuario_status = dadosUsuario.usuario_status
 
                 if (
                     nome != '' &&
@@ -278,7 +277,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     descricao != null &&
                     descricao.length <= 300
                 ) {
-                    updateUsuarioJson.descricao = descricao
+                    updateUsuarioJson.descricao = descricao.replace(/'/g, "|")
                 } else if (
                     descricao == '' &&
                     descricao == undefined &&

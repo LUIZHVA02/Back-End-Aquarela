@@ -404,10 +404,18 @@ app.post('/v1/aquarela/folders/products', cors(), bodyParserJson, async (request
 // #region Carrinho
 /********************************************************* Endpoints Carrinho *********************************************************/
 
-app.post('/v1/aquarela/cart/user/', cors(), async (request, response, next) => {
+app.post('/v1/aquarela/cart/user', cors(), bodyParserJson, async (request, response, next) => {
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let carrinhoData = await controllerCarrinho.setNovoCarrinho(dadosBody,contentType)
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
+})
+
+app.post('/v1/aquarela/cart/item', cors(), bodyParserJson, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let carrinhoData = await controllerCarrinho.setNovoItemCarrinho(dadosBody,contentType)
     response.status(carrinhoData.status_code)
     response.json(carrinhoData)
 })
