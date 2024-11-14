@@ -314,7 +314,7 @@ const setExcluirEndereco = async function (id) {
     if (id_endereco == "" || id_endereco == undefined || isNaN(id_endereco)) {
       return message.ERROR_INVALID_ID;
     } else {
-      const validaId = await userDAO.selectByIdenderecoAtivo(id_endereco);
+      const validaId = await addressDAO.selectByIdUsuarioAtivo(id_endereco);
 
       console.log(validaId);
 
