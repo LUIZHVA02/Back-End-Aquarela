@@ -169,13 +169,32 @@ const insertVisualizarProduto = async (dadosProduto) => {
     }
 };
 
+const insertProdutoPasta = async (dadosProduto) => {
+  try {
+    let sql = `call procAdicionarProdutoPasta(${dadosProduto.id_produto}, ${dadosProduto.id_pasta})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar postagem na pasta: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
 
 module.exports = {
-    insertNovoProduto,
-    selectAllProducts,
-    updateProduct,
-    selectByIdProducts,
-    insertCurtirProduto,
-    insertFavoritarProduto,
-    insertVisualizarProduto
+  insertNovoProduto,
+  selectAllProducts,
+  updateProduct,
+  selectByIdProducts,
+  insertCurtirProduto,
+  insertFavoritarProduto,
+  insertVisualizarProduto,
+  insertProdutoPasta
 }

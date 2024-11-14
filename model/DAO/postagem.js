@@ -248,6 +248,25 @@ const insertComentarioPublicacao = async (idComentario, idPublicacao) => {
   }
 };
 
+const insertPostagemPasta = async (dadosPostagem) => {
+  try {
+    let sql = `call procAdicionarPostagemPasta(${dadosPostagem.id_postagem}, ${dadosPostagem.id_pasta})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao visualizar postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovaPostagem,
   selectAllPosts,
@@ -256,5 +275,6 @@ module.exports = {
   insertCurtidaPostagem,
   insertFavoritarPostagem,
   insertVisualizarPostagem,
-  insertNovoComentario
+  insertNovoComentario,
+  insertPostagemPasta
 }
