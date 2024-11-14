@@ -33,7 +33,6 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
           })
         );
 
-        // Construir o resultado
         resultDadosPreferenciasUsuario.status = message.CREATED_ITEM.status;
         resultDadosPreferenciasUsuario.status_code = message.CREATED_ITEM.status_code;
         resultDadosPreferenciasUsuario.message = message.CREATED_ITEM.message;
@@ -42,7 +41,7 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
 
         console.log(categoriasArray); // Log no terminal para debug
 
-        return resultDadosPreferenciasUsuario; // Retornar o resultado
+        return resultDadosPreferenciasUsuario;
       }
     } else {
       return message.ERROR_CONTENT_TYPE;
@@ -55,38 +54,38 @@ const adicionarPreferencias = async function (dadosPreferenciasUsuario, contentT
 
 const getListPreferences = async () => {
   try {
-    let preferenciasJSON = {};
-    let userPreferencesJSON = {}
-    let userPreferencesARRAY = []
+    let preferenciasJSON = {}
 
     let dadosPreferenciasUsuario =
       await userPreferencesDAO.selectAllPreferences();
 
+    console.log(dadosPreferenciasUsuario);
 
 
     if (dadosPreferenciasUsuario) {
       if (dadosPreferenciasUsuario.length > 0) {
 
-        const keys = Object.keys(dadosPreferenciasUsuario)
+        const usersArray = Object.values(dadosPreferenciasUsuario.reduce((acc, item) => {
 
-            keys.forEach((key, index) => {
+          if (!acc[item.id_usuario]) {
+            acc[item.id_usuario] = {
+              id_usuario: item.id_usuario,
+              nome: item.nome,
+              nome_usuario: item.nome_usuario,
+              preferencias: []
+            };
+          }
 
-              addressesUserJSON = {
-                id_endereco: `${dataUserAdresses[key].id_endereco}`,
-                logradouro: `${dataUserAdresses[key].logradouro}`,
-                numero_casa: `${dataUserAdresses[key].numero_casa}`,
-                complemento: `${dataUserAdresses[key].complemento}`,
-                bairro: `${dataUserAdresses[key].bairro}`,
-                estado: `${dataUserAdresses[key].estado}`,
-                cidade: `${dataUserAdresses[key].cidade}`,
-                cep: `${dataUserAdresses[key].cep}`
-              }
 
-              userAddressesArray.push(addressesUserJSON)
+          acc[item.id_usuario].preferencias.push({
+            id_categoria: item.id_categoria,
+            categoria: item.categoria
+          });
 
-            })
+          return acc;
+        }, {}));
 
-        preferenciasJSON.usuarios = dadosPreferenciasUsuario;
+        preferenciasJSON.usuarios = usersArray;
         preferenciasJSON.quantity = dadosPreferenciasUsuario.length;
         preferenciasJSON.status_code = 200;
         return preferenciasJSON;

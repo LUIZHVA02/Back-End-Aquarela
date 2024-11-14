@@ -30,14 +30,13 @@ const insertNovaCategoria = async (dadosCategoria) => {
     }
   } catch (error) {
     console.error("Erro ao inserir categoria: ", error);
-
     console.log(error + "aqui");
 
     return false;
   }
 };
 
-const selectAllCategoriesByPostQuantity = async () => {
+const selectAllCategories = async () => {
   try {
     let sql = `
     select 
@@ -46,7 +45,7 @@ const selectAllCategoriesByPostQuantity = async () => {
     from 
       tbl_categoria as c
     order by 
-      rand();
+        rand();
         `;
 
     let resultStatus = await prisma.$queryRawUnsafe(sql);
@@ -83,6 +82,6 @@ const selectCategoriesById = async (id) => {
 
 module.exports = {
   insertNovaCategoria,
-  selectAllCategoriesByPostQuantity,
+  selectAllCategories,
   selectCategoriesById
 };

@@ -74,6 +74,7 @@ const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
 const controllerPasta = require('./controller/controller-pastas.js')
+const controllerConversas = require('./controller/controller-chats.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -190,6 +191,16 @@ app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
+app.get('/v1/aquarela/nickname/user/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let nickname = request.query.nickname
+    let userClient = request.query.client
+    let dadosUsuario = await controllerUsuarios.getBuscarApelido(nickname, userClient)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 // #region Preferência-Usuário
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/
 
@@ -230,6 +241,8 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.json(resultDados);
 })
 
+
+// #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
 
 app.get('/v1/aquarela/address/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -301,6 +314,7 @@ app.put('/v1/aquarela/reactivate/address/:id', cors(), bodyParserJson, async (re
     response.json(resultDados);
 })
 
+// #region Produtos
 /******************************************************** Endpoints Produtos ********************************************************/
 
 app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, response, next) => {
@@ -396,7 +410,7 @@ app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
 
 })
 
-app.get('/v1/aquarela/categorie/:id', cors(), async (request, response, next) => {
+app.get('/v1/aquarela/category/:id', cors(), async (request, response, next) => {
 
     let categoryData = await controllerCategoria.getCategoriesById(id)
     response.status(categoryData.status_code)
@@ -584,6 +598,29 @@ app.put('/v1/aquarela/folders/:id', cors(), bodyParserJson, async (request, resp
 
     response.status(resultDados.status_code);
     response.json(resultDados);
+})
+
+// #region Conversas
+
+/************************************************ EndPoins Conversas ************************************************/
+
+app.post('/v1/aquarela/chat/user/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPasta = await controllerConversas.setNovaConversa(dadosBody, contentType)
+
+    response.status(resultDadosPasta.status_code)
+    response.json(resultDadosPasta)
+
+})
+
+app.get('/v1/aquarela/chats', cors(), async function (request, response, next) {
+
+    let searchConversas = await controllerConversas.getListConversas()
+
+    response.json(searchConversas)
+    response.status(searchConversas.status_code)
 })
 
 const port = process.env.PORT || 8080

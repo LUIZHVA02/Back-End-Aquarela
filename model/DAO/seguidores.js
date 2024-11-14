@@ -87,7 +87,7 @@ const updateSeguidores = async function (id, dadosUsuarioUpdate) {
 
 const insertSeguidor= async (dadosSeguidores) => {
   try {
-    let sql = `call procFavoritarPostagem(${dadosSeguidores.id_seguidor}, ${dadosSeguidores.id_seguindo})`;
+    let sql = `call procSeguir(${dadosSeguidores.id_seguidor}, ${dadosSeguidores.id_seguindo})`;
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {
