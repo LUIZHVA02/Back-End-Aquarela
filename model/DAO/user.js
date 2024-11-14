@@ -363,36 +363,57 @@ const selectImages = async (id, postType) => {
 const selectUserByNickname = async (nickname, client) => {
     try {
         let sql = `
-                select 
-                    u.id_usuario as id,
-                    u.nome,
-                    u.nome_usuario,
-                    u.foto_usuario,
-                    u.descricao,
-                    u.email,
-                    u.cpf,
-                    date_format(u.data_nascimento, "%d-%m-%Y") as data_nascimento,
-                    u.telefone,
-                    u.disponibilidade,
-                    u.avaliacao,
-                    cast((select count(*) from tbl_postagem p where p.id_usuario = u.id_usuario) as decimal) +
-                    cast((select count(*) from tbl_produto pr where pr.id_usuario = u.id_usuario) as decimal) as qnt_publicacoes,
-                    cast((select count(*) from tbl_seguidores s where s.id_seguindo = u.id_usuario) as decimal) as seguidores,
-                    cast((select count(*) from tbl_seguidores s where s.id_seguidor = u.id_usuario) as decimal) as seguindo,
-                    cast(
-                        exists (
-                            select 1 
-                            from tbl_seguidores s 
-                            where s.id_seguidor = ${client} 
-                            and s.id_seguindo = u.id_usuario 
-                            and s.seguidores_status = true
-                        ) as decimal
-                    ) as esta_seguindo
-                from 
-                    tbl_usuario as u
-                where 
-                    u.nome_usuario = "${nickname}" 
-                    and u.usuario_status = true;
+        select
+            u.id_usuario as id,
+            u.nome,
+            u.nome_usuario,
+            u.foto_usuario,
+            u.descricao,
+            u.email,
+            u.cpf,
+            date_format(u.data_nascimento, "%d-%m-%Y") as data_nascimento,
+            u.telefone,
+            u.disponibilidade,
+            u.avaliacao,
+            cast(
+                (
+                    (select count(*)
+                    from tbl_postagem p
+                    where p.id_usuario = u.id_usuario
+                    and p.postagem_status = true)
+                    +
+                    (select count(*)
+                    from tbl_produto pr
+                    where pr.id_usuario = u.id_usuario
+                    and pr.produto_status = true)
+                ) as decimal
+            ) as qnt_publicacoes,
+            cast(
+                (select count(*)
+                from tbl_seguidores s
+                where s.id_seguindo = u.id_usuario
+                and s.seguidores_status = true) as decimal
+            ) as seguidores,
+            cast(
+                (select count(*)
+                from tbl_seguidores s
+                where s.id_seguidor = u.id_usuario
+                and s.seguidores_status = true) as decimal
+            ) as seguindo,
+            cast(
+                exists (
+                    select 1
+                        from tbl_seguidores s
+                        where s.id_seguidor = ${client}
+                        and s.id_seguindo = u.id_usuario
+                        and s.seguidores_status = true
+                ) as decimal
+            ) as esta_seguindo
+            from
+                tbl_usuario as u
+            where
+                u.nome_usuario = "${nickname}"
+                and u.usuario_status = true;
         `
         let rsUser = await prisma.$queryRawUnsafe(sql)
         return rsUser

@@ -372,6 +372,42 @@ const setExcluirProduto = async function (id) {
 
 }
 
+const setAdicionarProdutoPasta = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultProdutoPasta = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_pasta == '' || dadosProduto.id_pasta == undefined || dadosProduto.id_pasta == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let adicionarProduto = await produtoDAO.insertProdutoPasta(dadosProduto)
+  
+          if (adicionarProduto) {
+            resultProdutoPasta.status = message.CREATED_ITEM.status
+            resultProdutoPasta.status_code = message.CREATED_ITEM.status_code
+            resultProdutoPasta.status = message.CREATED_ITEM.message
+            resultProdutoPasta.produto = dadosProduto
+  
+            return resultProdutoPasta
+              
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar adicionar produto na pasta: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+  }
+
 module.exports = {
     setNovoProduto,
     getListProducts,
@@ -379,5 +415,6 @@ module.exports = {
     setExcluirProduto,
     setCurtirProduto,
     setFavoritarProduto,
-    setVisualizarProduto
+    setVisualizarProduto,
+    setAdicionarProdutoPasta
 }

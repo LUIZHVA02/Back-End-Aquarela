@@ -1,3 +1,4 @@
+const { contentType } = require('express/lib/response.js')
 const postagemDAO = require('../model/DAO/postagem.js')
 const message = require('../modulo/config.js')
 
@@ -375,6 +376,41 @@ const setComentarPostagem = async (dadosPostagem, contentType) => {
   }
 }
 
+const setAdicionarPostagemPasta = async (dadosPostagem, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultPostagemPasta = {}
+
+      if (
+        dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
+        dadosPostagem.id_pasta == '' || dadosPostagem.id_pasta == undefined || dadosPostagem.id_pasta == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let adicionarPostagem = await postagemDAO.insertPostagemPasta(dadosPostagem)
+
+        if (adicionarPostagem) {
+          resultPostagemPasta.status = message.CREATED_ITEM.status
+          resultPostagemPasta.status_code = message.CREATED_ITEM.status_code
+          resultPostagemPasta.status = message.CREATED_ITEM.message
+          resultPostagemPasta.postagem = dadosPostagem
+
+          return resultPostagemPasta
+            
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar adicionar postagem na pasta: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
 
 module.exports = {
   setNovaPostagem,
@@ -385,5 +421,6 @@ module.exports = {
   setCurtirPostagem,
   setFavoritarPostagem,
   setVisualizarPostagem,
-  setComentarPostagem
+  setComentarPostagem,
+  setAdicionarPostagemPasta
 }

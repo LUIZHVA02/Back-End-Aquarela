@@ -383,7 +383,18 @@ app.post('/v1/aquarela/vizualizer/product', cors(), bodyParserJson, async (reque
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+    let resultDadosProduto = await controllerProduto.setVisualizarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/folders/products', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setAdicionarProdutoPasta(dadosBody, contentType)
 
     response.status(resultDadosProduto.status_code)
     response.json(resultDadosProduto)
@@ -570,6 +581,17 @@ app.post('/v1/aquarela/coment/post', cors(), bodyParserJson, async (request, res
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDadosPostagem = await controllerPostagem.setComentarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/folders/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setAdicionarPostagemPasta(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
     response.json(resultDadosPostagem)
