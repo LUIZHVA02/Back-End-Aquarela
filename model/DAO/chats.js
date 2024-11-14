@@ -16,7 +16,6 @@ const insertNovaConversa = async (dadosConversa) => {
                                                     '${dadosConversa.id_usuario_2}',
                                                     true
                                                 )`
-        console.log(sql)
         let resultStatus = await prisma.$executeRawUnsafe(sql)
 
         if (resultStatus) {
@@ -36,6 +35,17 @@ const insertNovaConversa = async (dadosConversa) => {
 
 }
 
+const getListConversas = async () => {
+    try{
+        let sql = ``
+    } catch (error){
+        console.log(error);
+        return false
+    }
+
+}
+
 module.exports = {
-    insertNovaConversa
+    insertNovaConversa,
+    getListConversas
 }

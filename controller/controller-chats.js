@@ -12,17 +12,15 @@ const setNovaConversa = async (dadosConversa, contentType) => {
                 isNaN(dadosConversa.id_usuario_1) || dadosConversa.id_usuario_1 == undefined || dadosConversa.id_usuario_1 == null ||
                 isNaN(dadosConversa.id_usuario_1) || dadosConversa.id_usuario_2 == undefined || dadosConversa.id_usuario_2 == null
             ) {
-                console.log(dadosConversa);
-
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                let novoProduto = await chatsDAO.insertNovaConversa(dadosConversa)
+                let novoConversa = await chatsDAO.insertNovaConversa(dadosConversa)
 
-                if (novoProduto) {
+                if (novoConversa) {
                     resultDadosConversa.status = message.CREATED_ITEM.status
                     resultDadosConversa.status_code = message.CREATED_ITEM.status_code
                     resultDadosConversa.status = message.CREATED_ITEM.message
-                    resultDadosConversa.produto = dadosConversa
+                    resultDadosConversa.conversa = dadosConversa
 
                     return resultDadosConversa
 

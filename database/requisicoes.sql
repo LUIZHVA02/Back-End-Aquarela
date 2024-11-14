@@ -195,7 +195,6 @@ JOIN
 ON 
     p.id_usuario = po.id_usuario;
 
-
 select * from tbl_usuario;
 select * from tbl_seguidores;
 select * from tbl_endereco;

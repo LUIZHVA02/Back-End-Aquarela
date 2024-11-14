@@ -75,6 +75,7 @@ const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
 const controllerPasta = require('./controller/controller-pastas.js')
 const controllerConversas = require('./controller/controller-chats.js')
+const controllerCarrinho = require('./controller/controller-carrinho.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
@@ -387,6 +388,23 @@ app.post('/v1/aquarela/vizualizer/product', cors(), bodyParserJson, async (reque
     response.status(resultDadosProduto.status_code)
     response.json(resultDadosProduto)
 
+})
+
+// #region Carrinho
+/********************************************************* Endpoints Carrinho *********************************************************/
+
+app.post('/v1/aquarela/cart/user/', cors(), async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let carrinhoData = await controllerCarrinho.setNovoCarrinho(dadosBody,contentType)
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
+})
+
+app.get('/v1/aquarela/cart/users/', cors(), async (request, response, next) => {
+    let carrinhoData = await controllerCarrinho.getListCarrinho()
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
 })
 
 // #region Categorias
