@@ -717,7 +717,107 @@ const getBuscarApelido = async (nomeUsuario, cliente) => {
     }
 }
 
+const getBuscarFavoritos = async (idUsuario) => {
+    try {
+        let id_usuario = idUsuario;
+        let usuarioJSON = {};
 
+        if (!id_usuario) {
+            console.log(id_usuario);
+            return message.ERROR_REQUIRED_FIELDS;
+        } else {
+            // Busca o ID do usuário com o nome de usuário
+            let dadosUsuario = await userDAO.selectUserByNickname(id_usuario);
+            
+            if (dadosUsuario && dadosUsuario.length > 0) {
+                const usuarioId = dadosUsuario[0].id;
+                
+                // Usando o select guardado para buscar produtos e postagens favoritas em uma consulta
+                let favoritos = await userDAO.selectFavoriteByNickname(usuarioId);
+
+                if (favoritos.length > 0) {
+                    dadosUsuario[0].favoritos = favoritos;
+
+                    // Mapeia favoritos para buscar imagens, se necessário
+                    const promise = favoritos.map(async (fav) => {
+                        if (fav.tipo === 'postagem') {
+                            let images = await getBuscarImages(fav.id_publicacao, fav.tipo);
+                            fav.imagens = images.imagens;
+                        }
+                    });
+
+                    await Promise.all(promise);
+
+                    // Monta a resposta JSON final
+                    usuarioJSON.status = message.VALIDATED_ITEM.status;
+                    usuarioJSON.status_code = message.VALIDATED_ITEM.status_code;
+                    usuarioJSON.message = message.VALIDATED_ITEM.message;
+                    usuarioJSON.usuario = dadosUsuario[0];
+
+                    return usuarioJSON;
+                } else {
+                    return message.ERROR_NOT_FOUND;
+                }
+            } else {
+                return message.ERROR_NOT_FOUND;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return message.ERROR_INTERNAL_SERVER;
+    }
+};
+
+const getItensPasta = async (id) => {
+
+    try {
+
+        let idUsuario = id
+        let usuarioJSON = {}
+
+        const userValidation = await getBuscarUsuario(idUsuario)
+
+        if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario) || userValidation.status_code != 200) {
+            return message.ERROR_INVALID_ID // 400
+        } else {
+
+            let dadosFeed = await userDAO.selectFeed(idUsuario)
+
+            if (dadosFeed) {
+
+                if (dadosFeed.length > 0) {
+
+                    const promise = dadosFeed.map(async (post) => {
+
+                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
+                    usuarioJSON.feed = dadosFeed
+                    usuarioJSON.status_code = 200
+                    usuarioJSON.quantidade = dadosFeed.length
+
+                    return usuarioJSON
+
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
 
 module.exports = {
     setNovoUsuario,
@@ -731,5 +831,6 @@ module.exports = {
     getEmailCadastrado,
     setAtualizarSenha,
     getFeed,
-    getBuscarApelido
+    getBuscarApelido,
+    getBuscarFavoritos
 }

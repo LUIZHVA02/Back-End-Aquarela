@@ -423,6 +423,69 @@ const selectUserByNickname = async (nickname, client) => {
     }
 }
 
+const selectFavoriteByNickname = async (idUsuario) => {
+    try {
+        let sql = `
+            SELECT
+                'produto' AS tipo,
+                tp.id_produto AS id_publicacao,
+                tp.nome,
+                tp.descricao,
+                tp.item_digital,
+                tp.marca_dagua,
+                tp.preco,
+                tp.quantidade,
+                tp.id_usuario AS id_dono_publicacao,
+                CAST(CASE 
+                    WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS curtida,
+                CAST(CASE 
+                    WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS favorito
+            FROM tbl_produto AS tp
+            LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idUsuario}
+            LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idUsuario} AND pf.produto_favorito_status = true
+            WHERE pf.produto_favorito_status = true
+            GROUP BY tp.id_produto
+
+            UNION ALL
+
+            SELECT
+                'postagem' AS tipo,
+                tp.id_postagem AS id_publicacao,
+                tp.nome,
+                tp.descricao,
+                NULL AS item_digital,
+                NULL AS marca_dagua,
+                NULL AS preco,
+                NULL AS quantidade,
+                tp.id_usuario AS id_dono_publicacao,
+                CAST(CASE 
+                    WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS curtida,
+                CAST(CASE 
+                    WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS favorito
+            FROM tbl_postagem AS tp
+            LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${idUsuario}
+            LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idUsuario} AND pf.postagem_favorita_status = true
+            WHERE pf.postagem_favorita_status = true
+            GROUP BY tp.id_postagem
+
+            ORDER BY id_publicacao
+        `
+        let rsUser = await prisma.$queryRawUnsafe(sql)
+        return rsUser
+    } catch (error) {
+        console.log(error);
+        return error
+    }
+}
+
 const selectFoldersByUser = async (id) => {
     try {
         let sql = `
@@ -519,5 +582,6 @@ module.exports = {
     selectImages,
     selectUserByNickname,
     selectFoldersByUser,
-    selectPostsByUserId
+    selectPostsByUserId,
+    selectFavoriteByNickname
 }
