@@ -423,7 +423,7 @@ const selectUserByNickname = async (nickname, client) => {
     }
 }
 
-const selectFavoriteByNickname = async (idUsuario) => {
+const selectFavoriteById = async (idUsuario) => {
     try {
         let sql = `
             SELECT
@@ -583,5 +583,5 @@ module.exports = {
     selectUserByNickname,
     selectFoldersByUser,
     selectPostsByUserId,
-    selectFavoriteByNickname
+    selectFavoriteById: selectFavoriteById
 }

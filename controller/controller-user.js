@@ -674,19 +674,19 @@ const getBuscarApelido = async (nomeUsuario, cliente) => {
         } else {
 
             let dadosUsuario = await userDAO.selectUserByNickname(nome_usuario, cliente)
-            
+
             if (dadosUsuario) {
 
                 if (dadosUsuario.length > 0) {
-                    
+
                     let postagensUsuario = await userDAO.selectPostsByUserId(dadosUsuario[0].id, cliente)
                     let pastasUsuario = await userDAO.selectFoldersByUser(dadosUsuario[0].id)
 
-                    if(postagensUsuario){
+                    if (postagensUsuario) {
                         dadosUsuario[0].publicacoes = postagensUsuario
                     }
 
-                    if(pastasUsuario){
+                    if (pastasUsuario) {
                         dadosUsuario[0].pastas = pastasUsuario
                     }
 
@@ -720,44 +720,35 @@ const getBuscarApelido = async (nomeUsuario, cliente) => {
 const getBuscarFavoritos = async (idUsuario) => {
     try {
         let id_usuario = idUsuario;
-        let usuarioJSON = {};
+        let itensFavoritosJson = {};
 
         if (!id_usuario) {
             console.log(id_usuario);
             return message.ERROR_REQUIRED_FIELDS;
         } else {
             // Busca o ID do usuário com o nome de usuário
-            let dadosUsuario = await userDAO.selectUserByNickname(id_usuario);
-            
-            if (dadosUsuario && dadosUsuario.length > 0) {
-                const usuarioId = dadosUsuario[0].id;
-                
-                // Usando o select guardado para buscar produtos e postagens favoritas em uma consulta
-                let favoritos = await userDAO.selectFavoriteByNickname(usuarioId);
+            let itensFavoritos = await userDAO.selectFavoriteById(id_usuario);
 
-                if (favoritos.length > 0) {
-                    dadosUsuario[0].favoritos = favoritos;
+            if (itensFavoritos && itensFavoritos.length > 0) {
 
-                    // Mapeia favoritos para buscar imagens, se necessário
-                    const promise = favoritos.map(async (fav) => {
-                        if (fav.tipo === 'postagem') {
-                            let images = await getBuscarImages(fav.id_publicacao, fav.tipo);
-                            fav.imagens = images.imagens;
-                        }
-                    });
+                // Mapeia favoritos para buscar imagens, se necessário
+                const promise = itensFavoritos.map(async (fav) => {
 
-                    await Promise.all(promise);
+                    let images = await getBuscarImages(fav.id_publicacao, fav.tipo);
+                    fav.imagens = images.imagens;
 
-                    // Monta a resposta JSON final
-                    usuarioJSON.status = message.VALIDATED_ITEM.status;
-                    usuarioJSON.status_code = message.VALIDATED_ITEM.status_code;
-                    usuarioJSON.message = message.VALIDATED_ITEM.message;
-                    usuarioJSON.usuario = dadosUsuario[0];
+                });
 
-                    return usuarioJSON;
-                } else {
-                    return message.ERROR_NOT_FOUND;
-                }
+                await Promise.all(promise);
+
+                // Monta a resposta JSON final
+                itensFavoritosJson.status = message.VALIDATED_ITEM.status;
+                itensFavoritosJson.status_code = message.VALIDATED_ITEM.status_code;
+                itensFavoritosJson.message = message.VALIDATED_ITEM.message;
+                itensFavoritosJson.itens = itensFavoritos;
+
+                return itensFavoritosJson;
+
             } else {
                 return message.ERROR_NOT_FOUND;
             }

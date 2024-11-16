@@ -202,14 +202,13 @@ app.get('/v1/aquarela/nickname/user/', cors(), bodyParserJson, async (request, r
 
 })
 
-app.get('/v1/aquarela/favorite/nickname/user/', cors(), bodyParserJson, async (request, response, next) => {
+app.get('/v1/aquarela/favorite/user/:id', cors(), bodyParserJson, async (request, response, next) => {
 
-    let nickname = request.query.nickname
-    let userClient = request.query.client
-    let dadosUsuario = await controllerUsuarios.getBuscarFavoritos(nickname, userClient)
+    let id = request.params.id
+
+    let dadosUsuario = await controllerUsuarios.getBuscarFavoritos(id)
     response.status(dadosUsuario.status_code);
     response.json(dadosUsuario)
-
 })
 
 // #region Preferência-Usuário
