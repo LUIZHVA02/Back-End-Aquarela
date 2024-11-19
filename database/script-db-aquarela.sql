@@ -86,9 +86,6 @@ create table tbl_categoria(
     categoria varchar(255),
     categoria_status boolean not null default 1
 );
-SELECT *, COUNT(*) from tbl_categoria 
-GROUP BY categoria
-HAVING COUNT(*) > 1;
 
 create table tbl_categoria_produto (
     id_categoria_produto int not null primary key auto_increment,
@@ -363,5 +360,3 @@ create table tbl_conta_usuario (
     foreign key (id_conta) references tbl_conta (id_conta),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
 );
-
-call procCurtirProduto(1,2);
