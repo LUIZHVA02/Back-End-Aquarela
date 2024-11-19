@@ -44,49 +44,69 @@ const insertNovoSeguidor = async (dadosSeguidores) => {
 
 const selectAllFollowers = async () => {
 
-    try {
-        let sql = `select * from tbl_seguidores`
-        let rsSeguidor = await prisma.$queryRawUnsafe(sql)
+  try {
+    let sql = `select * from tbl_seguidores`
+    let rsSeguidor = await prisma.$queryRawUnsafe(sql)
 
-        return rsSeguidor
+    return rsSeguidor
 
-    } catch (error) {
-        console.log(error);
-        return false
-    }
+  } catch (error) {
+    console.log(error);
+    return false
+  }
 }
 
-// const updateSeguidores = async function (id, dadosUsuarioUpdate) {
-//   try {
-//       let sql = `UPDATE tbl_seguidores SET `
-//       const keys = Object.keys(dadosUsuarioUpdate)
+const updateSeguidores = async function (id, dadosUsuarioUpdate) {
+  try {
+    let sql = `UPDATE tbl_seguidores SET `
+    const keys = Object.keys(dadosUsuarioUpdate)
 
-//       keys.forEach((key, index) => {
-//           sql += `${key} = '${dadosUsuarioUpdate[key]}'`
-//           if (index !== keys.length - 1) {
-//               sql += `, `
-//           }
-//           console.log(sql);
-//       })
+    keys.forEach((key, index) => {
+      sql += `${key} = '${dadosUsuarioUpdate[key]}'`
+      if (index !== keys.length - 1) {
+        sql += `, `
+      }
+    })
 
-//       sql += ` WHERE id_seguidores = ${id};`
+    sql += ` WHERE id_seguidores = ${id};`
 
-//       let result = await prisma.$executeRawUnsafe(sql)
+    let result = await prisma.$executeRawUnsafe(sql)
 
-//       console.log(result);
+    console.log(result);
 
-//       return result
+    return result
 
-//   } catch (error) {
+  } catch (error) {
 
-//       console.log(error);
+    console.log(error);
 
-//       return false
-//   }
+    return false
+  }
 
-// }
+}
+
+const insertSeguidor= async (dadosSeguidores) => {
+  try {
+    let sql = `call procSeguir(${dadosSeguidores.id_seguidor}, ${dadosSeguidores.id_seguindo})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao seguir: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
 
 module.exports = {
   insertNovoSeguidor,
   selectAllFollowers,
+  updateSeguidores,
+  insertSeguidor
 }

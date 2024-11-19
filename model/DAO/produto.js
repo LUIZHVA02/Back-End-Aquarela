@@ -100,8 +100,101 @@ const updateProduct = async function (id, dataProductUpdate) {
 
 }
 
+const selectByIdProducts = async (id) => {
+
+    try {
+        let sql = `select * from tbl_produto where id_produto = ${id} and produto_status = "1"`
+        let rsProduto = await prisma.$queryRawUnsafe(sql)
+        return rsProduto
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
+const insertCurtirProduto = async (dadosProduto) => {
+    try {
+      let sql = `call procCurtirProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let resultStatus = await prisma.$executeRawUnsafe(sql);
+  
+      if (resultStatus) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao curtir produto: ", error);
+  
+      console.log(error + "aqui");
+  
+      return false;
+    }
+};
+
+const insertFavoritarProduto = async (dadosProduto) => {
+    try {
+      let sql = `call procFavoritarProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let resultStatus = await prisma.$executeRawUnsafe(sql);
+  
+      if (resultStatus) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao favoritar produto: ", error);
+  
+      console.log(error + "aqui");
+  
+      return false;
+    }
+};
+
+const insertVisualizarProduto = async (dadosProduto) => {
+    try {
+      let sql = `call procVisualizarProduto(${dadosProduto.id_produto}, ${dadosProduto.id_usuario})`;
+      let resultStatus = await prisma.$executeRawUnsafe(sql);
+  
+      if (resultStatus) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao favoritar produto: ", error);
+  
+      console.log(error + "aqui");
+  
+      return false;
+    }
+};
+
+const insertProdutoPasta = async (dadosProduto) => {
+  try {
+    let sql = `call procAdicionarProdutoPasta(${dadosProduto.id_produto}, ${dadosProduto.id_pasta})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar postagem na pasta: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
-    insertNovoProduto,
-    selectAllProducts,
-    updateProduct
+  insertNovoProduto,
+  selectAllProducts,
+  updateProduct,
+  selectByIdProducts,
+  insertCurtirProduto,
+  insertFavoritarProduto,
+  insertVisualizarProduto,
+  insertProdutoPasta
 }

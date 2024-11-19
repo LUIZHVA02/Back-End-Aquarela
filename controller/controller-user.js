@@ -1,6 +1,5 @@
 const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
-const tratamento = require('../modulo/tratamento.js')
 
 const setNovoUsuario = async (dadosUsuario, contentType) => {
     try {
@@ -18,7 +17,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length != 11 ||
                 dadosUsuario.data_nascimento == '' || dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento.length > 10 ||
                 dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 11 ||
-                dadosUsuario.disponibilidade === '' || dadosUsuario.disponibilidade === undefined 
+                dadosUsuario.disponibilidade === '' || dadosUsuario.disponibilidade === undefined
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -86,6 +85,57 @@ const getBuscarUsuario = async (id) => {
     }
 }
 
+const getFeed = async (id) => {
+
+    try {
+
+        let idUsuario = id
+        let usuarioJSON = {}
+
+        const userValidation = await getBuscarUsuario(idUsuario)
+
+        if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario) || userValidation.status_code != 200) {
+            return message.ERROR_INVALID_ID // 400
+        } else {
+
+            let dadosFeed = await userDAO.selectFeed(idUsuario)
+
+            if (dadosFeed) {
+
+                if (dadosFeed.length > 0) {
+
+                    const promise = dadosFeed.map(async (post) => {
+
+                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
+                    usuarioJSON.feed = dadosFeed
+                    usuarioJSON.status_code = 200
+                    usuarioJSON.quantidade = dadosFeed.length
+
+                    return usuarioJSON
+
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
+
 const getListarUsuarios = async () => {
 
     try {
@@ -96,7 +146,6 @@ const getListarUsuarios = async () => {
         if (dadosUsuario) {
 
             if (dadosUsuario.length > 0) {
-                console.log(dadosUsuario);
 
                 usuarioJSON.usuarios = dadosUsuario
                 usuarioJSON.quantidade = dadosUsuario.length
@@ -115,6 +164,45 @@ const getListarUsuarios = async () => {
 
     } catch (error) {
         console.log(error);
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+const getBuscarImages = async (id, postType) => {
+
+    try {
+
+        let imagemJSON = {}
+
+        if (id == '' || id == undefined || isNaN(id) ||
+            postType != 'postagem' && postType != 'produto') {
+            return message.ERROR_INVALID_ID // 400
+        } else {
+
+            let dadosImages = await userDAO.selectImages(id, postType)
+
+            if (dadosImages) {
+
+                if (dadosImages.length > 0) {
+
+                    imagemJSON.imagens = dadosImages
+                    imagemJSON.status_code = 200
+                    imagemJSON.quantidade = dadosImages.length
+
+                    return imagemJSON
+
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+
+        }
+
+    } catch (error) {
         message.ERROR_INTERNAL_SERVER // 500
     }
 
@@ -140,8 +228,8 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 let cpf = dadosUsuario.cpf
                 let data_nascimento = dadosUsuario.data_nascimento
                 let telefone = dadosUsuario.telefone
+                let avaliacao = dadosUsuario.avaliacao
                 let disponibilidade = dadosUsuario.disponibilidade
-                let usuario_status = dadosUsuario.usuario_status
 
                 if (
                     nome != '' &&
@@ -174,7 +262,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     foto_usuario != '' &&
                     foto_usuario != undefined &&
                     foto_usuario != null &&
-                    foto_usuario.length == 300
+                    foto_usuario.length <= 300
                 ) {
                     updateUsuarioJson.foto_usuario = foto_usuario
                 } else if (
@@ -187,9 +275,9 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     descricao != '' &&
                     descricao != undefined &&
                     descricao != null &&
-                    descricao.length == 300
+                    descricao.length <= 300
                 ) {
-                    updateUsuarioJson.descricao = descricao
+                    updateUsuarioJson.descricao = descricao.replace(/'/g, "|")
                 } else if (
                     descricao == '' &&
                     descricao == undefined &&
@@ -226,7 +314,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     cpf != '' &&
                     cpf != undefined &&
                     cpf != null &&
-                    cpf.length < 11
+                    cpf.length == 11
                 ) {
                     updateUsuarioJson.cpf = cpf
                 } else if (
@@ -251,7 +339,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     telefone != '' &&
                     telefone != undefined &&
                     telefone != null &&
-                    telefone.length < 11
+                    telefone.length == 11
                 ) {
                     updateUsuarioJson.telefone = telefone
                 } else if (
@@ -261,31 +349,27 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                 ) { }
 
                 if (
-                    disponibilidade != '' &&
-                    disponibilidade != undefined &&
-                    disponibilidade != null
+                    disponibilidade !== '' &&
+                    disponibilidade !== undefined
                 ) {
                     updateUsuarioJson.disponibilidade = disponibilidade
                 } else if (
-                    disponibilidade == '' &&
-                    disponibilidade == undefined &&
-                    disponibilidade == null
+                    disponibilidade === '' &&
+                    disponibilidade === undefined
                 ) { }
 
                 if (
-                    usuario_status != '' &&
-                    usuario_status != undefined &&
-                    usuario_status != null
+                    avaliacao != '' &&
+                    avaliacao != undefined &&
+                    avaliacao != null
                 ) {
-                    updateUsuarioJson.usuario_status = usuario_status
+                    updateUsuarioJson.avaliacao = avaliacao
                 } else if (
-                    usuario_status == '' &&
-                    usuario_status == undefined &&
-                    usuario_status == null
+                    avaliacao == '' &&
+                    avaliacao == undefined &&
+                    avaliacao == null &&
+                    isNaN(avaliacao)
                 ) { }
-
-                console.log(id_user, updateUsuarioJson);
-                
 
                 const usuarioAtualizado = await userDAO.updateUsuario(id_user, updateUsuarioJson)
 
@@ -297,12 +381,10 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id_usuario) => {
                     updatedUserJson.status = message.UPDATED_ITEM.status
                     updatedUserJson.status_code = message.UPDATED_ITEM.status_code
                     updatedUserJson.message = message.UPDATED_ITEM.message
-                    updatedUserJson.usuario = usuarioAtualizado
+                    updatedUserJson.usuario = id_user
 
                     return updatedUserJson
                 } else {
-
-                    console.log(usuarioAtualizado);
 
                     return message.ERROR_INTERNAL_SERVER_DB
                 }
@@ -399,18 +481,18 @@ const getValidarUsuarioEmail = async (emailUsuario, senhaUsuario, contentType) =
 
 const getEmailCadastrado = async (emailUsuario, contentType) => {
     try {
-        if(String(contentType).toLowerCase() == 'application/json'){
+        if (String(contentType).toLowerCase() == 'application/json') {
             let email = emailUsuario
             let usuarioJSON = {}
 
-            if(email != '' || email == undefined) {
+            if (!email || email === '') {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
                 let dadosUsuario = await userDAO.selectEmailCadastrado(email)
 
-                if(dadosUsuario) {
-                    if(dadosUsuario.length > 0) {
+                if (dadosUsuario) {
+                    if (dadosUsuario.length > 0) {
                         let usuario = dadosUsuario
 
                         usuarioJSON.status = message.VALIDATED_ITEM.status
@@ -516,6 +598,218 @@ const setReativarUsuario = async function (id) {
 
 }
 
+const setAtualizarSenha = async (dadosUsuario, contentType, id_usuario) => {
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+        let id_user = id_usuario
+        let updateSenhaJSON = {}
+        try {
+
+            const validaId = await userDAO.selectByIdUsuarioAtivo(id_user)
+
+            if (validaId) {
+
+                let senha = dadosUsuario.senha
+
+                if (
+                    senha != '' &&
+                    senha != undefined &&
+                    senha != null &&
+                    senha.length < 100
+                ) {
+                    updateSenhaJSON.senha = senha
+                } else if (
+                    senha == '' &&
+                    senha == undefined &&
+                    senha == null
+                ) { }
+
+
+
+                console.log(updateSenhaJSON);
+
+                const senhaUpdate = await userDAO.updateUsuario(id_user, updateSenhaJSON)
+
+                console.log(senhaUpdate);
+
+                if (senhaUpdate != false) {
+                    updateSenhaJSON.id = validaId
+                    updateSenhaJSON.status = message.UPDATED_ITEM.status
+                    updateSenhaJSON.status_code = message.UPDATED_ITEM.status_code
+                    updateSenhaJSON.message = message.UPDATED_ITEM.message
+                    updateSenhaJSON.senha = senhaUpdate
+
+                    return updateSenhaJSON
+                } else {
+
+                    console.log(senhaUpdate);
+
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+
+        } catch (error) {
+
+            console.log(error, "model/DAO/controller-user.js => setAtualizarSenha");
+
+            return message.ERROR_INTERNAL_SERVER_DB
+        }
+    } else {
+        return message.ERROR_CONTENT_TYPE
+    }
+}
+
+const getBuscarApelido = async (nomeUsuario, cliente) => {
+    try {
+
+        let nome_usuario = nomeUsuario
+        let usuarioJSON = {}
+
+        if (nome_usuario == '' || nome_usuario == undefined) {
+            console.log(nome_usuario);
+            return message.ERROR_REQUIRED_FIELDS
+
+        } else {
+
+            let dadosUsuario = await userDAO.selectUserByNickname(nome_usuario, cliente)
+
+            if (dadosUsuario) {
+
+                if (dadosUsuario.length > 0) {
+
+                    let postagensUsuario = await userDAO.selectPostsByUserId(dadosUsuario[0].id, cliente)
+                    let pastasUsuario = await userDAO.selectFoldersByUser(dadosUsuario[0].id)
+
+                    if (postagensUsuario) {
+                        dadosUsuario[0].publicacoes = postagensUsuario
+                    }
+
+                    if (pastasUsuario) {
+                        dadosUsuario[0].pastas = pastasUsuario
+                    }
+
+                    const promise = postagensUsuario.map(async (post) => {
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
+                    usuarioJSON.status = message.VALIDATED_ITEM.status
+                    usuarioJSON.status_code = message.VALIDATED_ITEM.status_code
+                    usuarioJSON.message = message.VALIDATED_ITEM.message
+                    usuarioJSON.usuario = dadosUsuario[0]
+
+                    return usuarioJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const getBuscarFavoritos = async (idUsuario) => {
+    try {
+        let id_usuario = idUsuario;
+        let itensFavoritosJson = {};
+
+        if (!id_usuario) {
+            console.log(id_usuario);
+            return message.ERROR_REQUIRED_FIELDS;
+        } else {
+            // Busca o ID do usuário com o nome de usuário
+            let itensFavoritos = await userDAO.selectFavoriteById(id_usuario);
+
+            if (itensFavoritos && itensFavoritos.length > 0) {
+
+                // Mapeia favoritos para buscar imagens, se necessário
+                const promise = itensFavoritos.map(async (fav) => {
+
+                    let images = await getBuscarImages(fav.id_publicacao, fav.tipo);
+                    fav.imagens = images.imagens;
+
+                });
+
+                await Promise.all(promise);
+
+                // Monta a resposta JSON final
+                itensFavoritosJson.status = message.VALIDATED_ITEM.status;
+                itensFavoritosJson.status_code = message.VALIDATED_ITEM.status_code;
+                itensFavoritosJson.message = message.VALIDATED_ITEM.message;
+                itensFavoritosJson.itens = itensFavoritos;
+
+                return itensFavoritosJson;
+
+            } else {
+                return message.ERROR_NOT_FOUND;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return message.ERROR_INTERNAL_SERVER;
+    }
+};
+
+const getItensPasta = async (id) => {
+
+    try {
+
+        let idUsuario = id
+        let usuarioJSON = {}
+
+        const userValidation = await getBuscarUsuario(idUsuario)
+
+        if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario) || userValidation.status_code != 200) {
+            return message.ERROR_INVALID_ID // 400
+        } else {
+
+            let dadosFeed = await userDAO.selectFeed(idUsuario)
+
+            if (dadosFeed) {
+
+                if (dadosFeed.length > 0) {
+
+                    const promise = dadosFeed.map(async (post) => {
+
+                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
+                    usuarioJSON.feed = dadosFeed
+                    usuarioJSON.status_code = 200
+                    usuarioJSON.quantidade = dadosFeed.length
+
+                    return usuarioJSON
+
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
@@ -525,5 +819,9 @@ module.exports = {
     getValidarUsuarioNome,
     getValidarUsuarioEmail,
     setReativarUsuario,
-    getEmailCadastrado
+    getEmailCadastrado,
+    setAtualizarSenha,
+    getFeed,
+    getBuscarApelido,
+    getBuscarFavoritos
 }

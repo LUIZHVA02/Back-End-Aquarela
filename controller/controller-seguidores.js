@@ -3,38 +3,38 @@ const message = require('../modulo/config.js')
 
 const setNovoSeguidor = async (dadosSeguidores, contentType) => {
   try {
-      if (String(contentType).toLowerCase() == 'application/json') {
+    if (String(contentType).toLowerCase() == 'application/json') {
 
-          let resultDadosSeguidores = {}
+      let resultDadosSeguidores = {}
 
-          if (
-              dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
-              dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null 
-              
-          ) {
-              return message.ERROR_REQUIRED_FIELDS
-          } else {
-              let novoSeguidor = await seguidorDAO.insertNovoSeguidor(dadosSeguidores)
+      if (
+        dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
+        dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null
 
-              if (novoSeguidor) {
-                  resultDadosSeguidores.status = message.CREATED_ITEM.status
-                  resultDadosSeguidores.status_code = message.CREATED_ITEM.status_code
-                  resultDadosSeguidores.status = message.CREATED_ITEM.message
-                  resultDadosSeguidores.seguidores = dadosSeguidores
-
-                  return resultDadosSeguidores
-
-              } else {
-                  return message.ERROR_INTERNAL_SERVER_DB
-              }
-          }
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
       } else {
-          return message.ERROR_CONTENT_TYPE
-      }
-  } catch (error) {
-      console.error("Erro ao tentar inserir seguidor: " + error);
+        let novoSeguidor = await seguidorDAO.insertNovoSeguidor(dadosSeguidores)
 
-      return message.ERROR_INTERNAL_SERVER
+        if (novoSeguidor) {
+          resultDadosSeguidores.status = message.CREATED_ITEM.status
+          resultDadosSeguidores.status_code = message.CREATED_ITEM.status_code
+          resultDadosSeguidores.status = message.CREATED_ITEM.message
+          resultDadosSeguidores.seguidores = dadosSeguidores
+
+          return resultDadosSeguidores
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar inserir seguidor: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
   }
 }
 
@@ -53,7 +53,7 @@ const getListFollowers = async () => {
         return seguidorJSON
       } else {
         console.log(dadosSeguidores.length, "getListFollowers");
-        
+
         return message.ERROR_NOT_FOUND
       }
     } else {
@@ -66,46 +66,81 @@ const getListFollowers = async () => {
   }
 }
 
+const setSeguir = async (dadosSeguidores, contentType) => {
+  try {
+    if (String(contentType).toLowerCase() == 'application/json') {
 
+      let resultDadosSeguidores = {}
 
-// const setExcluirSeguidor = async function (id) {
-//   try {
+      if (
+        dadosSeguidores.id_seguidor == '' || dadosSeguidores.id_seguidor == undefined || dadosSeguidores.id_seguidor == null ||
+        dadosSeguidores.id_seguindo == '' || dadosSeguidores.id_seguindo == undefined || dadosSeguidores.id_seguindo == null 
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let novoSeguidor = await seguidorDAO.insertSeguidor(dadosSeguidores)
 
-//       let id_seguidor = id;
-//       let deleteSeguidorJSON = {}
+        if (novoSeguidor) {
+          resultDadosSeguidores.status = message.CREATED_ITEM.status
+          resultDadosSeguidores.status_code = message.CREATED_ITEM.status_code
+          resultDadosSeguidores.status = message.CREATED_ITEM.message
+          resultDadosSeguidores.seguidor = dadosSeguidores
 
+          return resultDadosSeguidores
 
-//       if (id_seguidor == '' || id_seguidor == undefined || isNaN(id_seguidor)) {
-//           return message.ERROR_INVALID_ID;
-//       } else {
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar seguir: " + error);
 
-//         if (validaId.length > 0) {
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
 
-//               let seguidores_status = "0"
+const setExcluirSeguidor = async function (id) {
+  try {
 
-//               deleteSeguidorJSON.seguidores_status = seguidores_status
+    let id_seguidor = id;
+    let deleteSeguidorJSON = {}
 
-//               let dadosSeguidores = await seguidorDAO.updateSeguidores(id_seguidor, deleteSeguidorJSON)
+    if (id_seguidor == '' || id_seguidor == undefined || isNaN(id_seguidor)) {
+      return message.ERROR_INVALID_ID;
+    } else {
 
-//               if (dadosSeguidores) {
-//                   return message.DELETED_ITEM
-//               } else {
-//                   return message.ERROR_INTERNAL_SERVER_DB
-//               }
+      if (validaId.length > 0) {
 
-//           } else {
-//               return message.ERROR_NOT_FOUND
-//           }
-//       }
-//   } catch (error) {
-//       console.log(error);
+        let seguidores_status = "0"
 
-//       return message.ERROR_INTERNAL_SERVER
-//   }
+        deleteSeguidorJSON.seguidores_status = seguidores_status
 
-// }
+        let dadosSeguidores = await seguidorDAO.updateSeguidores(id_seguidor, deleteSeguidorJSON)
+
+        if (dadosSeguidores) {
+          return message.DELETED_ITEM
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+
+      } else {
+        return message.ERROR_NOT_FOUND
+      }
+    }
+  } catch (error) {
+    console.log(error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+
+}
 
 module.exports = {
   setNovoSeguidor,
   getListFollowers,
+  setExcluirSeguidor,
+  setSeguir
 }

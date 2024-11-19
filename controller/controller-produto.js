@@ -16,7 +16,7 @@ const setNovoProduto = async (dadosProduto, contentType) => {
                 dadosProduto.preco == '' || dadosProduto.preco == undefined || dadosProduto.preco == null ||
                 dadosProduto.quantidade == '' || dadosProduto.quantidade == undefined || dadosProduto.quantidade == null ||
                 dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null ||
-                dadosProduto.produto_status == '' || dadosProduto.produto_status == undefined || dadosProduto.produto_status == null
+                dadosProduto.produto_status === '' || dadosProduto.produto_status === undefined || dadosProduto.produto_status ==+ null
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -225,8 +225,196 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
     }
 }
 
+const setCurtirProduto = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultDadosProduto = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let curtirProduto = await produtoDAO.insertCurtirProduto(dadosProduto)
+  
+          if (curtirProduto) {
+            resultDadosProduto.status = message.CREATED_ITEM.status
+            resultDadosProduto.status_code = message.CREATED_ITEM.status_code
+            resultDadosProduto.status = message.CREATED_ITEM.message
+            resultDadosProduto.produto = dadosProduto
+  
+            return resultDadosProduto
+  
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar curtir postagem: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const setFavoritarProduto = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultDadosProduto = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let favoritarProduto = await produtoDAO.insertFavoritarProduto(dadosProduto)
+  
+          if (favoritarProduto) {
+            resultDadosProduto.status = message.CREATED_ITEM.status
+            resultDadosProduto.status_code = message.CREATED_ITEM.status_code
+            resultDadosProduto.status = message.CREATED_ITEM.message
+            resultDadosProduto.produto = dadosProduto
+  
+            return resultDadosProduto
+  
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar favoritar postagem: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const setVisualizarProduto = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultDadosVisualizar = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let visualizarProduto = await produtoDAO.insertVisualizarProduto(dadosProduto)
+  
+          if (visualizarProduto) {
+            resultDadosVisualizar.status = message.CREATED_ITEM.status
+            resultDadosVisualizar.status_code = message.CREATED_ITEM.status_code
+            resultDadosVisualizar.status = message.CREATED_ITEM.message
+            resultDadosVisualizar.produto = dadosProduto
+  
+            return resultDadosVisualizar
+  
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar visualizar produto: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+  }
+
+const setExcluirProduto = async function (id) {
+    try {
+
+        let id_produto = id;
+        let deleteProdutoJson = {}
+
+
+        if (id_produto == '' || id_produto == undefined) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await produtoDAO.selectByIdProducts(id_produto)
+
+            console.log(validaId);
+
+
+            if (validaId.length > 0) {
+
+                let produto_status = "0"
+
+                deleteProdutoJson.produto_status = produto_status
+
+                let dadosProduto = await produtoDAO.updateProduct(id_produto, deleteProdutoJson)
+
+                if (dadosProduto) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setAdicionarProdutoPasta = async (dadosProduto, contentType) => {
+    try {
+      if (String(contentType).toLowerCase() == 'application/json') {
+  
+        let resultProdutoPasta = {}
+  
+        if (
+          dadosProduto.id_produto == '' || dadosProduto.id_produto == undefined || dadosProduto.id_produto == null ||
+          dadosProduto.id_pasta == '' || dadosProduto.id_pasta == undefined || dadosProduto.id_pasta == null 
+        ) {
+          return message.ERROR_REQUIRED_FIELDS
+        } else {
+          let adicionarProduto = await produtoDAO.insertProdutoPasta(dadosProduto)
+  
+          if (adicionarProduto) {
+            resultProdutoPasta.status = message.CREATED_ITEM.status
+            resultProdutoPasta.status_code = message.CREATED_ITEM.status_code
+            resultProdutoPasta.status = message.CREATED_ITEM.message
+            resultProdutoPasta.produto = dadosProduto
+  
+            return resultProdutoPasta
+              
+          } else {
+            return message.ERROR_INTERNAL_SERVER_DB
+          }
+        }
+      } else {
+        return message.ERROR_CONTENT_TYPE
+      }
+    } catch (error) {
+      console.error("Erro ao tentar adicionar produto na pasta: " + error);
+  
+      return message.ERROR_INTERNAL_SERVER
+    }
+  }
+
 module.exports = {
     setNovoProduto,
     getListProducts,
-    setUpdateProducts
+    setUpdateProducts,
+    setExcluirProduto,
+    setCurtirProduto,
+    setFavoritarProduto,
+    setVisualizarProduto,
+    setAdicionarProdutoPasta
 }
