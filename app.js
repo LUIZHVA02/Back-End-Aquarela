@@ -118,13 +118,8 @@ app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
     let userInfo = await controllerUsuarios.getListarUsuarios()
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(userInfo)
+    response.status(userInfo.status_code)
 })
 
 app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -285,7 +280,6 @@ app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, respons
     let dadosBody = request.body
     let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
     response.status(resultdataAddress.status_code)
-    
     response.json(resultdataAddress)
 
 })
@@ -348,10 +342,8 @@ app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, respons
     let dadosBody = request.body
     let resultDataProduct = await controllerProduto.setNovoProduto(dadosBody, contentType)
     response.status(resultDataProduct.status_code)
-    
+    response.json(resultDataProduct)
 
-    response.json(resultDataProduct)    
-    
 })
 
 app.put('/v1/aquarela/product/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -452,10 +444,8 @@ app.post('/v1/aquarela/category', cors(), bodyParserJson, async (request, respon
     let dadosBody = request.body
     let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
     response.status(resultDataCategoria.status_code)
-    
+    response.json(resultDataCategoria)
 
-    response.json(resultDataCategoria)    
-    
 })
 
 app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
@@ -492,10 +482,30 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
     let resultDadosSeguidores = await controllerSeguidores.setNovoSeguidor(dadosBody, contentType)
     console.log(resultDadosSeguidores)
     response.status(resultDadosSeguidores.status_code)
-    
+    response.json(resultDadosSeguidores)
 
-    response.json(resultDadosSeguidores)    
-    
+})
+
+
+app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_seguidores = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerSeguidores.setExcluirSeguidor(dadosBody, contentType, id_seguidores)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+})
+
+app.post('/v1/aquarela/follower/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosSeguidores = await controllerSeguidores.setSeguir(dadosBody, contentType)
+
+    response.status(resultDadosSeguidores.status_code)
+    response.json(resultDadosSeguidores)
+
 })
 
 // #region Postagem
@@ -526,10 +536,8 @@ app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, 
     let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
 
     response.status(resultDadosPostagem.status_code)
-    
+    response.json(resultDadosPostagem)
 
-    response.json(resultDadosPostagem)    
-    
 })
 
 app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
