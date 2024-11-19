@@ -43,6 +43,21 @@
  * 
  *      Caso ocorra algum problema, execute:
  *          npm i 
+ * 
+ * 
+npm install
+npm run build --if-present
+npm run test --if-present
+npm install -g npm@latest
+npm install express --save
+npm install cors --save
+npm install body-parser --save
+npm install prisma --save
+npm install @prisma/client --save
+npx prisma init
+npx prisma db pull
+npx prisma generate
+npm i
  */
 
 const express = require('express')
@@ -79,11 +94,11 @@ app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, 
     let dadosBody = request.body
     let resultDadosUsuario = await controllerUsuarios.setNovoUsuario(dadosBody, contentType)
     response.status(resultDadosUsuario.status_code)
-    
+
     console.log(resultDadosUsuario);
 
     response.json(resultDadosUsuario)
-    
+
 })
 
 app.get('/v1/aquarela/user/:id', cors(), async function (request, response, next) {
@@ -105,13 +120,8 @@ app.get('/v1/aquarela/users', cors(), async function (request, response, next) {
 
     let infoFilmes = await controllerUsuarios.getListarUsuarios()
 
-    if (infoFilmes) {
-        response.json(infoFilmes)
-        response.status(200)
-    } else {
-        response.status(404)
-        response.json({ erro: 'Não foi possível encontrar um item!' })
-    }
+    response.json(infoFilmes)
+    response.status(infoFilmes.status_code)
 })
 
 app.put('/v1/aquarela/user/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -217,9 +227,9 @@ app.post('/v1/aquarela/address', cors(), bodyParserJson, async (request, respons
     let resultdataAddress = await controllerAddress.setNewAddress(dadosBody, contentType)
     console.log(resultdataAddress)
     response.status(resultdataAddress.status_code)
-    
+
     response.json(resultdataAddress)
-    
+
 })
 
 app.put('/v1/aquarela/address/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -290,10 +300,10 @@ app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, respons
     let resultDataProduct = await controllerProduto.setNovoProduto(dadosBody, contentType)
     console.log(resultDataProduct)
     response.status(resultDataProduct.status_code)
-    
 
-    response.json(resultDataProduct)    
-    
+
+    response.json(resultDataProduct)
+
 })
 
 app.put('/v1/aquarela/updateProduct/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -315,10 +325,10 @@ app.post('/v1/aquarela/insertNewCategory', cors(), bodyParserJson, async (reques
     let resultDataCategoria = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
     console.log(resultDataCategoria)
     response.status(resultDataCategoria.status_code)
-    
 
-    response.json(resultDataCategoria)    
-    
+
+    response.json(resultDataCategoria)
+
 })
 
 /******************************************************** Endpoints Seguidores ********************************************************/
@@ -343,10 +353,10 @@ app.post('/v1/aquarela/follower', cors(), bodyParserJson, async (request, respon
     let resultDadosSeguidores = await controllerSeguidores.setNovoSeguidor(dadosBody, contentType)
     console.log(resultDadosSeguidores)
     response.status(resultDadosSeguidores.status_code)
-    
 
-    response.json(resultDadosSeguidores)    
-    
+
+    response.json(resultDadosSeguidores)
+
 })
 
 // app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -381,10 +391,10 @@ app.post('/v1/aquarela/insertNewPost', cors(), bodyParserJson, async (request, r
     let resultDadosPostagem = await controllerPostagem.setNovaPostagem(dadosBody, contentType)
     console.log(resultDadosPostagem)
     response.status(resultDadosPostagem.status_code)
-    
 
-    response.json(resultDadosPostagem)    
-    
+
+    response.json(resultDadosPostagem)
+
 })
 
 app.get('/v1/aquarela/searchPosts/:id', cors(), async function (request, response, next) {
@@ -414,4 +424,4 @@ app.put('/v1/aquarela/updatePosts/:id', cors(), bodyParserJson, async (request, 
 
 
 const port = process.env.PORT || 8080
-app.listen(port, () => {console.log('API funcionando na porta ' + port)})
+app.listen(port, () => { console.log('API funcionando na porta ' + port) })
