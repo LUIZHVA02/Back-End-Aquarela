@@ -91,7 +91,7 @@ const selectAllUserAdresses = async (id_usuario) => {
                     tbl_endereco.estado, tbl_endereco.cidade, tbl_endereco.cep from tbl_usuario
                     inner join tbl_usuario_endereco on tbl_usuario.id_usuario = tbl_usuario_endereco.id_usuario
                     inner join tbl_endereco on tbl_usuario_endereco.id_endereco = tbl_endereco.id_endereco 
-                    where tbl_usuario.usuario_status = 1 and tbl_usuario.id_usuario = ${id_usuario};`
+                    where tbl_usuario.usuario_status = 1 and tbl_endereco.endereco_status = 1 and tbl_usuario.id_usuario = ${id_usuario};`
 
         let rsUserAdresses = await prisma.$queryRawUnsafe(sql)        
 

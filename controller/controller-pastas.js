@@ -48,7 +48,7 @@ const getListPastas = async () => {
         if (dadosPasta) {
 
             if (dadosPasta.length > 0) {
-                pastaJSON.address = dadosPasta
+                pastaJSON.folders = dadosPasta
                 pastaJSON.quantity = dadosPasta.length
                 pastaJSON.status_code = 200
                 return pastaJSON

@@ -314,16 +314,16 @@ const setExcluirEndereco = async function (id) {
     if (id_endereco == "" || id_endereco == undefined || isNaN(id_endereco)) {
       return message.ERROR_INVALID_ID;
     } else {
-      const validaId = await addressDAO.selectByIdUsuarioAtivo(id_endereco);
 
-      console.log(validaId);
+      const validaId = await addressDAO.selectByIdAddress(id_endereco);
 
       if (validaId.length > 0) {
+         
         let endereco_status = "0";
 
         deleteenderecoJson.endereco_status = endereco_status;
 
-        let dadosendereco = await userDAO.updateendereco(
+        let dadosendereco = await addressDAO.updateAddress(
           id_endereco,
           deleteenderecoJson
         );
