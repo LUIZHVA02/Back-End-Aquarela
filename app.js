@@ -626,6 +626,16 @@ app.get('/v1/aquarela/folders', cors(), async function (request, response, next)
     response.status(searchPastas.status_code)
 })
 
+app.get('/v1/aquarela/folder/', cors(), async function (request, response, next) {
+
+    let folderId = request.query.folder
+    let client = request.query.client
+    let searchPastas = await controllerPasta.getBuscarPasta(folderId, client)
+    response.status(searchPastas.status_code)
+    response.json(searchPastas)
+    
+})
+
 app.post('/v1/aquarela/folder', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']

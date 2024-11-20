@@ -1,4 +1,5 @@
 const pastasDAO = require('../model/DAO/pastas.js')
+const userController = require('./controller-user.js')
 const message = require('../modulo/config.js')
 
 const setNovaPasta = async (dadosPasta, contentType) => {
@@ -173,9 +174,62 @@ const setExcluirPasta = async function (id) {
 
 }
 
+const getBuscarPasta = async(folderId, clientId) => {
+
+    try {
+
+        let id_pasta = folderId
+        let pastaJSON = {}
+
+        const userValidation = await userController.getBuscarUsuario(clientId)
+
+        if (id_pasta == '' || id_pasta == undefined || isNaN(clientId) || userValidation.status_code != 200) {
+
+            return message.ERROR_REQUIRED_FIELDS
+
+        } else {
+
+            let dadosPasta = await pastasDAO.selectPastaItens(id_pasta, clientId)
+            
+            if (dadosPasta) {
+                
+                if (dadosPasta.length > 0) {
+                    
+                    const promise = dadosPasta.map(async (post) => {
+                        
+                        let images = await userController.getBuscarImages(post.id_publicacao, post.tipo)                        
+                        post.imagens = images.imagens
+                        
+                        let usuario = await userController.getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+                        
+                    })
+
+                    await Promise.all(promise)
+
+                    pastaJSON.status = message.VALIDATED_ITEM.status
+                    pastaJSON.status_code = message.VALIDATED_ITEM.status_code
+                    pastaJSON.message = message.VALIDATED_ITEM.message
+                    pastaJSON.pasta = dadosPasta
+
+                    return pastaJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
 module.exports = {
     setNovaPasta,
     getListPastas,
     setUpdatePasta,
-    setExcluirPasta
+    setExcluirPasta,
+    getBuscarPasta
 }

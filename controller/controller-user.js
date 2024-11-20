@@ -761,57 +761,6 @@ const getBuscarFavoritos = async (idUsuario) => {
     }
 };
 
-const getItensPasta = async (id) => {
-
-    try {
-
-        let idUsuario = id
-        let usuarioJSON = {}
-
-        const userValidation = await getBuscarUsuario(idUsuario)
-
-        if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario) || userValidation.status_code != 200) {
-            return message.ERROR_INVALID_ID // 400
-        } else {
-
-            let dadosFeed = await userDAO.selectFeed(idUsuario)
-
-            if (dadosFeed) {
-
-                if (dadosFeed.length > 0) {
-
-                    const promise = dadosFeed.map(async (post) => {
-
-                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
-                        post.dono_publicacao = usuario.usuario[0]
-
-                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
-                        post.imagens = images.imagens
-
-                    })
-
-                    await Promise.all(promise)
-
-                    usuarioJSON.feed = dadosFeed
-                    usuarioJSON.status_code = 200
-                    usuarioJSON.quantidade = dadosFeed.length
-
-                    return usuarioJSON
-
-                } else {
-                    return message.ERROR_NOT_FOUND // 404
-                }
-
-            } else {
-                return message.ERROR_INTERNAL_SERVER_DB // 500
-            }
-        }
-    } catch (error) {
-        console.log(error);
-        message.ERROR_INTERNAL_SERVER // 500
-    }
-}
-
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
@@ -824,7 +773,7 @@ module.exports = {
     getEmailCadastrado,
     setAtualizarSenha,
     getFeed,
+    getBuscarImages,
     getBuscarApelido,
     getBuscarFavoritos,
-    getItensPasta
 }
