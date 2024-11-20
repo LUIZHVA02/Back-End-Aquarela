@@ -497,6 +497,8 @@ const selectFoldersByUser = async (id) => {
                 tbl_pasta 
             WHERE 
                 id_usuario = ${id}
+            AND 
+                pasta_status = true
         `
         let rsFolder = await prisma.$queryRawUnsafe(sql)
         return rsFolder

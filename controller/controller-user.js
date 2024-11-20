@@ -65,8 +65,6 @@ const getBuscarUsuario = async (id) => {
             if (dadosUsuario) {
                 if (dadosUsuario.length > 0) {
 
-
-
                     usuarioJSON.usuario = dadosUsuario
                     usuarioJSON.status_code = 200
 
@@ -726,6 +724,7 @@ const getBuscarFavoritos = async (idUsuario) => {
             console.log(id_usuario);
             return message.ERROR_REQUIRED_FIELDS;
         } else {
+
             // Busca o ID do usuário com o nome de usuário
             let itensFavoritos = await userDAO.selectFavoriteById(id_usuario);
 
@@ -734,10 +733,13 @@ const getBuscarFavoritos = async (idUsuario) => {
                 // Mapeia favoritos para buscar imagens, se necessário
                 const promise = itensFavoritos.map(async (fav) => {
 
+                    let usuario = await getBuscarUsuario(fav.id_dono_publicacao)
+                    fav.dono_publicacao = usuario.usuario[0]
+
                     let images = await getBuscarImages(fav.id_publicacao, fav.tipo);
                     fav.imagens = images.imagens;
 
-                });
+                })
 
                 await Promise.all(promise);
 
@@ -823,5 +825,6 @@ module.exports = {
     setAtualizarSenha,
     getFeed,
     getBuscarApelido,
-    getBuscarFavoritos
+    getBuscarFavoritos,
+    getItensPasta
 }
