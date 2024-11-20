@@ -20,9 +20,9 @@ const setNovaPasta = async (dadosPasta, contentType) => {
                 let novaPasta = await pastasDAO.insertNovaPasta(dadosPasta)
 
                 if (novaPasta) {
-                    
+
                     const idPasta = await pastasDAO.selectLastId()
-                    dadosPasta.id = Number(idPasta[0].id)
+                    dadosPasta.id_pasta = Number(idPasta[0].id)
 
                     resultDadosPasta.status = message.CREATED_ITEM.status
                     resultDadosPasta.status_code = message.CREATED_ITEM.status_code
