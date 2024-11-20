@@ -63,12 +63,6 @@ CREATE PROCEDURE procRemoverPostagemPasta(
     IN p_id_pasta INTEGER
 )
 BEGIN
-    DECLARE associacao_existente INT;
-
-    SELECT COUNT(*) INTO associacao_existente
-    FROM tbl_pasta_postagem
-    WHERE id_postagem = p_id_postagem AND id_pasta = p_id_pasta;
-
     DELETE FROM tbl_pasta_postagem
     WHERE id_postagem = p_id_postagem AND id_pasta = p_id_pasta;
 END $$
