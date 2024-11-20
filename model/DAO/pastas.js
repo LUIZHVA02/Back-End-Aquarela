@@ -101,9 +101,22 @@ const selectByIdPasta = async (id) => {
     }
 }
 
+const selectLastId = async () => {
+
+    try {
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_pasta limit 1'
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     insertNovaPasta,
     selectAllPasta,
     updatePasta,
-    selectByIdPasta
+    selectByIdPasta,
+    selectLastId
 }
