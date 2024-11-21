@@ -345,6 +345,17 @@ app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, respons
 
 })
 
+app.get('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
+    
+    let idProduto = request.query.product
+    let client = request.query.client
+    let searchProducts = await controllerProduto.getBuscarProduto(idProduto, client)
+
+    response.json(searchProducts)
+    response.status(searchProducts.status_code)
+
+})
+
 app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']

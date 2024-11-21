@@ -1,4 +1,7 @@
 const produtoDAO = require('../model/DAO/produto.js')
+const categoriaDAO = require('../model/DAO/categoria.js')
+const imagemDAO = require('../model/DAO/image.js')
+const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
 const { tratarDataBACK } = require('../modulo/tratamento.js')
 
@@ -11,24 +14,72 @@ const setNovoProduto = async (dadosProduto, contentType) => {
             if (
                 dadosProduto.nome == '' || dadosProduto.nome == undefined || dadosProduto.nome.length > 100 ||
                 dadosProduto.descricao == '' || dadosProduto.descricao == undefined || dadosProduto.descricao.length > 500 ||
-                dadosProduto.marca_dagua == '' || dadosProduto.marca_dagua == undefined || dadosProduto.marca_dagua == null ||
-                dadosProduto.item_digital == '' || dadosProduto.item_digital == undefined || dadosProduto.item_digital == null ||
+                dadosProduto.marca_dagua === '' || dadosProduto.marca_dagua === undefined || dadosProduto.marca_dagua === null ||
+                dadosProduto.item_digital === '' || dadosProduto.item_digital === undefined || dadosProduto.item_digital === null ||
                 dadosProduto.preco == '' || dadosProduto.preco == undefined || dadosProduto.preco == null ||
                 dadosProduto.quantidade == '' || dadosProduto.quantidade == undefined || dadosProduto.quantidade == null ||
                 dadosProduto.id_usuario == '' || dadosProduto.id_usuario == undefined || dadosProduto.id_usuario == null ||
-                dadosProduto.produto_status === '' || dadosProduto.produto_status === undefined || dadosProduto.produto_status ==+ null
+                dadosProduto.categorias.length == 0 || dadosProduto.imagens.length == 0
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
+              
                 let novoProduto = await produtoDAO.insertNovoProduto(dadosProduto)
 
                 if (novoProduto) {
-                    resultDadosProduto.status = message.CREATED_ITEM.status
-                    resultDadosProduto.status_code = message.CREATED_ITEM.status_code
-                    resultDadosProduto.status = message.CREATED_ITEM.message
-                    resultDadosProduto.produto = dadosProduto
+                  
+                  let idProduto = await produtoDAO.selectLastId()
+                  let id =  Number(idProduto[0].id)
 
-                    return resultDadosProduto
+                  let categoriasARRAY = []
+                  let imagensARRAY = []
+
+                  const categoriaPromise = dadosProduto.categorias.map(async (categoriaId) => {
+                        
+                    const validaCategoria = await categoriaDAO.selectCategoriesById(categoriaId)
+                    
+                    if(validaCategoria){
+                      const categoriaProduto = await produtoDAO.insertProdutoCategoria(id, categoriaId)
+                      if (categoriaProduto) {                        
+                        categoriasARRAY.push(validaCategoria[0])
+                      }
+                    }
+                    
+                  })
+
+                  const imagePromisse = dadosProduto.imagens.map(async (imagemData) => {
+                        
+                    const imagem = await imagemDAO.insertImage(imagemData.url)
+                    
+                    if(imagem){
+
+                      let idImagemResp = await imagemDAO.selectLastId()
+                      let idImagem =  Number(idImagemResp[0].id)
+
+                      const imageProduto = await produtoDAO.insertProdutoImagem(id, idImagem)
+                      
+                      if (imageProduto) {
+
+                        const imagemById = await imagemDAO.selectByIdImagem(idImagem)                        
+                        imagensARRAY.push(imagemById[0])
+
+                      }
+                    }
+
+                  })
+
+                  await Promise.all(categoriaPromise)
+                  await Promise.all(imagePromisse)
+                  
+                  dadosProduto.categorias = categoriasARRAY
+                  dadosProduto.imagens = imagensARRAY
+
+                  resultDadosProduto.status = message.CREATED_ITEM.status
+                  resultDadosProduto.status_code = message.CREATED_ITEM.status_code
+                  resultDadosProduto.status = message.CREATED_ITEM.message
+                  resultDadosProduto.produto = dadosProduto
+
+                  return resultDadosProduto
 
                 } else {
                     return message.ERROR_INTERNAL_SERVER_DB
@@ -69,6 +120,47 @@ const getListProducts = async () => {
 
         message.ERROR_INTERNAL_SERVER
     }
+}
+
+const getBuscarProduto = async(idProduto, idCliente) => {
+
+  try {
+
+    let produtoJSON = {}
+    let validaCliente = await userDAO.selectByIdUsuarioAtivo(idCliente)
+
+    if (idProduto == '' || idProduto == undefined || isNaN(idProduto) || validaCliente.length == 0) {
+      
+      return message.ERROR_INVALID_ID // 400
+      
+    } else {
+      
+      let dadosProduto = await produtoDAO.selectByIdProductComplete(idProduto, idCliente)            
+
+      if (dadosProduto) {
+
+        if (dadosProduto.length > 0) {
+
+          let donoPublicacao = await userDAO.selectByIdUsuarioAtivo(dadosProduto[0].id_dono_publicacao)          
+          dadosProduto[0].dono_publicacao = donoPublicacao[0]
+
+          produtoJSON.produto = dadosProduto
+          produtoJSON.status_code = 200
+          return produtoJSON
+
+        } else {
+          return message.ERROR_NOT_FOUND // 404
+        }
+
+      } else {
+        return message.ERROR_INTERNAL_SERVER_DB // 500
+      }
+    }
+
+  } catch (error) {
+    message.ERROR_INTERNAL_SERVER // 500
+  }
+
 }
 
 const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
@@ -343,7 +435,7 @@ const setExcluirProduto = async function (id) {
         if (id_produto == '' || id_produto == undefined) {
             return message.ERROR_INVALID_ID;
         } else {
-            const validaId = await produtoDAO.selectByIdProducts(id_produto)
+            const validaId = await produtoDAO.selectByIdProduct(id_produto)
 
             console.log(validaId);
 
@@ -411,6 +503,7 @@ const setAdicionarProdutoPasta = async (dadosProduto, contentType) => {
 module.exports = {
     setNovoProduto,
     getListProducts,
+    getBuscarProduto,
     setUpdateProducts,
     setExcluirProduto,
     setCurtirProduto,

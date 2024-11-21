@@ -179,22 +179,25 @@ const getBuscarPasta = async(folderId, clientId) => {
     try {
 
         let id_pasta = folderId
-        let pastaJSON = {}
-
+        let pastaJSON = {}        
+        
         const userValidation = await userController.getBuscarUsuario(clientId)
-
+        
         if (id_pasta == '' || id_pasta == undefined || isNaN(clientId) || userValidation.status_code != 200) {
-
-            return message.ERROR_REQUIRED_FIELDS
-
-        } else {
-
-            let dadosPasta = await pastasDAO.selectPastaItens(id_pasta, clientId)
             
-            if (dadosPasta) {
+            return message.ERROR_REQUIRED_FIELDS
+            
+        } else {
+            
+            let pasta = await pastasDAO.selectByIdPasta(id_pasta)            
+            console.log(pasta);
+            
+            if (pasta) {
                 
-                if (dadosPasta.length > 0) {
+                if (pasta.length > 0) {
                     
+                    let dadosPasta = await pastasDAO.selectPastaItens(id_pasta, clientId)
+
                     const promise = dadosPasta.map(async (post) => {
                         
                         let images = await userController.getBuscarImages(post.id_publicacao, post.tipo)                        
@@ -207,10 +210,12 @@ const getBuscarPasta = async(folderId, clientId) => {
 
                     await Promise.all(promise)
 
+                    pasta[0].pasta = dadosPasta
+
                     pastaJSON.status = message.VALIDATED_ITEM.status
                     pastaJSON.status_code = message.VALIDATED_ITEM.status_code
                     pastaJSON.message = message.VALIDATED_ITEM.message
-                    pastaJSON.pasta = dadosPasta
+                    pastaJSON.pasta = pasta[0]
 
                     return pastaJSON
                 } else {

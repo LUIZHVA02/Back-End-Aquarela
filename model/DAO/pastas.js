@@ -92,7 +92,8 @@ const updatePasta = async function (id, dataPastaUpdate) {
 const selectByIdPasta = async (id) => {
 
     try {
-        let sql = `select * from tbl_pasta where id_pasta = ${id} and pasta_status = "1"`
+        let sql = `select id_pasta, nome, id_usuario from tbl_pasta where id_pasta = ${id} and pasta_status = "1"`    
+        
         let rsPasta = await prisma.$queryRawUnsafe(sql)
         return rsPasta
     } catch (error) {

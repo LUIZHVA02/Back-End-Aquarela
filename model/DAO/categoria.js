@@ -65,6 +65,7 @@ const selectCategoriesById = async (id) => {
   try {
     let sql = `
             SELECT 
+                id_categoria,
                 categoria
             FROM 
                 tbl_categoria
@@ -79,6 +80,8 @@ const selectCategoriesById = async (id) => {
     return false;
   }
 };
+
+
 
 module.exports = {
   insertNovaCategoria,

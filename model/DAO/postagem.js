@@ -267,6 +267,69 @@ const insertPostagemPasta = async (dadosPostagem) => {
   }
 };
 
+const insertPostagemCategoria = async (idPostagem, idCategoria) => {
+
+  try {
+
+      let sql = `INSERT INTO tbl_categoria_postagem (id_postagem, id_categoria, categoria_postagem_status)
+                 VALUES
+                (${idPostagem}, ${idCategoria}, TRUE)`
+      let resultStatus = await prisma.$executeRawUnsafe(sql)
+      if (resultStatus) {
+          return true
+      }
+      else {
+          return false
+      }
+
+  } catch (error) {
+      console.error("Erro ao inserir postagem: ", error);
+
+      console.log(error + "aqui");
+
+      return false
+  }
+
+}
+
+const insertPostagemImagem = async (idPostagem, idImagem) => {
+
+  try {
+
+      let sql = `INSERT INTO tbl_imagem_postagem (id_postagem, id_imagem, imagem_postagem_status)
+                 VALUES
+                (${idPostagem}, ${idImagem}, TRUE)`
+      let resultStatus = await prisma.$executeRawUnsafe(sql)
+      if (resultStatus) {
+          return true
+      }
+      else {
+          return false
+      }
+
+  } catch (error) {
+      console.error("Erro ao inserir produto: ", error);
+
+      console.log(error + "aqui");
+
+      return false
+  }
+
+}
+
+const selectLastId = async () => {
+
+  try {
+      let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_postagem limit 1'
+      let rsProduto = await prisma.$queryRawUnsafe(sql)
+      return rsProduto
+  } catch (error) {
+      return false
+  }
+
+}
+
+
 module.exports = {
   selectAllPosts,
   selectByIdPosts,
@@ -276,5 +339,8 @@ module.exports = {
   insertFavoritarPostagem,
   insertVisualizarPostagem,
   insertNovoComentario,
-  insertPostagemPasta
+  insertPostagemPasta,
+  insertPostagemCategoria,
+  insertPostagemImagem,
+  selectLastId
 }
