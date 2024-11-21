@@ -80,6 +80,15 @@ const controllerCarrinho = require('./controller/controller-carrinho.js')
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
 
+app.get('/v1/aquarela/search/', cors(), async function(request, response, next) {
+    let idClient = request.query.id_client
+    let texto = request.query.texto
+    let resultDadosSearch = await controllerUsuarios.getBuscarItensByText(idClient,texto)
+
+    response.json(resultDadosSearch)
+    response.status(resultDadosSearch.status_code)
+})
+
 app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
@@ -510,12 +519,6 @@ app.post('/v1/aquarela/follower/user', cors(), bodyParserJson, async (request, r
 
 // #region Postagem
 /******************************************************** Endpoints Postagem ********************************************************/
-
-app.post('/v1/aquarela/available/posts/:id', cors(), bodyParserJson, async function(request, response, next) {
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let resultDadosSearch = await controllerPostagem.getListar
-})
 
 app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
 

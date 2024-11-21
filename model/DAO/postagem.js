@@ -8,37 +8,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const insertNovaPostagem = async (dadosPostagem) => {
-  try {
-    let sql = `insert into tbl_postagem  (   
-                                              nome,
-                                              descricao,
-                                              id_usuario,
-                                              postagem_status
-                                          ) 
-                                          values 
-                                          (
-                                              '${dadosPostagem.nome}',
-                                              '${dadosPostagem.descricao}',
-                                              '${dadosPostagem.id_usuario}',
-                                              true
-                                          )`;
-    let resultStatus = await prisma.$executeRawUnsafe(sql);
-
-    if (resultStatus) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("Erro ao inserir postagem: ", error);
-
-    console.log(error + "aqui");
-
-    return false;
-  }
-};
-
 const selectAllPosts = async (id) => {
   try {
     let sql = `
@@ -128,6 +97,37 @@ const updatePosts = async function (id, dadosPostagem) {
   }
 
 }
+
+const insertNovaPostagem = async (dadosPostagem) => {
+  try {
+    let sql = `insert into tbl_postagem  (   
+                                              nome,
+                                              descricao,
+                                              id_usuario,
+                                              postagem_status
+                                          ) 
+                                          values 
+                                          (
+                                              '${dadosPostagem.nome}',
+                                              '${dadosPostagem.descricao}',
+                                              '${dadosPostagem.id_usuario}',
+                                              true
+                                          )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao inserir postagem: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
 
 const insertCurtidaPostagem = async (dadosPostagem) => {
   try {
@@ -268,10 +268,10 @@ const insertPostagemPasta = async (dadosPostagem) => {
 };
 
 module.exports = {
-  insertNovaPostagem,
   selectAllPosts,
   selectByIdPosts,
   updatePosts,
+  insertNovaPostagem,
   insertCurtidaPostagem,
   insertFavoritarPostagem,
   insertVisualizarPostagem,

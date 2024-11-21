@@ -6,8 +6,18 @@
 ****************************************************************************************************************************************************/
 
 const { PrismaClient } = require('@prisma/client');
-const res = require('express/lib/response');
 const prisma = new PrismaClient();
+
+const selectSearchItemsByText = async (id_client, text) => {
+    try {
+      let sql = `select * from tbl_postagem where id_postagem = ${id}`;
+      let rsSearch = await prisma.$queryRawUnsafe(sql);
+      return rsSearch;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
 
 // Inserir um novo usuário
 const insertUsuario = async (dadosUsuario) => {
@@ -571,6 +581,7 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
 
 
 module.exports = {
+    selectSearchItemsByText,
     insertUsuario,
     selectAllUsuarios,
     selectLastId,

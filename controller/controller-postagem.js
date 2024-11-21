@@ -1,4 +1,3 @@
-const { contentType } = require('express/lib/response.js')
 const postagemDAO = require('../model/DAO/postagem.js')
 const message = require('../modulo/config.js')
 
@@ -162,7 +161,7 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
         const postUpdate = await postagemDAO.updatePosts(id_postagem, updatePostJSON)
 
         console.log(postUpdate);
-        
+
         if (postUpdate != false) {
           updatePostJSON.id = validaId
           updatePostJSON.status = message.UPDATED_ITEM.status
@@ -200,7 +199,7 @@ const setCurtirPostagem = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
@@ -236,7 +235,7 @@ const setFavoritarPostagem = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
@@ -272,7 +271,7 @@ const setVisualizarPostagem = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null 
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
@@ -303,38 +302,38 @@ const setVisualizarPostagem = async (dadosPostagem, contentType) => {
 const setExcluirPostagem = async function (id) {
   try {
 
-      let id_postagem = id;
-      let deletePostagemJSON = {}
+    let id_postagem = id;
+    let deletePostagemJSON = {}
 
 
-      if (id_postagem == '' || id_postagem == undefined || isNaN(id_postagem)) {
-          return message.ERROR_INVALID_ID;
+    if (id_postagem == '' || id_postagem == undefined || isNaN(id_postagem)) {
+      return message.ERROR_INVALID_ID;
+    } else {
+
+      let validaId = await postagemDAO.selectByIdPosts(id_postagem);
+
+      if (validaId.length > 0) {
+
+        let postagem_status = "0"
+
+        deletePostagemJSON.postagem_status = postagem_status
+
+        let dadosPostagem = await postagemDAO.updatePosts(id_postagem, deletePostagemJSON)
+
+        if (dadosPostagem) {
+          return message.DELETED_ITEM
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+
       } else {
-
-          let validaId = await postagemDAO.selectByIdPosts(id_postagem);
-
-          if (validaId.length > 0) {
-
-              let postagem_status = "0"
-
-              deletePostagemJSON.postagem_status = postagem_status
-
-              let dadosPostagem = await postagemDAO.updatePosts(id_postagem, deletePostagemJSON)
-
-              if (dadosPostagem) {
-                  return message.DELETED_ITEM
-              } else {
-                  return message.ERROR_INTERNAL_SERVER_DB
-              }
-
-          } else {
-              return message.ERROR_NOT_FOUND
-          }
+        return message.ERROR_NOT_FOUND
       }
+    }
   } catch (error) {
-      console.log(error);
+    console.log(error);
 
-      return message.ERROR_INTERNAL_SERVER
+    return message.ERROR_INTERNAL_SERVER
   }
 
 }
@@ -347,8 +346,8 @@ const setComentarPostagem = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.mensagem == '' || dadosPostagem.mensagem == undefined || dadosPostagem.mensagem.length > 255 ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null || 
-        dadosPostagem.id_resposta == '' || dadosPostagem.id_resposta == undefined || dadosPostagem.id_resposta == null 
+        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null ||
+        dadosPostagem.id_resposta == '' || dadosPostagem.id_resposta == undefined || dadosPostagem.id_resposta == null
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
@@ -361,7 +360,7 @@ const setComentarPostagem = async (dadosPostagem, contentType) => {
           resultDadosComentar.postagem = dadosPostagem
 
           return resultDadosComentar
-            
+
         } else {
           return message.ERROR_INTERNAL_SERVER_DB
         }
@@ -384,7 +383,7 @@ const setAdicionarPostagemPasta = async (dadosPostagem, contentType) => {
 
       if (
         dadosPostagem.id_postagem == '' || dadosPostagem.id_postagem == undefined || dadosPostagem.id_postagem == null ||
-        dadosPostagem.id_pasta == '' || dadosPostagem.id_pasta == undefined || dadosPostagem.id_pasta == null 
+        dadosPostagem.id_pasta == '' || dadosPostagem.id_pasta == undefined || dadosPostagem.id_pasta == null
       ) {
         return message.ERROR_REQUIRED_FIELDS
       } else {
@@ -397,7 +396,7 @@ const setAdicionarPostagemPasta = async (dadosPostagem, contentType) => {
           resultPostagemPasta.postagem = dadosPostagem
 
           return resultPostagemPasta
-            
+
         } else {
           return message.ERROR_INTERNAL_SERVER_DB
         }
