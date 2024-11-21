@@ -511,6 +511,12 @@ app.post('/v1/aquarela/follower/user', cors(), bodyParserJson, async (request, r
 // #region Postagem
 /******************************************************** Endpoints Postagem ********************************************************/
 
+app.post('/v1/aquarela/available/posts/:id', cors(), bodyParserJson, async function(request, response, next) {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosSearch = await controllerPostagem.getListar
+})
+
 app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
 
     let searchPosts = await controllerPostagem.getListarPostagens()
@@ -529,7 +535,7 @@ app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next
     response.status(searchPosts.status_code)
 })
 
-app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/post', cors(), bodyParserJson, async function (request, response, next) {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
