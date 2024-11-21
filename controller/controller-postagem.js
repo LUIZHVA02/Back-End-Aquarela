@@ -1,42 +1,91 @@
 const { contentType } = require('express/lib/response.js')
 const postagemDAO = require('../model/DAO/postagem.js')
+const categoriaDAO = require('../model/DAO/categoria.js')
+const imagemDAO = require('../model/DAO/image.js')
 const message = require('../modulo/config.js')
 
 const setNovaPostagem = async (dadosPostagem, contentType) => {
   try {
-    if (String(contentType).toLowerCase() == 'application/json') {
+      if (String(contentType).toLowerCase() == 'application/json') {
 
-      let resultDadosPostagem = {}
+          let resultDadosPostagem = {}
 
-      if (
-        dadosPostagem.nome == '' || dadosPostagem.nome == undefined || dadosPostagem.nome.length > 100 ||
-        dadosPostagem.descricao == '' || dadosPostagem.descricao == undefined || dadosPostagem.descricao.length > 500 ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null ||
-        dadosPostagem.postagem_status == '' || dadosPostagem.postagem_status == undefined || dadosPostagem.postagem_status == null
-      ) {
-        return message.ERROR_REQUIRED_FIELDS
+          if (
+            dadosPostagem.nome == '' || dadosPostagem.nome == undefined || dadosPostagem.nome.length > 100 ||
+            dadosPostagem.descricao == '' || dadosPostagem.descricao == undefined || dadosPostagem.descricao.length > 500 ||
+            dadosPostagem.id_usuario === '' || dadosPostagem.id_usuario === undefined || dadosPostagem.id_usuario === null ||
+            dadosPostagem.categorias.length == 0 || dadosPostagem.imagens.length == 0
+          ) {
+              return message.ERROR_REQUIRED_FIELDS
+          } else {
+            
+              let novaPostagem = await postagemDAO.insertNovaPostagem(dadosPostagem)
+
+              if (novaPostagem) {
+                
+                let idPostagem = await postagemDAO.selectLastId()
+                let id =  Number(idPostagem[0].id)
+
+                let categoriasARRAY = []
+                let imagensARRAY = []
+
+                const categoriaPromise = dadosPostagem.categorias.map(async (categoriaId) => {
+                      
+                  const validaCategoria = await categoriaDAO.selectCategoriesById(categoriaId)
+                  
+                  if(validaCategoria){
+                    const categoriaPostagem = await postagemDAO.insertPostagemCategoria(id, categoriaId)
+                    if (categoriaPostagem) {                        
+                      categoriasARRAY.push(validaCategoria[0])
+                    }
+                  }
+                  
+                })
+
+                const imagePromisse = dadosPostagem.imagens.map(async (imagemData) => {
+                      
+                  const imagem = await imagemDAO.insertImage(imagemData.url)
+                  
+                  if(imagem){
+
+                    let idImagemResp = await imagemDAO.selectLastId()
+                    let idImagem =  Number(idImagemResp[0].id)
+
+                    const imageProduto = await postagemDAO.insertPostagemImagem(id, idImagem)
+                    
+                    if (imageProduto) {
+
+                      const imagemById = await imagemDAO.selectByIdImagem(idImagem)                        
+                      imagensARRAY.push(imagemById[0])
+
+                    }
+                  }
+
+                })
+
+                await Promise.all(categoriaPromise)
+                await Promise.all(imagePromisse)
+                
+                dadosPostagem.categorias = categoriasARRAY
+                dadosPostagem.imagens = imagensARRAY
+
+                resultDadosPostagem.status = message.CREATED_ITEM.status
+                resultDadosPostagem.status_code = message.CREATED_ITEM.status_code
+                resultDadosPostagem.status = message.CREATED_ITEM.message
+                resultDadosPostagem.postagem = dadosPostagem
+
+                return resultDadosPostagem
+
+              } else {
+                  return message.ERROR_INTERNAL_SERVER_DB
+              }
+          }
       } else {
-        let novaPostagem = await postagemDAO.insertNovaPostagem(dadosPostagem)
-
-        if (novaPostagem) {
-          resultDadosPostagem.status = message.CREATED_ITEM.status
-          resultDadosPostagem.status_code = message.CREATED_ITEM.status_code
-          resultDadosPostagem.status = message.CREATED_ITEM.message
-          resultDadosPostagem.postagem = dadosPostagem
-
-          return resultDadosPostagem
-
-        } else {
-          return message.ERROR_INTERNAL_SERVER_DB
-        }
+          return message.ERROR_CONTENT_TYPE
       }
-    } else {
-      return message.ERROR_CONTENT_TYPE
-    }
   } catch (error) {
-    console.error("Erro ao tentar inserir postagem: " + error);
-
-    return message.ERROR_INTERNAL_SERVER
+      console.error("Erro ao tentar inserir postagem: " + error);
+      return message.ERROR_INTERNAL_SERVER
   }
 }
 

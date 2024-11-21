@@ -26,11 +26,11 @@ const insertNovoProduto = async (dadosProduto) => {
                                             (
                                                 '${dadosProduto.nome}', 
                                                 '${dadosProduto.descricao}', 
-                                                true,
-                                                true,
-                                                '${dadosProduto.preco}',
-                                                '${dadosProduto.quantidade}', 
-                                                '${dadosProduto.id_usuario}',
+                                                ${dadosProduto.marca_dagua},
+                                                ${dadosProduto.item_digital},
+                                                ${dadosProduto.preco},
+                                                ${dadosProduto.quantidade}, 
+                                                ${dadosProduto.id_usuario},
                                                 true
                                             )`
                                             console.log(sql)
@@ -100,10 +100,47 @@ const updateProduct = async function (id, dataProductUpdate) {
 
 }
 
-const selectByIdProducts = async (id) => {
+const selectByIdProduct = async (id) => {
 
     try {
         let sql = `select * from tbl_produto where id_produto = ${id} and produto_status = "1"`
+        let rsProduto = await prisma.$queryRawUnsafe(sql)
+        return rsProduto
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
+const selectByIdProductComplete = async (idProduto, idUsuario) => {
+
+    try {      
+
+        let sql = `
+          SELECT
+              'produto' AS tipo,
+              tp.id_produto AS id_publicacao,
+              tp.nome,
+              tp.descricao,
+              tp.item_digital,
+              tp.marca_dagua,
+              tp.preco,
+              tp.quantidade,
+              tp.id_usuario AS id_dono_publicacao,
+              CAST(CASE 
+                  WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                  ELSE 0 
+                  END AS DECIMAL) AS curtida,
+              CAST(CASE 
+                  WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+                  ELSE 0 
+                  END AS DECIMAL) AS favorito
+          FROM tbl_produto AS tp
+          LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idUsuario}
+          LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idUsuario} AND pf.produto_favorito_status = true
+          WHERE tp.id_produto = ${idProduto}
+          GROUP BY tp.id_produto
+        `        
         let rsProduto = await prisma.$queryRawUnsafe(sql)
         return rsProduto
     } catch (error) {
@@ -188,13 +225,80 @@ const insertProdutoPasta = async (dadosProduto) => {
   }
 };
 
+const selectLastId = async () => {
+
+  try {
+      let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_produto limit 1'
+      let rsProduto = await prisma.$queryRawUnsafe(sql)
+      return rsProduto
+  } catch (error) {
+      return false
+  }
+
+}
+
+const insertProdutoCategoria = async (idProduto, idCategoria) => {
+
+  try {
+
+      let sql = `INSERT INTO tbl_categoria_produto (id_produto, id_categoria, categoria_produto_status)
+                 VALUES
+                (${idProduto}, ${idCategoria}, TRUE)`
+      let resultStatus = await prisma.$executeRawUnsafe(sql)
+      if (resultStatus) {
+          return true
+      }
+      else {
+          return false
+      }
+
+  } catch (error) {
+      console.error("Erro ao inserir produto: ", error);
+
+      console.log(error + "aqui");
+
+      return false
+  }
+
+}
+
+const insertProdutoImagem = async (idProduto, idImagem) => {
+
+  try {
+
+      let sql = `INSERT INTO tbl_imagem_produto (id_produto, id_imagem, imagem_produto_status)
+                 VALUES
+                (${idProduto}, ${idImagem}, TRUE)`
+      let resultStatus = await prisma.$executeRawUnsafe(sql)
+      if (resultStatus) {
+          return true
+      }
+      else {
+          return false
+      }
+
+  } catch (error) {
+      console.error("Erro ao inserir produto: ", error);
+
+      console.log(error + "aqui");
+
+      return false
+  }
+
+}
+
+
 module.exports = {
   insertNovoProduto,
   selectAllProducts,
   updateProduct,
-  selectByIdProducts,
+  selectByIdProduct,
   insertCurtirProduto,
   insertFavoritarProduto,
+  selectByIdProductComplete,
   insertVisualizarProduto,
-  insertProdutoPasta
+  insertProdutoPasta,
+  insertProdutoCategoria,
+  insertProdutoImagem,
+  selectLastId
 }

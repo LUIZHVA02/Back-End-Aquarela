@@ -585,5 +585,5 @@ module.exports = {
     selectUserByNickname,
     selectFoldersByUser,
     selectPostsByUserId,
-    selectFavoriteById: selectFavoriteById
+    selectFavoriteById
 }
