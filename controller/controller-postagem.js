@@ -1,6 +1,7 @@
 const postagemDAO = require('../model/DAO/postagem.js')
 const categoriaDAO = require('../model/DAO/categoria.js')
 const imagemDAO = require('../model/DAO/image.js')
+const userDAO = require('../model/DAO/user.js')
 const message = require('../modulo/config.js')
 
 const setNovaPostagem = async (dadosPostagem, contentType) => {
@@ -116,24 +117,30 @@ const getListarPostagens = async () => {
   }
 }
 
-const getBuscarPostagem = async (id) => {
+const getBuscarPostagem = async(idPostagem, idCliente) => {
 
   try {
 
-    let id_postagem = id
     let postagemJSON = {}
+    let validaCliente = await userDAO.selectByIdUsuarioAtivo(idCliente)
 
-    if (id_postagem == '' || id_postagem == undefined || isNaN(id_postagem)) {
-
+    if (idPostagem == '' || idPostagem == undefined || isNaN(idPostagem) || validaCliente.length == 0) {
+      
       return message.ERROR_INVALID_ID // 400
-
+      
     } else {
-
-      let dadosPostagem = await postagemDAO.selectByIdPosts(id_postagem)
+      
+      let dadosPostagem = await postagemDAO.selectByIdPostComplete(idPostagem, idCliente)            
 
       if (dadosPostagem) {
 
         if (dadosPostagem.length > 0) {
+
+          let donoPublicacao = await userDAO.selectByIdUsuarioFollowing(dadosPostagem[0].id_dono_publicacao, idCliente)          
+          dadosPostagem[0].dono_publicacao = donoPublicacao[0]
+
+          let comentarios = await postagemDAO.selectComentariosPostagem(idPostagem)
+          dadosPostagem[0].comentarios = comentarios
 
           postagemJSON.postagem = dadosPostagem
           postagemJSON.status_code = 200
@@ -158,6 +165,7 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
   if (String(contentType).toLowerCase() == 'application/json') {
 
     let updatePostJSON = {}
+    
     try {
 
       const validaId = await postagemDAO.selectByIdPosts(id_postagem)
@@ -387,43 +395,6 @@ const setExcluirPostagem = async function (id) {
 
 }
 
-const setComentarPostagem = async (dadosPostagem, contentType) => {
-  try {
-    if (String(contentType).toLowerCase() == 'application/json') {
-
-      let resultDadosComentar = {}
-
-      if (
-        dadosPostagem.mensagem == '' || dadosPostagem.mensagem == undefined || dadosPostagem.mensagem.length > 255 ||
-        dadosPostagem.id_usuario == '' || dadosPostagem.id_usuario == undefined || dadosPostagem.id_usuario == null ||
-        dadosPostagem.id_resposta == '' || dadosPostagem.id_resposta == undefined || dadosPostagem.id_resposta == null
-      ) {
-        return message.ERROR_REQUIRED_FIELDS
-      } else {
-        let visualizarPostagem = await postagemDAO.insertNovoComentario(dadosPostagem)
-
-        if (visualizarPostagem) {
-          resultDadosComentar.status = message.CREATED_ITEM.status
-          resultDadosComentar.status_code = message.CREATED_ITEM.status_code
-          resultDadosComentar.status = message.CREATED_ITEM.message
-          resultDadosComentar.postagem = dadosPostagem
-
-          return resultDadosComentar
-
-        } else {
-          return message.ERROR_INTERNAL_SERVER_DB
-        }
-      }
-    } else {
-      return message.ERROR_CONTENT_TYPE
-    }
-  } catch (error) {
-    console.error("Erro ao tentar visualizar postagem: " + error);
-
-    return message.ERROR_INTERNAL_SERVER
-  }
-}
-
 const setAdicionarPostagemPasta = async (dadosPostagem, contentType) => {
   try {
     if (String(contentType).toLowerCase() == 'application/json') {
@@ -455,6 +426,45 @@ const setAdicionarPostagemPasta = async (dadosPostagem, contentType) => {
     }
   } catch (error) {
     console.error("Erro ao tentar adicionar postagem na pasta: " + error);
+
+    return message.ERROR_INTERNAL_SERVER
+  }
+}
+
+const setComentarPostagem = async (dadosComentario, contentType) => {
+  try {
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+      let resultComentarioPostagem = {}
+
+      if (
+        dadosComentario.mensagem == '' || dadosComentario.mensagem == undefined || dadosComentario.mensagem == null ||
+        dadosComentario.id_usuario == '' || dadosComentario.id_usuario == undefined || dadosComentario.id_usuario == null ||
+        dadosComentario.id_postagem == '' || dadosComentario.id_postagem == undefined || dadosComentario.id_postagem == null ||
+        dadosComentario.id_resposta === undefined
+      ) {
+        return message.ERROR_REQUIRED_FIELDS
+      } else {
+        let adicionarComentario = await postagemDAO.insertComentarioPostagem(dadosComentario)
+
+        if (adicionarComentario) {
+          resultComentarioPostagem.status = message.CREATED_ITEM.status
+          resultComentarioPostagem.status_code = message.CREATED_ITEM.status_code
+          resultComentarioPostagem.status = message.CREATED_ITEM.message
+          resultComentarioPostagem.comentario = dadosComentario
+
+          return resultComentarioPostagem
+
+        } else {
+          return message.ERROR_INTERNAL_SERVER_DB
+        }
+      }
+    } else {
+      return message.ERROR_CONTENT_TYPE
+    }
+  } catch (error) {
+    console.error("Erro ao tentar comentar na postagem: " + error);
 
     return message.ERROR_INTERNAL_SERVER
   }

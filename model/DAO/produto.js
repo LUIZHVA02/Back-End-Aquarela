@@ -118,23 +118,31 @@ const selectByIdProductComplete = async (idProduto, idUsuario) => {
 
         let sql = `
           SELECT
-              'produto' AS tipo,
-              tp.id_produto AS id_publicacao,
-              tp.nome,
-              tp.descricao,
-              tp.item_digital,
-              tp.marca_dagua,
-              tp.preco,
-              tp.quantidade,
-              tp.id_usuario AS id_dono_publicacao,
-              CAST(CASE 
-                  WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
-                  ELSE 0 
-                  END AS DECIMAL) AS curtida,
-              CAST(CASE 
-                  WHEN MAX(pf.produto_favorito_status) = true THEN 1 
-                  ELSE 0 
-                  END AS DECIMAL) AS favorito
+            'produto' AS tipo,
+            tp.id_produto AS id_publicacao,
+            tp.nome,
+            tp.descricao,
+            tp.item_digital,
+            tp.marca_dagua,
+            tp.preco,
+            tp.quantidade,
+            tp.id_usuario AS id_dono_publicacao,
+            CAST(CASE 
+                WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                ELSE 0 
+                END AS DECIMAL) AS curtida,
+            CAST(CASE 
+                WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+                ELSE 0 
+                END AS DECIMAL) AS favorito,
+            CAST(CASE 
+                WHEN tp.id_usuario = ${idUsuario} THEN 
+                    (SELECT COUNT(*) 
+                    FROM tbl_visualizacao_produto 
+                    WHERE id_produto = tp.id_produto 
+                    AND visualizacao_produto_status = true)
+                ELSE NULL 
+                END AS DECIMAL) AS quantidade_visualizacoes
           FROM tbl_produto AS tp
           LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idUsuario}
           LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idUsuario} AND pf.produto_favorito_status = true
@@ -217,18 +225,66 @@ const insertProdutoPasta = async (dadosProduto) => {
       return false;
     }
   } catch (error) {
-    console.error("Erro ao adicionar postagem na pasta: ", error);
+    console.error("Erro ao adicionar produto na pasta: ", error);
 
     console.log(error + "aqui");
 
     return false;
   }
-};
+}
+
+const insertComentarioProduto = async (dadosComentario) => {
+  try {
+    let sql = `call procAdicionarComentarioProduto('${dadosComentario.mensagem}', ${dadosComentario.id_usuario}, ${dadosComentario.id_produto}, ${dadosComentario.id_resposta})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar comentário no produto: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+}
 
 const selectLastId = async () => {
 
   try {
       let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_produto limit 1'
+      let rsProduto = await prisma.$queryRawUnsafe(sql)
+      return rsProduto
+  } catch (error) {
+      return false
+  }
+
+}
+
+const selectComentariosProduto = async (idProduto) => {
+
+  try {
+      let sql = `select 
+                    c.id_comentario,
+                    c.mensagem,
+                    c.id_usuario,
+                    c.id_resposta,
+                    u.nome_usuario,
+                    u.foto_usuario
+                from 
+                    tbl_comentario_produto cp
+                join 
+                    tbl_comentario c on cp.id_comentario = c.id_comentario
+                join 
+                    tbl_usuario u on c.id_usuario = u.id_usuario
+                where 
+                    cp.id_produto = ${idProduto}
+                    and c.comentario_status = true
+                    and u.usuario_status = true
+                    and cp.comentario_produto_status = true`
       let rsProduto = await prisma.$queryRawUnsafe(sql)
       return rsProduto
   } catch (error) {
@@ -299,6 +355,8 @@ module.exports = {
   insertVisualizarProduto,
   insertProdutoPasta,
   insertProdutoCategoria,
+  insertComentarioProduto,
+  selectComentariosProduto,
   insertProdutoImagem,
   selectLastId
 }

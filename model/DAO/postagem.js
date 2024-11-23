@@ -72,6 +72,52 @@ const selectByIdPosts = async (id) => {
   }
 };
 
+const selectByIdPostComplete = async (idPostagem, idUsuario) => {
+
+  try {      
+
+      let sql = `
+        SELECT
+          'postagem' AS tipo,
+          tp.id_postagem AS id_publicacao,
+          tp.nome,
+          tp.descricao,
+          NULL AS item_digital,
+          NULL AS marca_dagua,
+          NULL AS preco,
+          NULL AS quantidade,
+          tp.id_usuario AS id_dono_publicacao,
+          CAST(CASE 
+              WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+              ELSE 0 
+              END AS DECIMAL) AS curtida,
+          CAST(CASE 
+              WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+              ELSE 0 
+              END AS DECIMAL) AS favorito,
+          CAST(CASE 
+              WHEN tp.id_usuario = ${idUsuario} THEN 
+                  (SELECT COUNT(*) 
+                   FROM tbl_visualizacao_postagem 
+                   WHERE id_postagem = tp.id_postagem 
+                   AND visualizacao_postagem_status = true)
+              ELSE NULL 
+              END AS DECIMAL) AS quantidade_visualizacoes
+        FROM tbl_postagem AS tp
+        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${idUsuario}
+        LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idUsuario} AND pf.postagem_favorita_status = true
+        WHERE tp.id_postagem = ${idPostagem}
+        GROUP BY tp.id_postagem
+      `        
+      let rsPostagem = await prisma.$queryRawUnsafe(sql)
+      return rsPostagem
+  } catch (error) {
+      console.log(error);
+      return false
+  }
+}
+
+
 const updatePosts = async function (id, dadosPostagem) {
   try {
     let sql = `UPDATE tbl_postagem SET `;
@@ -186,68 +232,6 @@ const insertVisualizarPostagem = async (dadosPostagem) => {
   }
 };
 
-const insertNovoComentario = async (dadosComentario) => {
-  try {
-    let sql = `insert into tbl_comentario  (   
-                                              mensagem,
-                                              id_usuario,
-                                              id_resposta,
-                                              comentario_status
-                                          ) 
-                                          values 
-                                          (
-                                              '${dadosComentario.mensagem}',
-                                              '${dadosComentario.id_usuario}',
-                                              '${dadosComentario.id_resposta}',
-                                              true
-                                          )`;
-    let resultStatus = await prisma.$executeRawUnsafe(sql);
-
-    if (resultStatus) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("Erro ao inserir comentario: ", error);
-
-    console.log(error + "aqui");
-
-    return false;
-  }
-};
-
-const insertComentarioPublicacao = async (idComentario, idPublicacao) => {
-  try {
-    let sql = `insert into tbl_comentario_publicacao  (   
-                                              mensagem,
-                                              id_usuario,
-                                              id_resposta,
-                                              comentario_status
-                                          ) 
-                                          values 
-                                          (
-                                              '${dadosComentario.mensagem}',
-                                              '${dadosComentario.id_usuario}',
-                                              '${dadosComentario.id_resposta}',
-                                              true
-                                          )`;
-    let resultStatus = await prisma.$executeRawUnsafe(sql);
-
-    if (resultStatus) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("Erro ao inserir comentario: ", error);
-
-    console.log(error + "aqui");
-
-    return false;
-  }
-};
-
 const insertPostagemPasta = async (dadosPostagem) => {
   try {
     let sql = `call procAdicionarPostagemPasta(${dadosPostagem.id_postagem}, ${dadosPostagem.id_pasta})`;
@@ -329,18 +313,65 @@ const selectLastId = async () => {
 
 }
 
+const selectComentariosPostagem = async (idPostagem) => {
+
+  try {
+      let sql = `SELECT 
+                    c.id_comentario,
+                    c.mensagem,
+                    c.id_usuario,
+                    c.id_resposta,
+                    u.nome_usuario,
+                    u.foto_usuario
+                FROM 
+                    tbl_comentario_postagem cp
+                JOIN 
+                    tbl_comentario c ON cp.id_comentario = c.id_comentario
+                JOIN 
+                    tbl_usuario u ON c.id_usuario = u.id_usuario
+                WHERE 
+                    cp.id_postagem = ${idPostagem}
+                    AND c.comentario_status = true
+                    AND u.usuario_status = true
+                    AND cp.comentario_postagem_status = true`
+      let rsPostagem = await prisma.$queryRawUnsafe(sql)
+      return rsPostagem
+  } catch (error) {
+      return false
+  }
+
+}
+
+const insertComentarioPostagem = async (dadosComentario) => {
+  try {
+    let sql = `call procAdicionarComentarioPostagem('${dadosComentario.mensagem}', ${dadosComentario.id_usuario}, ${dadosComentario.id_postagem}, ${dadosComentario.id_resposta})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar comentário na postagem: ", error);
+    return false;
+  }
+};
+
 
 module.exports = {
   selectAllPosts,
   selectByIdPosts,
+  selectByIdPostComplete,
   updatePosts,
   insertNovaPostagem,
   insertCurtidaPostagem,
   insertFavoritarPostagem,
   insertVisualizarPostagem,
-  insertNovoComentario,
   insertPostagemPasta,
   insertPostagemCategoria,
   insertPostagemImagem,
-  selectLastId
+  selectLastId,
+  selectComentariosPostagem,
+  insertComentarioPostagem
 }
