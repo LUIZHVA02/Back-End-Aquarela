@@ -802,6 +802,37 @@ const getBuscarFavoritos = async (idUsuario) => {
     }
 };
 
+const getUserFolders = async (idUsuario) => {
+    try {
+
+        let pastasJSON = {};
+
+        if (!idUsuario) {
+            return message.ERROR_REQUIRED_FIELDS;
+        } else {
+
+            let pastas = await userDAO.selectFoldersByUser(idUsuario);
+
+            if (pastas) {
+
+                pastasJSON.status = message.VALIDATED_ITEM.status;
+                pastasJSON.status_code = message.VALIDATED_ITEM.status_code;
+                pastasJSON.message = message.VALIDATED_ITEM.message;
+                pastasJSON.pastas = pastas;
+
+                return pastasJSON;
+
+            } else {
+                return message.ERROR_NOT_FOUND;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return message.ERROR_INTERNAL_SERVER;
+    }
+};
+
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
@@ -817,5 +848,6 @@ module.exports = {
     getBuscarImages,
     getBuscarApelido,
     getBuscarFavoritos,
-    getBuscarItensByText
+    getBuscarItensByText,
+    getUserFolders
 }
