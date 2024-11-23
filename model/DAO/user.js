@@ -87,6 +87,47 @@ const selectByIdUsuarioAtivo = async (id) => {
 
 }
 
+// Buscar um usuário existente filtrando pelo ID
+const selectByIdUsuarioFollowing = async (idUsuario, client) => {
+
+    try {
+        let sql = `select 
+                    id_usuario, 
+                    nome, 
+                    nome_usuario, 
+                    foto_usuario, 
+                    descricao, 
+                    email, 
+                    cpf, 
+                    date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, 
+                    telefone, 
+                    disponibilidade, 
+                    avaliacao,
+                    cast(
+                        exists (
+                            select 1 
+                            from tbl_seguidores s
+                            where s.id_seguidor = ${client} 
+                            and s.id_seguindo = tbl_usuario.id_usuario 
+                            and s.seguidores_status = true
+                        ) as decimal
+                    ) as esta_seguindo
+                from 
+                    tbl_usuario
+                where 
+                    usuario_status = true
+                    and id_usuario = ${idUsuario}`
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+    } catch (error) {
+
+        console.log(error);
+        return false
+    }
+
+}
+
 const selectAllUsuarios = async () => {
 
     try {
@@ -582,6 +623,7 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
 
 module.exports = {
     selectSearchItemsByText,
+    selectByIdUsuarioFollowing,
     insertUsuario,
     selectAllUsuarios,
     selectLastId,
