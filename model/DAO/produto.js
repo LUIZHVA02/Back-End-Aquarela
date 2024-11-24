@@ -284,7 +284,8 @@ const selectComentariosProduto = async (idProduto) => {
                     cp.id_produto = ${idProduto}
                     and c.comentario_status = true
                     and u.usuario_status = true
-                    and cp.comentario_produto_status = true`
+                    and cp.comentario_produto_status = true
+                ORDER BY c.id_comentario DESC`
       let rsProduto = await prisma.$queryRawUnsafe(sql)
       return rsProduto
   } catch (error) {

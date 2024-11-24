@@ -333,7 +333,8 @@ const selectComentariosPostagem = async (idPostagem) => {
                     cp.id_postagem = ${idPostagem}
                     AND c.comentario_status = true
                     AND u.usuario_status = true
-                    AND cp.comentario_postagem_status = true`
+                    AND cp.comentario_postagem_status = true
+                ORDER BY c.id_comentario DESC`
       let rsPostagem = await prisma.$queryRawUnsafe(sql)
       return rsPostagem
   } catch (error) {
