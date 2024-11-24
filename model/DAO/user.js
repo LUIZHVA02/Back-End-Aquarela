@@ -92,7 +92,7 @@ const selectByIdUsuarioFollowing = async (idUsuario, client) => {
 
     try {
         let sql = `select 
-                    id_usuario, 
+                    id_usuario as id, 
                     nome, 
                     nome_usuario, 
                     foto_usuario, 
@@ -131,7 +131,7 @@ const selectByIdUsuarioFollowing = async (idUsuario, client) => {
 const selectAllUsuarios = async () => {
 
     try {
-        let sql = ` select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+        let sql = ` select id_usuario as id, nome, nome_usuario, foto_usuario, descricao, 
                     email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
                     disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";`
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
