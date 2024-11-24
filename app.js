@@ -419,7 +419,7 @@ app.post('/v1/aquarela/favorite/product', cors(), bodyParserJson, async (request
 
 })
 
-app.post('/v1/aquarela/vizualizer/product', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/visualizer/product', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -626,7 +626,7 @@ app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, resp
 
 })
 
-app.post('/v1/aquarela/vizualizer/posts', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/visualizer/posts', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
