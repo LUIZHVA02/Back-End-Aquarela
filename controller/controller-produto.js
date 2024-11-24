@@ -144,6 +144,9 @@ const getBuscarProduto = async (idProduto, idCliente) => {
           let donoPublicacao = await userDAO.selectByIdUsuarioFollowing(dadosProduto[0].id_dono_publicacao, idCliente)
           dadosProduto[0].dono_publicacao = donoPublicacao[0]
 
+          let imagens = await userDAO.selectImages(idProduto, dadosProduto[0].tipo)
+          dadosProduto[0].imagens = imagens
+
           let comentarios = await produtoDAO.selectComentariosProduto(idProduto)
           dadosProduto[0].comentarios = comentarios
 

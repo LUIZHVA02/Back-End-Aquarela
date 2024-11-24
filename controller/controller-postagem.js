@@ -139,6 +139,9 @@ const getBuscarPostagem = async(idPostagem, idCliente) => {
           let donoPublicacao = await userDAO.selectByIdUsuarioFollowing(dadosPostagem[0].id_dono_publicacao, idCliente)          
           dadosPostagem[0].dono_publicacao = donoPublicacao[0]
 
+          let imagens = await userDAO.selectImages(idPostagem, dadosPostagem[0].tipo)
+          dadosPostagem[0].imagens = imagens
+
           let comentarios = await postagemDAO.selectComentariosPostagem(idPostagem)
           dadosPostagem[0].comentarios = comentarios
 
