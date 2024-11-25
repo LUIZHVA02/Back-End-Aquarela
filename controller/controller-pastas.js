@@ -210,7 +210,7 @@ const getBuscarPasta = async(folderId, clientId) => {
 
                     await Promise.all(promise)
 
-                    pasta[0].pasta = dadosPasta
+                    pasta[0].itens = dadosPasta
 
                     pastaJSON.status = message.VALIDATED_ITEM.status
                     pastaJSON.status_code = message.VALIDATED_ITEM.status_code
