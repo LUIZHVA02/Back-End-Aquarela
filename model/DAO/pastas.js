@@ -132,6 +132,7 @@ const selectPastaItens = async (idPasta, idUsuario) => {
             WHERE pp.id_pasta = ${idPasta}
             AND tp.produto_status = true
             AND u.usuario_status = true
+            AND pp.pasta_produto_status = true
             GROUP BY tp.id_produto, tp.nome, tp.descricao, tp.item_digital, tp.marca_dagua, tp.preco, tp.quantidade, tp.id_usuario
 
             UNION ALL
@@ -162,6 +163,7 @@ const selectPastaItens = async (idPasta, idUsuario) => {
             WHERE pp.id_pasta = ${idPasta}
             AND tp.postagem_status = true
             AND u.usuario_status = true
+            AND pp.pasta_postagem_status = true
             GROUP BY tp.id_postagem, tp.nome, tp.descricao, tp.id_usuario
 
             ORDER BY id_publicacao
