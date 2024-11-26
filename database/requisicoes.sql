@@ -249,3 +249,4 @@ where preferencia_status = "1" order by tbl_usuario.id_usuario;
 select * from tbl_banco;
 select * from tbl_conta;
 select * from tbl_conta_usuario;
+
