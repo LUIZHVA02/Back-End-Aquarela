@@ -3,37 +3,45 @@ const message = require('../modulo/config.js')
 
 const getBuscarItensByText = async (idClient, texto) => {
     try {
-        if (String(contentType).toLowerCase() == 'application/json') {
-            let pesquisasJSON = {}
-            let id_client = idClient
-            let text = texto
-            
-            if (
-                id_client == '' || id_client == undefined || isNaN(id_client) ||
-                text == '' || text == undefined
-            ) {
-                return message.ERROR_REQUIRED_FIELDS
-            } else {
-                
-            let dadosPesquisa = await userDAO.selectSearchItemsByText(id_client,text)
-            
-                if (dadosPesquisa) {
-                    if (dadosPesquisa.length > 0) {
-                        pesquisasJSON.resultado = dadosPesquisa
-                        pesquisasJSON.quantity = dadosPesquisa.length
-                        pesquisasJSON.status_code = 200
-                        return pesquisasJSON
-                    } else {
-                        console.log(dadosPesquisa.length, "getListPosts");
-
-                        return message.ERROR_NOT_FOUND
-                    }
-                } else {
-                    return message.ERROR_INTERNAL_SERVER_DB
-                }
-            }
+        let pesquisasJSON = {}
+        let id_client = idClient
+        let text = texto
+        
+        if (
+            id_client == '' || id_client == undefined || isNaN(id_client) ||
+            text == '' || text == undefined
+        ) {
+            return message.ERROR_REQUIRED_FIELDS
         } else {
-            return message.ERROR_CONTENT_TYPE
+            
+        let dadosPesquisa = await userDAO.selectSearchItemsByText(id_client,text)
+        
+            if (dadosPesquisa) {
+                if (dadosPesquisa.length > 0) {
+
+
+                    const promise = dadosPesquisa.map(async (post) => {
+
+                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
+                    pesquisasJSON.resultado = dadosPesquisa
+                    pesquisasJSON.quantity = dadosPesquisa.length
+                    pesquisasJSON.status_code = 200
+                    return pesquisasJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
         }
     } catch (error) {
         console.log(error);

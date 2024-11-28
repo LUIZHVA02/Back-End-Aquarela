@@ -1,30 +1,94 @@
 /****************************************************************************************************************************************************
-* Objetivo: Criar a interação com o Banco de Dados MySQL para fazer CRUD de usuários
-* Data: 05/09/2024
-* Autor: Luiz Vidal, Luan Oliveira, Pedro Barbosa, Ryan Alves & Vitória Azevedo
-* Versão: 1.0
-****************************************************************************************************************************************************/
+ * Objetivo: Criar a interação com o Banco de Dados MySQL para fazer CRUD de usuários
+ * Data: 05/09/2024
+ * Autor: Luiz Vidal, Luan Oliveira, Pedro Barbosa, Ryan Alves & Vitória Azevedo
+ * Versão: 1.0
+ ****************************************************************************************************************************************************/
 
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const selectSearchItemsByText = async (id_client, text) => {
-    try {
-      let sql = `select * from tbl_postagem where id_postagem = ${id}`;
-      let rsSearch = await prisma.$queryRawUnsafe(sql);
-      return rsSearch;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  };
+const selectSearchItemsByText = async (idClient, pesquisa) => {
+  try {
+    let sql = `
+            SELECT
+                'produto' AS tipo,
+                tp.id_produto AS id_publicacao,
+                tp.nome,
+                tp.descricao,
+                tp.item_digital,
+                tp.marca_dagua,
+                tp.preco,
+                tp.quantidade,
+                tp.id_usuario AS id_dono_publicacao,
+                CAST(CASE 
+                    WHEN MAX(cp.curtidas_produto_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS curtida,
+                CAST(CASE 
+                    WHEN MAX(pf.produto_favorito_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS favorito,
+                CAST(CASE 
+                    WHEN tp.nome LIKE CONCAT('%', '${pesquisa}', '%') THEN 1
+                    WHEN tp.descricao LIKE CONCAT('%', '${pesquisa}', '%') THEN 2
+                    ELSE 3
+                END AS DECIMAL) AS relevancia
+            FROM tbl_produto AS tp
+            LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idClient}
+            LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idClient}
+            WHERE 
+                (tp.nome LIKE CONCAT('%', '${pesquisa}', '%') OR tp.descricao LIKE CONCAT('%', '${pesquisa}', '%'))
+                AND tp.produto_status = 1
+            GROUP BY tp.id_produto
+
+            UNION ALL
+
+            SELECT
+                'postagem' AS tipo,
+                tp.id_postagem AS id_publicacao,
+                tp.nome,
+                tp.descricao,
+                NULL AS item_digital,
+                NULL AS marca_dagua,
+                NULL AS preco,
+                NULL AS quantidade,
+                tp.id_usuario AS id_dono_publicacao,
+                CAST(CASE 
+                    WHEN MAX(cp.curtidas_postagem_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS curtida,
+                CAST(CASE 
+                    WHEN MAX(pf.postagem_favorita_status) = true THEN 1 
+                    ELSE 0 
+                    END AS DECIMAL) AS favorito,
+                CAST(CASE 
+                    WHEN tp.nome LIKE CONCAT('%', '${pesquisa}', '%') THEN 1
+                    WHEN tp.descricao LIKE CONCAT('%', '${pesquisa}', '%') THEN 2
+                    ELSE 3
+                END AS DECIMAL) AS relevancia
+            FROM tbl_postagem AS tp
+            LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${idClient}
+            LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idClient}
+            WHERE 
+                (tp.nome LIKE CONCAT('%', '${pesquisa}', '%') OR tp.descricao LIKE CONCAT('%', '${pesquisa}', '%')) 
+                AND tp.postagem_status = 1
+            GROUP BY tp.id_postagem
+
+            ORDER BY relevancia, RAND()
+      `;
+    let rsSearch = await prisma.$queryRawUnsafe(sql);
+    return rsSearch;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 // Inserir um novo usuário
 const insertUsuario = async (dadosUsuario) => {
-
-    try {
-
-        let sql = `insert into tbl_usuario  (   nome, 
+  try {
+    let sql = `insert into tbl_usuario  (   nome, 
                                                 nome_usuario, 
                                                 foto_usuario, 
                                                 descricao, 
@@ -49,49 +113,42 @@ const insertUsuario = async (dadosUsuario) => {
                                                 '${dadosUsuario.telefone}', 
                                                 '${dadosUsuario.disponibilidade}', 
                                                 true
-                                            )`
-        let resultStatus = await prisma.$executeRawUnsafe(sql)
+                                            )`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
 
-        if (resultStatus) {
-            return true
-        }
-        else {
-            return false
-        }
-
-    } catch (error) {
-        console.error("Erro ao inserir usuário: ", error);
-
-        console.log(error);
-
-        return false
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
     }
+  } catch (error) {
+    console.error("Erro ao inserir usuário: ", error);
 
-}
+    console.log(error);
+
+    return false;
+  }
+};
 
 // Buscar um usuário existente filtrando pelo ID
 const selectByIdUsuarioAtivo = async (id) => {
-
-    try {
-        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+  try {
+    let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
                     email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1" and id_usuario = ${id}`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1" and id_usuario = ${id}`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
 
-        return rsUsuario
-    } catch (error) {
-
-        console.log(error);
-        return false
-    }
-
-}
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 // Buscar um usuário existente filtrando pelo ID
 const selectByIdUsuarioFollowing = async (idUsuario, client) => {
-
-    try {
-        let sql = `select 
+  try {
+    let sql = `select 
                     id_usuario as id, 
                     nome, 
                     nome_usuario, 
@@ -116,150 +173,130 @@ const selectByIdUsuarioFollowing = async (idUsuario, client) => {
                     tbl_usuario
                 where 
                     usuario_status = true
-                    and id_usuario = ${idUsuario}`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+                    and id_usuario = ${idUsuario}`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
 
-        return rsUsuario
-    } catch (error) {
-
-        console.log(error);
-        return false
-    }
-
-}
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 const selectAllUsuarios = async () => {
-
-    try {
-        let sql = ` select id_usuario as id, nome, nome_usuario, foto_usuario, descricao, 
+  try {
+    let sql = ` select id_usuario as id, nome, nome_usuario, foto_usuario, descricao, 
                     email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
-                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+                    disponibilidade, avaliacao from tbl_usuario where usuario_status = "1";`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
 
-        return rsUsuario
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
 
-    } catch (error) {
-
-        console.log(error);
-
-        return false
-    }
-
-}
+    return false;
+  }
+};
 
 // Atualizar um usuário existente filtrando pelo ID
 const updateUsuario = async function (id, dadosUsuarioUpdate) {
-    try {
-        let sql = `UPDATE tbl_usuario SET `
-        const keys = Object.keys(dadosUsuarioUpdate)
+  try {
+    let sql = `UPDATE tbl_usuario SET `;
+    const keys = Object.keys(dadosUsuarioUpdate);
 
-        keys.forEach((key, index) => {
-            if (key == "senha") {
-                sql += `${key} = md5('${dadosUsuarioUpdate[key]}')`
-                if (index !== keys.length - 1) {
-                    sql += `, `
-                }
-            } else {
-                sql += `${key} = '${dadosUsuarioUpdate[key]}'`
-                if (index !== keys.length - 1) {
-                    sql += `, `
-                }
-            }
-        })
+    keys.forEach((key, index) => {
+      if (key == "senha") {
+        sql += `${key} = md5('${dadosUsuarioUpdate[key]}')`;
+        if (index !== keys.length - 1) {
+          sql += `, `;
+        }
+      } else {
+        sql += `${key} = '${dadosUsuarioUpdate[key]}'`;
+        if (index !== keys.length - 1) {
+          sql += `, `;
+        }
+      }
+    });
 
-        sql += ` WHERE id_usuario = ${id};`
+    sql += ` WHERE id_usuario = ${id};`;
 
-        console.log(sql);
-        
-        let result = await prisma.$executeRawUnsafe(sql)
+    console.log(sql);
 
-        console.log(result);
-        
+    let result = await prisma.$executeRawUnsafe(sql);
 
-        return result
+    console.log(result);
 
-    } catch (error) {
+    return result;
+  } catch (error) {
+    console.log(error);
 
-        console.log(error);
-
-        return false
-    }
-
-}
+    return false;
+  }
+};
 
 const selectByIdUsuarioInativo = async (id) => {
+  try {
+    let sql = `select * from tbl_usuario where id_usuario = ${id} and usuario_status = "0"`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
 
-    try {
-        let sql = `select * from tbl_usuario where id_usuario = ${id} and usuario_status = "0"`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-
-        return rsUsuario
-    } catch (error) {
-
-        console.log(error);
-        return false
-    }
-
-}
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 const selectLastId = async () => {
-
-    try {
-        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1'
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
-        return false
-    }
-
-}
+  try {
+    let sql =
+      "select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1";
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
+    return rsUsuario;
+  } catch (error) {
+    return false;
+  }
+};
 
 const selectValidacaoUsuarioNome = async (nome, senha) => {
-
-    try {
-        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+  try {
+    let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
         disponibilidade, avaliacao from tbl_usuario where nome_usuario = '${nome}' and 
-        senha = md5('${senha}') and usuario_status = "1";`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
-        return false
-    }
-
-}
+        senha = md5('${senha}') and usuario_status = "1";`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
+    return rsUsuario;
+  } catch (error) {
+    return false;
+  }
+};
 
 const selectValidacaoUsuarioEmail = async (email, senha) => {
-
-    try {
-        let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+  try {
+    let sql = `select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
         email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
         disponibilidade, avaliacao from tbl_usuario where email = '${email}' and 
-        senha = md5('${senha}') and usuario_status = "1";`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
-        return false
-    }
-}
+        senha = md5('${senha}') and usuario_status = "1";`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
+    return rsUsuario;
+  } catch (error) {
+    return false;
+  }
+};
 
 const selectEmailCadastrado = async (email) => {
-
-    try {
-        let sql = `select id_usuario, email from tbl_usuario where email = '${email}')`
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-    } catch (error) {
-        console.log(error);
-        return false
-    }
-}
+  try {
+    let sql = `select id_usuario, email from tbl_usuario where email = '${email}')`;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 const selectFeed = async (id) => {
-
-    try {
-
-        let sql = `
+  try {
+    let sql = `
         SELECT
         'produto' AS tipo,
         tp.id_produto AS id_publicacao,
@@ -385,35 +422,33 @@ const selectFeed = async (id) => {
         END,
         RAND()
 
-        `
-        let rsUsuario = await prisma.$queryRawUnsafe(sql)
-        return rsUsuario
-
-    } catch (error) {
-        console.log(error);
-        return false
-    }
-
-}
+        `;
+    let rsUsuario = await prisma.$queryRawUnsafe(sql);
+    return rsUsuario;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
 const selectImages = async (id, postType) => {
-    try {
-        let sql = `
+  try {
+    let sql = `
             select ti.id_imagem, ti.url from tbl_imagem as ti
             inner join tbl_imagem_${postType} as tip
             on ti.id_imagem=tip.id_imagem
             where tip.id_${postType} = ${id} and tip.imagem_${postType}_status = true
-        `
-        let rsImagem = await prisma.$queryRawUnsafe(sql)
-        return rsImagem
-    } catch (error) {
-        return error
-    }
-}
+        `;
+    let rsImagem = await prisma.$queryRawUnsafe(sql);
+    return rsImagem;
+  } catch (error) {
+    return error;
+  }
+};
 
 const selectUserByNickname = async (nickname, client) => {
-    try {
-        let sql = `
+  try {
+    let sql = `
         select
             u.id_usuario as id,
             u.nome,
@@ -465,18 +500,18 @@ const selectUserByNickname = async (nickname, client) => {
             where
                 u.nome_usuario = "${nickname}"
                 and u.usuario_status = true;
-        `
-        let rsUser = await prisma.$queryRawUnsafe(sql)
-        return rsUser
-    } catch (error) {
-        console.log(error);
-        return error
-    }
-}
+        `;
+    let rsUser = await prisma.$queryRawUnsafe(sql);
+    return rsUser;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 const selectFavoriteById = async (idUsuario) => {
-    try {
-        let sql = `
+  try {
+    let sql = `
             SELECT
                 'produto' AS tipo,
                 tp.id_produto AS id_publicacao,
@@ -528,18 +563,18 @@ const selectFavoriteById = async (idUsuario) => {
             GROUP BY tp.id_postagem
 
             ORDER BY id_publicacao
-        `
-        let rsUser = await prisma.$queryRawUnsafe(sql)
-        return rsUser
-    } catch (error) {
-        console.log(error);
-        return error
-    }
-}
+        `;
+    let rsUser = await prisma.$queryRawUnsafe(sql);
+    return rsUser;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 const selectFoldersByUser = async (id) => {
-    try {
-        let sql = `
+  try {
+    let sql = `
             SELECT
                 id_pasta,
                 nome
@@ -550,17 +585,17 @@ const selectFoldersByUser = async (id) => {
                 id_usuario = ${id}
             AND 
                 pasta_status = true
-        `
-        let rsFolder = await prisma.$queryRawUnsafe(sql)
-        return rsFolder
-    } catch (error) {
-        return error
-    }
-}
+        `;
+    let rsFolder = await prisma.$queryRawUnsafe(sql);
+    return rsFolder;
+  } catch (error) {
+    return error;
+  }
+};
 
 const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
-    try {
-        let sql = `
+  try {
+    let sql = `
         SELECT
             'produto' AS tipo,
             tp.id_produto AS id_publicacao,
@@ -612,31 +647,30 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
        GROUP BY tp.id_postagem
        
        ORDER BY id_publicacao
-        `
-        let rsPost = await prisma.$queryRawUnsafe(sql)
-        return rsPost
-    } catch (error) {
-        return error
-    }
-}
-
+        `;
+    let rsPost = await prisma.$queryRawUnsafe(sql);
+    return rsPost;
+  } catch (error) {
+    return error;
+  }
+};
 
 module.exports = {
-    selectSearchItemsByText,
-    selectByIdUsuarioFollowing,
-    insertUsuario,
-    selectAllUsuarios,
-    selectLastId,
-    selectByIdUsuarioAtivo,
-    selectByIdUsuarioInativo,
-    updateUsuario,
-    selectValidacaoUsuarioNome,
-    selectValidacaoUsuarioEmail,
-    selectEmailCadastrado,
-    selectFeed,
-    selectImages,
-    selectUserByNickname,
-    selectFoldersByUser,
-    selectPostsByUserId,
-    selectFavoriteById
-}
+  selectSearchItemsByText,
+  selectByIdUsuarioFollowing,
+  insertUsuario,
+  selectAllUsuarios,
+  selectLastId,
+  selectByIdUsuarioAtivo,
+  selectByIdUsuarioInativo,
+  updateUsuario,
+  selectValidacaoUsuarioNome,
+  selectValidacaoUsuarioEmail,
+  selectEmailCadastrado,
+  selectFeed,
+  selectImages,
+  selectUserByNickname,
+  selectFoldersByUser,
+  selectPostsByUserId,
+  selectFavoriteById,
+};

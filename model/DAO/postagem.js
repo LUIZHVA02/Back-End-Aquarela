@@ -23,7 +23,7 @@ const selectAllPosts = async (id) => {
         FROM 
             tbl_produto as p
         WHERE 
-            id_usuario = ${id}
+            id_usuario
         AND 
           p.produto_status = true
 
@@ -41,7 +41,7 @@ const selectAllPosts = async (id) => {
         FROM 
             tbl_postagem as po
         WHERE 
-            po.id_usuario = ${id}
+            po.id_usuario
         AND 
           po.postagem_status = true;
 

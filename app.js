@@ -82,8 +82,8 @@ const controllerComentario = require('./controller/controller-comentario.js')
 /******************************************************** Endpoints Usuários ********************************************************/
 
 app.get('/v1/aquarela/search/', cors(), async function(request, response, next) {
-    let idClient = request.query.id_client
-    let texto = request.query.texto
+    let idClient = request.query.client
+    let texto = request.query.search
     let resultDadosSearch = await controllerUsuarios.getBuscarItensByText(idClient,texto)
 
     response.json(resultDadosSearch)

@@ -150,6 +150,9 @@ const getBuscarProduto = async (idProduto, idCliente) => {
           let comentarios = await produtoDAO.selectComentariosProduto(idProduto)
           dadosProduto[0].comentarios = comentarios
 
+          let categorias = await categoriaDAO.selectCategoriesByProductId(idProduto)
+          dadosProduto[0].categorias = categorias
+
           produtoJSON.produto = dadosProduto
           produtoJSON.status_code = 200
           return produtoJSON

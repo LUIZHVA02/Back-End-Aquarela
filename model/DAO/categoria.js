@@ -81,10 +81,58 @@ const selectCategoriesById = async (id) => {
   }
 };
 
+const selectCategoriesByPublicationId = async (id) => {
+  try {
+    let sql = `
+            SELECT 
+                tc.id_categoria as id,
+                tc.categoria as nome
+            FROM 
+                tbl_categoria as tc
+            INNER JOIN 
+              tbl_categoria_postagem as tcp
+            ON
+              tc.id_categoria = tcp.id_categoria
+              where tcp.id_postagem = ${id}
+            `;
+    let resultStatus = await prisma.$queryRawUnsafe(sql);
+
+    return resultStatus;
+  } catch (error) {
+    console.error("Erro ao listar categorias: ", error);
+    return false;
+  }
+};
+
+
+const selectCategoriesByProductId = async (id) => {
+  try {
+    let sql = `
+            SELECT 
+                tc.id_categoria as id,
+                tc.categoria as nome
+            FROM 
+                tbl_categoria as tc
+            INNER JOIN 
+              tbl_categoria_produto as tcp
+            ON
+              tc.id_categoria = tcp.id_categoria
+              where tcp.id_produto = ${id}
+            `;
+    let resultStatus = await prisma.$queryRawUnsafe(sql);
+
+    return resultStatus;
+  } catch (error) {
+    console.error("Erro ao listar categorias: ", error);
+    return false;
+  }
+};
 
 
 module.exports = {
   insertNovaCategoria,
   selectAllCategories,
-  selectCategoriesById
+  selectCategoriesById,
+  selectCategoriesByPublicationId,
+  selectCategoriesByProductId
 };
