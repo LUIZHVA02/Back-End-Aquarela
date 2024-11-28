@@ -18,6 +18,20 @@ const getBuscarItensByText = async (idClient, texto) => {
         
             if (dadosPesquisa) {
                 if (dadosPesquisa.length > 0) {
+
+
+                    const promise = dadosPesquisa.map(async (post) => {
+
+                        let usuario = await getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+
+                        let images = await getBuscarImages(post.id_publicacao, post.tipo)
+                        post.imagens = images.imagens
+
+                    })
+
+                    await Promise.all(promise)
+
                     pesquisasJSON.resultado = dadosPesquisa
                     pesquisasJSON.quantity = dadosPesquisa.length
                     pesquisasJSON.status_code = 200
