@@ -20,7 +20,7 @@ const insertNovaCategoria = async (dadosCategoria) => {
                                                 '${dadosCategoria.categoria}',
                                                 true
                                             )`;
-    console.log(sql);
+
     let resultStatus = await prisma.$executeRawUnsafe(sql);
 
     if (resultStatus) {
@@ -49,6 +49,24 @@ const selectAllCategories = async () => {
         `;
 
     let resultStatus = await prisma.$queryRawUnsafe(sql);
+
+    if (resultStatus) {
+      return resultStatus;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao listar categorias: ", error);
+    return false;
+  }
+};
+
+const gerenciarCategoriaPostagem = async (idPostagem, idCategoria) => {
+  try {
+    let sql = `
+        call procGerenciarCategoriaPostagem(${idPostagem}, ${idCategoria})      
+    `;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
     console.log(resultStatus);
     if (resultStatus) {
       return resultStatus;
@@ -93,7 +111,7 @@ const selectCategoriesByPublicationId = async (id) => {
               tbl_categoria_postagem as tcp
             ON
               tc.id_categoria = tcp.id_categoria
-              where tcp.id_postagem = ${id}
+              where tcp.id_postagem = ${id} and tcp.categoria_postagem_status = true
             `;
     let resultStatus = await prisma.$queryRawUnsafe(sql);
 
@@ -117,7 +135,7 @@ const selectCategoriesByProductId = async (id) => {
               tbl_categoria_produto as tcp
             ON
               tc.id_categoria = tcp.id_categoria
-              where tcp.id_produto = ${id}
+              where tcp.id_produto = ${id} and tcp.categoria_produto_status = true
             `;
     let resultStatus = await prisma.$queryRawUnsafe(sql);
 
@@ -134,5 +152,6 @@ module.exports = {
   selectAllCategories,
   selectCategoriesById,
   selectCategoriesByPublicationId,
-  selectCategoriesByProductId
+  selectCategoriesByProductId,
+  gerenciarCategoriaPostagem
 };

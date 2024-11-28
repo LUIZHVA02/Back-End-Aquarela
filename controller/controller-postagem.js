@@ -220,17 +220,34 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
           postagem_status == undefined &&
           postagem_status == null
         ) { }
+
         const postUpdate = await postagemDAO.updatePosts(id_postagem, updatePostJSON)
 
-        console.log(postUpdate);
+        if (postUpdate) {
 
-        if (postUpdate != false) {
-          updatePostJSON.id = validaId
+          const categoriasSelecionadas = dadosPostagem.categorias;
+          const categoriasPostagem = await categoriaDAO.selectCategoriesByPublicationId(id_postagem);
+          const iDscategoriasPostagem = categoriasPostagem.map(categoria => categoria.id);
+          
+          const gerenciarPromise = iDscategoriasPostagem.map(async categoria => {
+            if (!categoriasSelecionadas.includes(categoria)) {
+              await categoriaDAO.gerenciarCategoriaPostagem(id_postagem, categoria);
+            }
+          })
+
+          const adicionarPromise = categoriasSelecionadas.map(async categoria => {
+            if (!iDscategoriasPostagem.includes(categoria)) {
+              await categoriaDAO.gerenciarCategoriaPostagem(id_postagem, categoria);
+            }
+          })
+
+          await Promise.all([...gerenciarPromise, ...adicionarPromise])
+          
           updatePostJSON.status = message.UPDATED_ITEM.status
           updatePostJSON.status_code = message.UPDATED_ITEM.status_code
           updatePostJSON.message = message.UPDATED_ITEM.message
           updatePostJSON.postagem = postUpdate
-
+          
           return updatePostJSON
         } else {
 
