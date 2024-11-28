@@ -12,7 +12,6 @@ const setNovaPostagem = async (dadosPostagem, contentType) => {
 
           if (
             dadosPostagem.nome == '' || dadosPostagem.nome == undefined || dadosPostagem.nome.length > 100 ||
-            dadosPostagem.descricao == '' || dadosPostagem.descricao == undefined || dadosPostagem.descricao.length > 500 ||
             dadosPostagem.id_usuario === '' || dadosPostagem.id_usuario === undefined || dadosPostagem.id_usuario === null ||
             dadosPostagem.categorias.length == 0 || dadosPostagem.imagens.length == 0
           ) {
@@ -144,6 +143,9 @@ const getBuscarPostagem = async(idPostagem, idCliente) => {
 
           let comentarios = await postagemDAO.selectComentariosPostagem(idPostagem)
           dadosPostagem[0].comentarios = comentarios
+
+          let categorias = await categoriaDAO.selectCategoriesByPublicationId(idPostagem)
+          dadosPostagem[0].categorias = categorias
 
           postagemJSON.postagem = dadosPostagem
           postagemJSON.status_code = 200
