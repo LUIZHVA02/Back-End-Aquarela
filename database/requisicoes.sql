@@ -257,3 +257,5 @@ select tbl_usuario.id_usuario, tbl_usuario.nome,
                     tbl_usuario on tbl_usuario.id_usuario = 
                     tbl_carrinho_compra.id_usuario where 
                     carrinho_compra_status = 1;
+                    
+select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1;
