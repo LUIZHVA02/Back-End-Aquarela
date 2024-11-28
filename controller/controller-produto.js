@@ -298,11 +298,30 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
 
         if (productUpdate) {
 
+          const categoriasSelecionadas = dadosProduto.categorias;
+          const categoriasProduto = await categoriaDAO.selectCategoriesByProductId(id_produto);
+          const iDscategoriasProduto = categoriasProduto.map(categoria => categoria.id);
+          
+          const gerenciarPromise = iDscategoriasProduto.map(async categoria => {
+            if (!categoriasSelecionadas.includes(categoria)) {
+              await categoriaDAO.gerenciarCategoriaProduto(id_produto, categoria);
+            }
+          })
+
+          const adicionarPromise = categoriasSelecionadas.map(async categoria => {
+            if (!iDscategoriasProduto.includes(categoria)) {
+              await categoriaDAO.gerenciarCategoriaProduto(id_produto, categoria);
+            }
+          })
+
+          await Promise.all([...gerenciarPromise, ...adicionarPromise])
+
+
           updateProductJson.id = id_produto
           updateProductJson.status = message.UPDATED_ITEM.status
           updateProductJson.status_code = message.UPDATED_ITEM.status_code
           updateProductJson.message = message.UPDATED_ITEM.message
-          updateProductJson.usuario = productUpdate
+          updateProductJson.produto = productUpdate
 
           return updateProductJson
         } else {
