@@ -56,11 +56,13 @@ const setNovoItemCarrinho = async (dadosItemCarrinho, contentType) => {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
                 let validaCarrinho = await getCarrinhoByIdUsuario(dadosItemCarrinho.id_usuario)
-console.log(validaCarrinho);
-                if (validaCarrinho.status_code = 200) {
+                
+                if (validaCarrinho.status_code == 200) {
                     
-                    let novoItemCarrinho = await carrinhoDAO.insertNovoItemCarrinho(dadosItemCarrinho, validaCarrinho.carrinho[0].id_carrinho_compra)
-                    let idItemCarrinho = await carrinhoDAO.selectLastIdItemCarrinho()
+                    dadosItemCarrinho.id_carrinho_compra = validaCarrinho.carrinho[0].id_carrinho_compra
+                    
+                    let novoItemCarrinho = await carrinhoDAO.insertNovoItemCarrinho(dadosItemCarrinho)
+                    let idItemCarrinho = await carrinhoDAO.selectLastIdItemCarrinho(dadosItemCarrinho.id_carrinho_compra)
 
                     if (idItemCarrinho) {
                         dadosItemCarrinho.id_Item_carrinho_compra = idItemCarrinho[0].id
@@ -78,17 +80,21 @@ console.log(validaCarrinho);
                         return message.ERROR_INTERNAL_SERVER_DB
                     }
                 }
-                else {
+
+
+                if (validaCarrinho.status_code == 404) {
                     let novoCarrinho = await carrinhoDAO.insertNovoCarrinho(dadosItemCarrinho)
                     if (novoCarrinho) {
+                        console.log(dadosItemCarrinho, "sou eu meu mano");
+                        
                         let idCarrinho = await carrinhoDAO.selectLastIdCarrinho()
 
                         if (idCarrinho) {
                             dadosItemCarrinho.id_carrinho_compra = idCarrinho[0].id
-                        }
+                        }                        
 
                         let novoItemCarrinho = await carrinhoDAO.insertNovoItemCarrinho(dadosItemCarrinho)
-                        let idItemCarrinho = await carrinhoDAO.selectLastIdItemCarrinho(dadosItemCarrinho.id_carrinho_compra)
+                        let idItemCarrinho = await carrinhoDAO.selectLastIdItemCarrinho(dadosItemCarrinho.id_carrinho_compra)                        
 
                         if (idItemCarrinho) {
                             dadosItemCarrinho.id_Item_carrinho_compra = idItemCarrinho[0].id
@@ -110,6 +116,9 @@ console.log(validaCarrinho);
                         return message.ERROR_INTERNAL_SERVER_DB
                     }
                 }
+                else {
+                    return message.ERROR_INTERNAL_SERVER_DB;
+                }
             }
         } else {
             return message.ERROR_CONTENT_TYPE
@@ -125,7 +134,7 @@ const getListCarrinho = async () => {
     try {
         let carrinhoJSON = {};
         let carrinhoData = await carrinhoDAO.selectAllCarrinhos();
-        
+
         if (carrinhoData) {
             if (carrinhoData.length > 0) {
                 carrinhoJSON.carrinho = carrinhoData;

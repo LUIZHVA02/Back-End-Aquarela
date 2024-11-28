@@ -8,7 +8,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const selectAllPosts = async (id) => {
+const selectAllPosts = async () => {
   try {
     let sql = `
         SELECT 

@@ -42,7 +42,7 @@ const insertNovoItemCarrinho = async (dadosItemCarrinho) => {
                                                 '${dadosItemCarrinho.id_produto}',
                                                 '${dadosItemCarrinho.id_carrinho_compra}',
                                                 true
-                                            );`
+                                            );`                                            
 
         let resultStatus = await prisma.$executeRawUnsafe(sql);
 
@@ -133,6 +133,7 @@ const selectLastIdItemCarrinho = async (id_carrinho) => {
     try {
         let sql = `select cast(last_insert_id() as DECIMAL) as id from tbl_item_carrinho 
                     where id_carrinho_compra = ${id_carrinho} limit 1`
+                    
         let rsUsuario = await prisma.$queryRawUnsafe(sql)
         return rsUsuario
     } catch (error) {
