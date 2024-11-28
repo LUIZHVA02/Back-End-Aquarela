@@ -349,7 +349,8 @@ create table tbl_conta (
     nome_do_banco int, 
     agencia text, 
     numero_da_conta text, 
-    dv text, 
+    dv text,
+    conta_status boolean not null default 1,
     foreign key (nome_do_banco) references tbl_banco (id_banco)
 );
 
@@ -357,6 +358,7 @@ create table tbl_conta_usuario (
 	id_conta_usuario int not null primary key auto_increment,
     id_usuario int,
     id_conta int,
+    conta_usuario_status boolean not null default 1,
     foreign key (id_conta) references tbl_conta (id_conta),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
 );

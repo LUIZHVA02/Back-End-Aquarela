@@ -46,9 +46,9 @@ const selectAllPosts = async (id) => {
           po.postagem_status = true;
 
       `;
-
+    console.log(sql);
     let resultStatus = await prisma.$queryRawUnsafe(sql);
-    console.log(resultStatus);
+
     if (resultStatus) {
       return resultStatus;
     } else {
@@ -56,7 +56,7 @@ const selectAllPosts = async (id) => {
     }
   } catch (error) {
     console.log(error);
-    
+
     return false;
   }
 };
@@ -74,9 +74,9 @@ const selectByIdPosts = async (id) => {
 
 const selectByIdPostComplete = async (idPostagem, idUsuario) => {
 
-  try {      
+  try {
 
-      let sql = `
+    let sql = `
         SELECT
           'postagem' AS tipo,
           tp.id_postagem AS id_publicacao,
@@ -108,12 +108,12 @@ const selectByIdPostComplete = async (idPostagem, idUsuario) => {
         LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idUsuario} AND pf.postagem_favorita_status = true
         WHERE tp.id_postagem = ${idPostagem}
         GROUP BY tp.id_postagem
-      `        
-      let rsPostagem = await prisma.$queryRawUnsafe(sql)
-      return rsPostagem
+      `
+    let rsPostagem = await prisma.$queryRawUnsafe(sql)
+    return rsPostagem
   } catch (error) {
-      console.log(error);
-      return false
+    console.log(error);
+    return false
   }
 }
 
@@ -255,23 +255,23 @@ const insertPostagemCategoria = async (idPostagem, idCategoria) => {
 
   try {
 
-      let sql = `INSERT INTO tbl_categoria_postagem (id_postagem, id_categoria, categoria_postagem_status)
+    let sql = `INSERT INTO tbl_categoria_postagem (id_postagem, id_categoria, categoria_postagem_status)
                  VALUES
                 (${idPostagem}, ${idCategoria}, TRUE)`
-      let resultStatus = await prisma.$executeRawUnsafe(sql)
-      if (resultStatus) {
-          return true
-      }
-      else {
-          return false
-      }
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+    if (resultStatus) {
+      return true
+    }
+    else {
+      return false
+    }
 
   } catch (error) {
-      console.error("Erro ao inserir postagem: ", error);
+    console.error("Erro ao inserir postagem: ", error);
 
-      console.log(error + "aqui");
+    console.log(error + "aqui");
 
-      return false
+    return false
   }
 
 }
@@ -280,23 +280,23 @@ const insertPostagemImagem = async (idPostagem, idImagem) => {
 
   try {
 
-      let sql = `INSERT INTO tbl_imagem_postagem (id_postagem, id_imagem, imagem_postagem_status)
+    let sql = `INSERT INTO tbl_imagem_postagem (id_postagem, id_imagem, imagem_postagem_status)
                  VALUES
                 (${idPostagem}, ${idImagem}, TRUE)`
-      let resultStatus = await prisma.$executeRawUnsafe(sql)
-      if (resultStatus) {
-          return true
-      }
-      else {
-          return false
-      }
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+    if (resultStatus) {
+      return true
+    }
+    else {
+      return false
+    }
 
   } catch (error) {
-      console.error("Erro ao inserir produto: ", error);
+    console.error("Erro ao inserir produto: ", error);
 
-      console.log(error + "aqui");
+    console.log(error + "aqui");
 
-      return false
+    return false
   }
 
 }
@@ -304,11 +304,11 @@ const insertPostagemImagem = async (idPostagem, idImagem) => {
 const selectLastId = async () => {
 
   try {
-      let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_postagem limit 1'
-      let rsProduto = await prisma.$queryRawUnsafe(sql)
-      return rsProduto
+    let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_postagem limit 1'
+    let rsProduto = await prisma.$queryRawUnsafe(sql)
+    return rsProduto
   } catch (error) {
-      return false
+    return false
   }
 
 }
@@ -316,7 +316,7 @@ const selectLastId = async () => {
 const selectComentariosPostagem = async (idPostagem) => {
 
   try {
-      let sql = `SELECT 
+    let sql = `SELECT 
                     c.id_comentario,
                     c.mensagem,
                     c.id_usuario,
@@ -335,10 +335,10 @@ const selectComentariosPostagem = async (idPostagem) => {
                     AND u.usuario_status = true
                     AND cp.comentario_postagem_status = true
                 ORDER BY c.id_comentario DESC`
-      let rsPostagem = await prisma.$queryRawUnsafe(sql)
-      return rsPostagem
+    let rsPostagem = await prisma.$queryRawUnsafe(sql)
+    return rsPostagem
   } catch (error) {
-      return false
+    return false
   }
 
 }

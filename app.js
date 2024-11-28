@@ -477,6 +477,13 @@ app.get('/v1/aquarela/cart/users/', cors(), async (request, response, next) => {
     response.json(carrinhoData)
 })
 
+app.get('/v1/aquarela/cart/user/:id', cors(), async (request, response, next) => {
+    let id_usuario = request.params.id
+    let resultDadosCarrinho = await controllerCarrinho.getCarrinhoByIdUsuario(id_usuario)
+    response.status(resultDadosCarrinho.status_code)
+    response.json(resultDadosCarrinho)
+})
+
 // #region Categorias
 /******************************************************** Endpoints Categorias ********************************************************/
 

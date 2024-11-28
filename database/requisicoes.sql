@@ -250,3 +250,10 @@ select * from tbl_banco;
 select * from tbl_conta;
 select * from tbl_conta_usuario;
 
+select tbl_usuario.id_usuario, tbl_usuario.nome, 
+                    tbl_usuario.nome_usuario, tbl_usuario.email, 
+                    tbl_carrinho_compra.id_carrinho_compra 
+                    from tbl_carrinho_compra inner join 
+                    tbl_usuario on tbl_usuario.id_usuario = 
+                    tbl_carrinho_compra.id_usuario where 
+                    carrinho_compra_status = 1;
