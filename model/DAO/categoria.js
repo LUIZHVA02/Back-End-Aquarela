@@ -86,7 +86,7 @@ const selectCategoriesByPublicationId = async (id) => {
     let sql = `
             SELECT 
                 tc.id_categoria as id,
-                tc.categoria
+                tc.categoria as nome
             FROM 
                 tbl_categoria as tc
             INNER JOIN 
@@ -110,7 +110,7 @@ const selectCategoriesByProductId = async (id) => {
     let sql = `
             SELECT 
                 tc.id_categoria as id,
-                tc.categoria 
+                tc.categoria as nome
             FROM 
                 tbl_categoria as tc
             INNER JOIN 
