@@ -64,6 +64,8 @@ const setNovoItemCarrinho = async (dadosItemCarrinho, contentType) => {
                     let novoItemCarrinho = await carrinhoDAO.insertNovoItemCarrinho(dadosItemCarrinho)
                     let idItemCarrinho = await carrinhoDAO.selectLastIdItemCarrinho(dadosItemCarrinho.id_carrinho_compra)
 
+                    
+
                     if (idItemCarrinho) {
                         dadosItemCarrinho.id_Item_carrinho_compra = idItemCarrinho[0].id
                     }
