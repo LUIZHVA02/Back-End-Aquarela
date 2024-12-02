@@ -617,7 +617,7 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
        FROM tbl_produto AS tp
        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${idUsuario}
        LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${idUsuario}
-       WHERE tp.id_usuario = ${idDonoPublicacao}
+       WHERE tp.id_usuario = ${idDonoPublicacao} AND tp.produto_status = TRUE
        GROUP BY tp.id_produto
        
        UNION ALL
@@ -643,7 +643,7 @@ const selectPostsByUserId = async (idDonoPublicacao, idUsuario) => {
        FROM tbl_postagem AS tp
        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${idUsuario}
        LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${idUsuario}
-       WHERE tp.id_usuario = ${idDonoPublicacao}
+       WHERE tp.id_usuario = ${idDonoPublicacao} AND tp.postagem_status = TRUE
        GROUP BY tp.id_postagem
        
        ORDER BY id_publicacao
