@@ -195,7 +195,6 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
         ) { }
 
         if (
-          descricao != '' &&
           descricao != undefined &&
           descricao != null &&
           descricao.length < 500
