@@ -250,8 +250,6 @@ const setAtualizarPostagem = async (dadosPostagem, contentType, id_postagem) => 
           return updatePostJSON
         } else {
 
-          console.log(postUpdate);
-
           return message.ERROR_INTERNAL_SERVER_DB
         }
       } else {

@@ -209,7 +209,7 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
           descricao != '' &&
           descricao != undefined &&
           descricao != null &&
-          descricao.length == 500
+          descricao.length < 500
         ) {
           updateProductJson.descricao = descricao
         } else if (
@@ -292,8 +292,6 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
           product_status == null
         ) { }
 
-
-
         const productUpdate = await produtoDAO.updateProduct(id_produto, updateProductJson)
 
         if (productUpdate) {
@@ -316,8 +314,6 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
 
           await Promise.all([...gerenciarPromise, ...adicionarPromise])
 
-
-          updateProductJson.id = id_produto
           updateProductJson.status = message.UPDATED_ITEM.status
           updateProductJson.status_code = message.UPDATED_ITEM.status_code
           updateProductJson.message = message.UPDATED_ITEM.message
@@ -325,8 +321,6 @@ const setUpdateProducts = async (dadosProduto, contentType, id_product) => {
 
           return updateProductJson
         } else {
-
-          console.log(productUpdate);
 
           return message.ERROR_INTERNAL_SERVER_DB
         }

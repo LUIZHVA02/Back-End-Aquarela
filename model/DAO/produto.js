@@ -76,7 +76,11 @@ const updateProduct = async function (id, dataProductUpdate) {
         const keys = Object.keys(dataProductUpdate)
 
         keys.forEach((key, index) => {
-            sql += `${key} = '${dataProductUpdate[key]}'`
+            if(typeof(dataProductUpdate[key]) === 'string'){
+              sql += `${key} = '${dataProductUpdate[key]}'`
+            }else{
+              sql += `${key} = ${dataProductUpdate[key]}`
+            }
             if (index !== keys.length - 1) {
                 sql += `, `
             }

@@ -79,6 +79,24 @@ const gerenciarCategoriaPostagem = async (idPostagem, idCategoria) => {
   }
 };
 
+const gerenciarCategoriaProduto = async (idProduto, idCategoria) => {
+  try {
+    let sql = `
+        call procGerenciarCategoriaProduto(${idProduto}, ${idCategoria})      
+    `;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+    console.log(resultStatus);
+    if (resultStatus) {
+      return resultStatus;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao listar categorias: ", error);
+    return false;
+  }
+};
+
 const selectCategoriesById = async (id) => {
   try {
     let sql = `
@@ -153,5 +171,6 @@ module.exports = {
   selectCategoriesById,
   selectCategoriesByPublicationId,
   selectCategoriesByProductId,
-  gerenciarCategoriaPostagem
+  gerenciarCategoriaPostagem,
+  gerenciarCategoriaProduto
 };
