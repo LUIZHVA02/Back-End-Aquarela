@@ -14,9 +14,6 @@ const insertUserAddress = async (id_endereco, id_usuario) => {
         console.log(sql);
         let rs = await prisma.$executeRawUnsafe(sql)
 
-
-
-
         return rs
     } catch (error) {
         console.log(error);

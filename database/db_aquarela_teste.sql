@@ -19,6 +19,7 @@ create table tbl_usuario(
     avaliacao float,
     usuario_status boolean not null 
 );
+
 select * from tbl_usuario;
 
 ## Seguidores
@@ -158,6 +159,8 @@ create table tbl_comentario_produto (
     foreign key (id_comentario) references tbl_comentario (id_comentario)
 );
 
+select * from tbl_comentario_produto;
+
 create table tbl_comentario_postagem ( 
 	id_comentario_postagem integer not null primary key auto_increment,
     id_postagem integer not null,
@@ -166,6 +169,8 @@ create table tbl_comentario_postagem (
     foreign key (id_postagem) references tbl_postagem (id_postagem),
     foreign key (id_comentario) references tbl_comentario (id_comentario)
 );
+
+select * from tbl_comentario_postagem;
 
 ## Favoritos
 
@@ -178,6 +183,8 @@ create table tbl_produto_favorito (
     foreign key (id_usuario) references tbl_usuario (id_usuario)
 );
 
+select * from tbl_produto_favorito;
+
 create table tbl_postagem_favorita ( 
 	id_postagem_favorita integer not null primary key auto_increment,
     id_postagem integer not null,
@@ -186,6 +193,8 @@ create table tbl_postagem_favorita (
     foreign key (id_postagem) references tbl_postagem (id_postagem),
     foreign key (id_usuario) references tbl_usuario (id_usuario)
 );
+
+select * from tbl_postagem_favorita;
 
 ## Curtidas
 
@@ -198,14 +207,18 @@ create table tbl_curtida_postagem (
     foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
 
+select * from tbl_curtida_postagem;
+
 create table tbl_curtida_produto (
     id_curtidas_produto integer not null primary key auto_increment,
-    id_produto integer not null,
     id_usuario integer not null,
+    id_produto integer not null,
     curtidas_produto_status boolean not null,
     foreign key (id_produto) references tbl_produto(id_produto),
     foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
+
+select * from tbl_curtida_produto;
 
 ## Visualizações
 
@@ -218,6 +231,8 @@ create table tbl_visualizacao_produto (
     foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
 
+select * from tbl_visualizacao_produto;
+
 create table tbl_visualizacao_postagem (
     id_visualizacao_postagem integer not null primary key auto_increment,
     id_postagem integer not null,
@@ -227,6 +242,8 @@ create table tbl_visualizacao_postagem (
     foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
 
+select * from tbl_visualizacao_postagem;
+
 ## Imagens
 
 create table tbl_imagem ( 
@@ -234,6 +251,8 @@ create table tbl_imagem (
     url varchar(255) not null,
     imagem_status boolean not null
 );
+
+select * from tbl_imagem;
 
 create table tbl_imagem_produto ( 
 	id_imagem_produto integer not null primary key auto_increment,
@@ -244,6 +263,8 @@ create table tbl_imagem_produto (
     foreign key (id_produto) references tbl_produto(id_produto)
 );
 
+select * from tbl_imagem_produto;
+
 create table tbl_imagem_postagem (
     id_imagem_postagem integer not null primary key auto_increment,
     id_imagem integer not null,
@@ -252,6 +273,8 @@ create table tbl_imagem_postagem (
     foreign key (id_imagem) references tbl_imagem(id_imagem),
     foreign key (id_postagem) references tbl_postagem(id_postagem)
 );
+
+select * from tbl_imagem_postagem;
 
 ## Pastas
 
@@ -263,6 +286,8 @@ create table tbl_pasta (
 	foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
 
+select * from tbl_pasta;
+
 create table tbl_pasta_postagem ( 
 	id_pasta_postagem integer not null primary key auto_increment,
 	id_postagem integer not null,
@@ -271,6 +296,8 @@ create table tbl_pasta_postagem (
     foreign key (id_postagem) references tbl_postagem(id_postagem),
     foreign key (id_pasta) references tbl_pasta(id_pasta)
 );
+
+select * from tbl_pasta_postagem;
 
 create table tbl_pasta_produto (
     id_pasta_produto integer not null primary key auto_increment,
@@ -281,6 +308,8 @@ create table tbl_pasta_produto (
     foreign key (id_pasta) references tbl_pasta(id_pasta)
 );
 
+select * from tbl_pasta_produto;
+
 ## Carrinho de compras
 
 create table tbl_carrinho_compra( 
@@ -289,6 +318,8 @@ create table tbl_carrinho_compra(
     carrinho_compra_status boolean not null,
 	foreign key (id_usuario) references tbl_usuario(id_usuario)
 );
+
+select * from tbl_carrinho_compra;
 
 create table tbl_item_carrinho( 
 	id_item_carrinho integer not null primary key auto_increment,
@@ -299,6 +330,8 @@ create table tbl_item_carrinho(
     foreign key (id_produto) references tbl_produto(id_produto),
     foreign key (id_carrinho_compra) references tbl_carrinho_compra(id_carrinho_compra)
 );
+
+select * from tbl_item_carrinho;
 
 ## Compra
 
@@ -312,6 +345,8 @@ create table tbl_pedido(
 	foreign key (id_usuario_endereco) references tbl_usuario_endereco(id_usuario_endereco)
 );
 
+select * from tbl_pedido;
+
 create table tbl_item_pedido(
 	id_item_pedido integer not null primary key auto_increment,
 	quantidade integer not null,
@@ -321,6 +356,8 @@ create table tbl_item_pedido(
     foreign key (id_pedido) references tbl_pedido(id_pedido),
     foreign key (id_produto) references tbl_produto(id_produto)
 );
+
+select * from tbl_item_pedido;
 
 ## Conversa
 
@@ -333,6 +370,8 @@ create table tbl_conversa(
     foreign key (id_usuario_2) references tbl_usuario(id_usuario)
 );
 
+select * from tbl_conversa;
+
 create table tbl_mensagem (
 	id_mensagem integer not null primary key auto_increment,
     mensagem text not null,
@@ -342,3 +381,54 @@ create table tbl_mensagem (
     foreign key (id_usuario) references tbl_usuario(id_usuario),
     foreign key (id_conversa) references tbl_conversa(id_conversa)
 );
+
+select * from tbl_mensagem;
+
+create table tbl_tipo_perfil (
+id_tipo_perfil integer not null primary key auto_increment,
+    nome varchar(50) not null,
+tipo_perfil_status boolean not null
+);
+
+select * from tbl_tipo_perfil;
+
+create table tbl_tipo_perfil_usuario (
+id_tipo_perfil_usuario integer not null primary key auto_increment,
+    id_tipo_perfil integer not null,
+    id_usuario integer not null,
+tipo_perfil_usuario_status boolean not null,
+    foreign key (id_usuario) references tbl_usuario(id_usuario),
+    foreign key (id_tipo_perfil) references tbl_tipo_perfil(id_tipo_perfil)
+);
+
+select * from tbl_tipo_perfil_usuario;
+
+create table tbl_banco (
+	id_banco int not null primary key auto_increment,
+    banco text,
+    banco_status boolean not null
+);
+
+select * from tbl_banco;
+
+create table tbl_conta (
+	id_conta int not null primary key auto_increment, 
+    nome_completo text, 
+    nome_do_banco int, 
+    agencia text, 
+    numero_da_conta text, 
+    dv text, 
+    foreign key (nome_do_banco) references tbl_banco (id_banco)
+);
+
+select * from tbl_conta;
+
+create table tbl_conta_usuario (
+	id_conta_usuario int not null primary key auto_increment,
+    id_usuario int,
+    id_conta int,
+    foreign key (id_conta) references tbl_conta (id_conta),
+    foreign key (id_usuario) references tbl_usuario (id_usuario)
+);
+
+select * from tbl_conta_usuario;

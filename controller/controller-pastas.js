@@ -1,4 +1,5 @@
 const pastasDAO = require('../model/DAO/pastas.js')
+const userController = require('./controller-user.js')
 const message = require('../modulo/config.js')
 
 const setNovaPasta = async (dadosPasta, contentType) => {
@@ -16,13 +17,18 @@ const setNovaPasta = async (dadosPasta, contentType) => {
 
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                let novoProduto = await pastasDAO.insertNovaPasta(dadosPasta)
 
-                if (novoProduto) {
+                let novaPasta = await pastasDAO.insertNovaPasta(dadosPasta)
+
+                if (novaPasta) {
+
+                    const idPasta = await pastasDAO.selectLastId()
+                    dadosPasta.id_pasta = Number(idPasta[0].id)
+
                     resultDadosPasta.status = message.CREATED_ITEM.status
                     resultDadosPasta.status_code = message.CREATED_ITEM.status_code
                     resultDadosPasta.status = message.CREATED_ITEM.message
-                    resultDadosPasta.produto = dadosPasta
+                    resultDadosPasta.pasta = dadosPasta
 
                     return resultDadosPasta
 
@@ -48,7 +54,7 @@ const getListPastas = async () => {
         if (dadosPasta) {
 
             if (dadosPasta.length > 0) {
-                pastaJSON.address = dadosPasta
+                pastaJSON.folders = dadosPasta
                 pastaJSON.quantity = dadosPasta.length
                 pastaJSON.status_code = 200
                 return pastaJSON
@@ -101,7 +107,7 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
 
                 if (pastaUpdate) {
 
-                    updatePastaJson.id = id_produto
+                    updatePastaJson.id = id_pasta
                     updatePastaJson.status = message.UPDATED_ITEM.status
                     updatePastaJson.status_code = message.UPDATED_ITEM.status_code
                     updatePastaJson.message = message.UPDATED_ITEM.message
@@ -129,47 +135,106 @@ const setUpdatePasta = async (dadosPasta, contentType, id_folder) => {
     }
 }
 
-// const setExcluirProduto = async function (id) {
-//     try {
+const setExcluirPasta = async function (id) {
+    try {
 
-//         let id_produto = id;
-//         let deleteProdutoJson = {}
-
-
-//         if (id_produto == '' || id_produto == undefined) {
-//             return message.ERROR_INVALID_ID;
-//         } else {
-//             const validaId = await produtoDAO.selectByIdpastas(id_produto)
-
-//             console.log(validaId);
+        let id_pasta = id;
+        let deletePastaJson = {}
 
 
-//             if (validaId.length > 0) {
+        if (id_pasta == '' || id_pasta == undefined) {
+            return message.ERROR_INVALID_ID;
+        } else {
+            const validaId = await pastasDAO.selectByIdPasta(id_pasta)
 
-//                 let produto_status = "0"
+            console.log(validaId);
 
-//                 deleteProdutoJson.produto_status = produto_status
 
-//                 let dadosPasta = await produtoDAO.updatepasta(id_produto, deleteProdutoJson)
+            if (validaId.length > 0) {
 
-//                 if (dadosPasta) {
-//                     return message.DELETED_ITEM
-//                 } else {
-//                     return message.ERROR_INTERNAL_SERVER_DB
-//                 }
+                let pasta_status = "0"
 
-//             } else {
-//                 return message.ERROR_NOT_FOUND
-//             }
-//         }
-//     } catch (error) {
-//         return message.ERROR_INTERNAL_SERVER
-//     }
+                deletePastaJson.pasta_status = pasta_status
 
-// }
+                let dadosPasta = await pastasDAO.updatePasta(id_pasta, deletePastaJson)
+
+                if (dadosPasta) {
+                    return message.DELETED_ITEM
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB
+                }
+
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const getBuscarPasta = async(folderId, clientId) => {
+
+    try {
+
+        let id_pasta = folderId
+        let pastaJSON = {}        
+        
+        const userValidation = await userController.getBuscarUsuario(clientId)
+        
+        if (id_pasta == '' || id_pasta == undefined || isNaN(clientId) || userValidation.status_code != 200) {
+            
+            return message.ERROR_REQUIRED_FIELDS
+            
+        } else {
+            
+            let pasta = await pastasDAO.selectByIdPasta(id_pasta)            
+            console.log(pasta);
+            
+            if (pasta) {
+                
+                if (pasta.length > 0) {
+                    
+                    let dadosPasta = await pastasDAO.selectPastaItens(id_pasta, clientId)
+
+                    const promise = dadosPasta.map(async (post) => {
+                        
+                        let images = await userController.getBuscarImages(post.id_publicacao, post.tipo)                        
+                        post.imagens = images.imagens
+                        
+                        let usuario = await userController.getBuscarUsuario(post.id_dono_publicacao)
+                        post.dono_publicacao = usuario.usuario[0]
+                        
+                    })
+
+                    await Promise.all(promise)
+
+                    pasta[0].itens = dadosPasta
+
+                    pastaJSON.status = message.VALIDATED_ITEM.status
+                    pastaJSON.status_code = message.VALIDATED_ITEM.status_code
+                    pastaJSON.message = message.VALIDATED_ITEM.message
+                    pastaJSON.pasta = pasta[0]
+
+                    return pastaJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
 
 module.exports = {
     setNovaPasta,
     getListPastas,
-    setUpdatePasta
+    setUpdatePasta,
+    setExcluirPasta,
+    getBuscarPasta
 }

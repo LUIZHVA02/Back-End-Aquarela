@@ -43,6 +43,8 @@
  * 
  *      Caso ocorra algum problema, execute:
  *          npm i 
+ * 
+ *
  */
 
 const express = require('express')
@@ -72,9 +74,21 @@ const controllerSeguidores = require('./controller/controller-seguidores.js')
 const controllerPostagem = require('./controller/controller-postagem.js')
 const controllerPreferencias = require('./controller/controller-preferencias-usuario.js')
 const controllerPasta = require('./controller/controller-pastas.js')
+const controllerConversas = require('./controller/controller-chats.js')
+const controllerCarrinho = require('./controller/controller-carrinho.js')
+const controllerComentario = require('./controller/controller-comentario.js')
 
 // #region Usuários
 /******************************************************** Endpoints Usuários ********************************************************/
+
+app.get('/v1/aquarela/search/', cors(), async function(request, response, next) {
+    let idClient = request.query.client
+    let texto = request.query.search
+    let resultDadosSearch = await controllerUsuarios.getBuscarItensByText(idClient,texto)
+
+    response.json(resultDadosSearch)
+    response.status(resultDadosSearch.status_code)
+})
 
 app.post('/v1/aquarela/user', cors(), bodyParserJson, async (request, response, next) => {
 
@@ -188,6 +202,35 @@ app.put('/v1/aquarela/user/password/:id', cors(), bodyParserJson, async (request
     response.json(resultDados)
 })
 
+app.get('/v1/aquarela/nickname/user/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let nickname = request.query.nickname
+    let userClient = request.query.client
+    let dadosUsuario = await controllerUsuarios.getBuscarApelido(nickname, userClient)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
+app.get('/v1/aquarela/favorite/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id = request.params.id
+
+    let dadosUsuario = await controllerUsuarios.getBuscarFavoritos(id)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+})
+
+app.get('/v1/aquarela/folders/user/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id = request.params.id
+
+    let dadosUsuario = await controllerUsuarios.getUserFolders(id)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+    
+})
+
 // #region Preferência-Usuário
 /******************************************************** Endpoints Preferência-Usuário ********************************************************/
 
@@ -227,6 +270,7 @@ app.put('/v1/aquarela/delete/preferences/user/:id', cors(), bodyParserJson, asyn
     response.status(resultDados.status_code);
     response.json(resultDados);
 })
+
 
 // #region Endereço
 /******************************************************** Endpoints Endereço ********************************************************/
@@ -312,6 +356,17 @@ app.get('/v1/aquarela/products', cors(), bodyParserJson, async (request, respons
 
 })
 
+app.get('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
+    
+    let idProduto = request.query.product
+    let client = request.query.client
+    let searchProducts = await controllerProduto.getBuscarProduto(idProduto, client)
+
+    response.json(searchProducts)
+    response.status(searchProducts.status_code)
+
+})
+
 app.post('/v1/aquarela/product', cors(), bodyParserJson, async (request, response, next) => {
 
     let contentType = request.headers['content-type']
@@ -342,6 +397,100 @@ app.put('/v1/aquarela/products/:id', cors(), bodyParserJson, async (request, res
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/like/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setCurtirProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/favorite/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setFavoritarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/visualizer/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setVisualizarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/comment/product', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setComentarProduto(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+app.post('/v1/aquarela/folders/products', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosProduto = await controllerProduto.setAdicionarProdutoPasta(dadosBody, contentType)
+
+    response.status(resultDadosProduto.status_code)
+    response.json(resultDadosProduto)
+
+})
+
+// #region Carrinho
+/********************************************************* Endpoints Carrinho *********************************************************/
+
+app.post('/v1/aquarela/cart/user', cors(), bodyParserJson, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let carrinhoData = await controllerCarrinho.setNovoCarrinho(dadosBody,contentType)
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
+})
+
+app.post('/v1/aquarela/cart/item', cors(), bodyParserJson, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let carrinhoData = await controllerCarrinho.setNovoItemCarrinho(dadosBody,contentType)
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
+})
+
+app.get('/v1/aquarela/cart/users/', cors(), async (request, response, next) => {
+    let carrinhoData = await controllerCarrinho.getListCarrinho()
+    response.status(carrinhoData.status_code)
+    response.json(carrinhoData)
+})
+
+app.get('/v1/aquarela/cart/user/:id', cors(), async (request, response, next) => {
+    let id_usuario = request.params.id
+    let resultDadosCarrinho = await controllerCarrinho.getCarrinhoByIdUsuario(id_usuario)
+    response.status(resultDadosCarrinho.status_code)
+    response.json(resultDadosCarrinho)
+})
+
+app.get('/v1/aquarela/cart/items/:id', cors(), async (request, response, next) => {
+    let id_carrinho = request.params.id
+    let resultDadosItensCarrinho = await controllerCarrinho.getListItensCarrinhoById(id_carrinho)
+    response.status(resultDadosItensCarrinho.status_code)
+    response.json(resultDadosItensCarrinho)
+})
+
 // #region Categorias
 /******************************************************** Endpoints Categorias ********************************************************/
 
@@ -363,7 +512,7 @@ app.get('/v1/aquarela/categories', cors(), async (request, response, next) => {
 
 })
 
-app.get('/v1/aquarela/categorie/:id', cors(), async (request, response, next) => {
+app.get('/v1/aquarela/category/:id', cors(), async (request, response, next) => {
 
     let categoryData = await controllerCategoria.getCategoriesById(id)
     response.status(categoryData.status_code)
@@ -404,6 +553,17 @@ app.put('/v1/aquarela/follower/:id', cors(), bodyParserJson, async (request, res
     response.json(resultDados)
 })
 
+app.post('/v1/aquarela/follower/user', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosSeguidores = await controllerSeguidores.setSeguir(dadosBody, contentType)
+
+    response.status(resultDadosSeguidores.status_code)
+    response.json(resultDadosSeguidores)
+
+})
+
 // #region Postagem
 /******************************************************** Endpoints Postagem ********************************************************/
 
@@ -415,17 +575,18 @@ app.get('/v1/aquarela/posts', cors(), async function (request, response, next) {
     response.status(searchPosts.status_code)
 })
 
-app.get('/v1/aquarela/post/:id', cors(), async function (request, response, next) {
-
-    let id = request.params.id
-
-    let searchPosts = await controllerPostagem.getBuscarPostagem(id)
+app.get('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
+    
+    let idPostagem = request.query.post
+    let client = request.query.client
+    let searchPosts = await controllerPostagem.getBuscarPostagem(idPostagem, client)
 
     response.json(searchPosts)
     response.status(searchPosts.status_code)
+
 })
 
-app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, next) => {
+app.post('/v1/aquarela/post', cors(), bodyParserJson, async function (request, response, next) {
 
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -436,7 +597,6 @@ app.post('/v1/aquarela/post', cors(), bodyParserJson, async (request, response, 
 
 })
 
-
 app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, response, next) => {
 
     let id_postagem = request.params.id
@@ -445,6 +605,7 @@ app.put('/v1/aquarela/post/:id', cors(), bodyParserJson, async (request, respons
     let resultDados = await controllerPostagem.setAtualizarPostagem(dadosBody, contentType, id_postagem)
     response.status(resultDados.status_code);
     response.json(resultDados)
+
 })
 
 app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, response, next) => {
@@ -457,6 +618,61 @@ app.put('/v1/aquarela/delete/post/:id', cors(), bodyParserJson, async (request, 
     response.json(resultDados);
 })
 
+app.post('/v1/aquarela/favorite/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setFavoritarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/like/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setCurtirPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/visualizer/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setVisualizarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/comment/post', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setComentarPostagem(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
+app.post('/v1/aquarela/folders/posts', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPostagem = await controllerPostagem.setAdicionarPostagemPasta(dadosBody, contentType)
+
+    response.status(resultDadosPostagem.status_code)
+    response.json(resultDadosPostagem)
+
+})
+
 // #region Pastas
 /******************************************************** Endpoints Pasta ********************************************************/
 
@@ -466,6 +682,16 @@ app.get('/v1/aquarela/folders', cors(), async function (request, response, next)
 
     response.json(searchPastas)
     response.status(searchPastas.status_code)
+})
+
+app.get('/v1/aquarela/folder/', cors(), async function (request, response, next) {
+
+    let folderId = request.query.folder
+    let client = request.query.client
+    let searchPastas = await controllerPasta.getBuscarPasta(folderId, client)
+    response.status(searchPastas.status_code)
+    response.json(searchPastas)
+    
 })
 
 app.post('/v1/aquarela/folder', cors(), bodyParserJson, async (request, response, next) => {
@@ -487,6 +713,64 @@ app.put('/v1/aquarela/folder/:id', cors(), bodyParserJson, async (request, respo
     let resultDados = await controllerPasta.setUpdatePasta(dadosBody, contentType, id_pasta)
     response.status(resultDados.status_code);
     response.json(resultDados)
+})
+
+app.put('/v1/aquarela/folders/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let id_pasta = request.params.id
+
+    let resultDados = await controllerPasta.setExcluirPasta(id_pasta);
+
+    response.status(resultDados.status_code);
+    response.json(resultDados);
+})
+
+// #region Conversas
+
+/************************************************ EndPoints Conversas ************************************************/
+
+app.post('/v1/aquarela/chat/user/', cors(), bodyParserJson, async (request, response, next) => {
+    
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDadosPasta = await controllerConversas.setNovaConversa(dadosBody, contentType)
+    
+    response.status(resultDadosPasta.status_code)
+    response.json(resultDadosPasta)
+    
+})
+
+app.get('/v1/aquarela/chats', cors(), async function (request, response, next) {
+    
+    let searchConversas = await controllerConversas.getListConversas()
+
+    response.json(searchConversas)
+    response.status(searchConversas.status_code)
+})
+
+
+// #region Comentários
+
+/************************************************ EndPoints Comentários ************************************************/
+
+app.put('/v1/aquarela/comment/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idComentario = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerComentario.updateComentario(dadosBody, contentType, idComentario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+    
+})
+
+app.put('/v1/aquarela/delete/comment/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idComentario = request.params.id
+    let resultDados = await controllerComentario.setExcluirComentario(idComentario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
 })
 
 const port = process.env.PORT || 8080

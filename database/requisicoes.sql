@@ -19,10 +19,10 @@ select tbl_usuario.id_usuario, tbl_usuario.nome, tbl_postagem.id_postagem from t
 inner join tbl_curtida_postagem on tbl_usuario.id_usuario = tbl_curtida_postagem.id_usuario
 inner join tbl_postagem on tbl_curtida_postagem.id_usuario= tbl_postagem.id_postagem; 
 
+
 # Feed
 
 DELIMITER $$
-
 CREATE PROCEDURE GetGerarFeed(IN userId INT)
 BEGIN
     SELECT * FROM (
@@ -148,7 +148,6 @@ BEGIN
         num_categorias DESC,  
         RAND();  
 END $$
-
 DELIMITER ;
 
 select * from tbl_usuario;
@@ -178,7 +177,8 @@ insert into tbl_preferencia (id_usuario, id_categoria, preferencia_status) value
 (12,225,true);
 
 
-call GetGerarFeed(12)
+call GetGerarFeed(12);
+
 
 # Listar postagem e produto
 
@@ -195,3 +195,67 @@ JOIN
 ON 
     p.id_usuario = po.id_usuario;
 
+select * from tbl_usuario;
+select * from tbl_seguidores;
+select * from tbl_endereco;
+select * from tbl_usuario_endereco;
+select * from tbl_postagem;
+select * from tbl_produto;
+select * from tbl_categoria;
+select * from tbl_categoria_produto;
+select * from tbl_categoria_postagem;
+select * from tbl_preferencia;
+select * from tbl_comentario;
+select * from tbl_comentario_produto;
+select * from tbl_comentario_postagem;
+select * from tbl_produto_favorito;
+select * from tbl_postagem_favorita;
+select * from tbl_curtida_postagem;
+select * from tbl_curtida_produto;
+select * from tbl_visualizacao_produto;
+select * from tbl_visualizacao_postagem;
+select * from tbl_imagem;
+select * from tbl_imagem_produto;
+select * from tbl_imagem_postagem;
+select * from tbl_pasta;
+select * from tbl_pasta_postagem;
+select * from tbl_pasta_produto;
+select * from tbl_carrinho_compra;
+select * from tbl_item_carrinho;
+select * from tbl_pedido;
+select * from tbl_item_pedido;
+select * from tbl_conversa;
+select * from tbl_mensagem;
+select * from tbl_tipo_perfil;
+select * from tbl_tipo_perfil_usuario;
+
+select 	tbl_usuario.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 
+		tbl_usuario.foto_usuario, tbl_carrinho_compra.id_carrinho_compra 
+        from tbl_usuario inner join tbl_carrinho_compra on 
+        tbl_carrinho_compra.id_usuario = tbl_usuario.id_usuario
+        inner join tbl_item_carrinho on tbl_item_carrinho.id_carrinho_compra 
+        = tbl_carrinho_compra.id_carrinho_compra;
+
+select id_usuario, nome, nome_usuario, foto_usuario, descricao, 
+        email, cpf, date_format(data_nascimento, "%d-%m-%Y") as data_nascimento, telefone, 
+        disponibilidade, avaliacao from tbl_usuario where nome_usuario = 'matheus' and senha = md5('1533');
+        
+select tbl_preferencia.id_usuario, tbl_usuario.nome, tbl_usuario.nome_usuario, 
+tbl_preferencia.id_categoria, tbl_categoria.categoria from tbl_categoria
+inner join tbl_preferencia on tbl_preferencia.id_categoria = tbl_categoria.id_categoria 
+inner join tbl_usuario on tbl_usuario.id_usuario = tbl_preferencia.id_usuario 
+where preferencia_status = "1" order by tbl_usuario.id_usuario;
+
+select * from tbl_banco;
+select * from tbl_conta;
+select * from tbl_conta_usuario;
+
+select tbl_usuario.id_usuario, tbl_usuario.nome, 
+                    tbl_usuario.nome_usuario, tbl_usuario.email, 
+                    tbl_carrinho_compra.id_carrinho_compra 
+                    from tbl_carrinho_compra inner join 
+                    tbl_usuario on tbl_usuario.id_usuario = 
+                    tbl_carrinho_compra.id_usuario where 
+                    carrinho_compra_status = 1;
+                    
+select cast(last_insert_id() as DECIMAL) as id from tbl_usuario limit 1;

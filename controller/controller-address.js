@@ -261,6 +261,8 @@ const getSearchUserAddresses = async (id_usuario) => {
         if (dataUserAdresses) {
           if (dataUserAdresses.length > 0) {
 
+            console.log(dataUserAdresses);
+
             const keys = Object.keys(dataUserAdresses)
 
             keys.forEach((key, index) => {
@@ -287,9 +289,6 @@ const getSearchUserAddresses = async (id_usuario) => {
             userAddressesJSON.enderecos = userAddressesArray
             userAddressesJSON.status_code = 200;
 
-            console.log(userAddressesJSON);
-            
-
             return userAddressesJSON;
           } else {
             return message.ERROR_NOT_FOUND; // 404
@@ -315,16 +314,16 @@ const setExcluirEndereco = async function (id) {
     if (id_endereco == "" || id_endereco == undefined || isNaN(id_endereco)) {
       return message.ERROR_INVALID_ID;
     } else {
-      const validaId = await userDAO.selectByIdenderecoAtivo(id_endereco);
 
-      console.log(validaId);
+      const validaId = await addressDAO.selectByIdAddress(id_endereco);
 
       if (validaId.length > 0) {
+         
         let endereco_status = "0";
 
         deleteenderecoJson.endereco_status = endereco_status;
 
-        let dadosendereco = await userDAO.updateendereco(
+        let dadosendereco = await addressDAO.updateAddress(
           id_endereco,
           deleteenderecoJson
         );

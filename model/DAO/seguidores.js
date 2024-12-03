@@ -85,8 +85,28 @@ const updateSeguidores = async function (id, dadosUsuarioUpdate) {
 
 }
 
+const insertSeguidor= async (dadosSeguidores) => {
+  try {
+    let sql = `call procSeguir(${dadosSeguidores.id_seguidor}, ${dadosSeguidores.id_seguindo})`;
+    let resultStatus = await prisma.$executeRawUnsafe(sql);
+
+    if (resultStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao seguir: ", error);
+
+    console.log(error + "aqui");
+
+    return false;
+  }
+};
+
 module.exports = {
   insertNovoSeguidor,
   selectAllFollowers,
-  updateSeguidores
+  updateSeguidores,
+  insertSeguidor
 }
