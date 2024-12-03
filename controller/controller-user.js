@@ -79,7 +79,7 @@ const setNovoUsuario = async (dadosUsuario, contentType) => {
                 if (novoUsuario) {
                     resultDadosUsuario.status = message.CREATED_ITEM.status
                     resultDadosUsuario.status_code = message.CREATED_ITEM.status_code
-                    resultDadosUsuario.status = message.CREATED_ITEM.message
+                    resultDadosUsuario.message = message.CREATED_ITEM.message
                     resultDadosUsuario.usuario = dadosUsuario
 
                     return resultDadosUsuario
