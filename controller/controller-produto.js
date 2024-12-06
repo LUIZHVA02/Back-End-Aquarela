@@ -71,6 +71,7 @@ const setNovoProduto = async (dadosProduto, contentType) => {
           await Promise.all(categoriaPromise)
           await Promise.all(imagePromisse)
 
+          dadosProduto.id = id
           dadosProduto.categorias = categoriasARRAY
           dadosProduto.imagens = imagensARRAY
 

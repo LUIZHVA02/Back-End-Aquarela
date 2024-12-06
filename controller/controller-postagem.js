@@ -23,7 +23,7 @@ const setNovaPostagem = async (dadosPostagem, contentType) => {
               if (novaPostagem) {
                 
                 let idPostagem = await postagemDAO.selectLastId()
-                let id =  Number(idPostagem[0].id)
+                let id = Number(idPostagem[0].id)
 
                 let categoriasARRAY = []
                 let imagensARRAY = []
@@ -65,6 +65,7 @@ const setNovaPostagem = async (dadosPostagem, contentType) => {
                 await Promise.all(categoriaPromise)
                 await Promise.all(imagePromisse)
                 
+                dadosPostagem.id = id
                 dadosPostagem.categorias = categoriasARRAY
                 dadosPostagem.imagens = imagensARRAY
 
