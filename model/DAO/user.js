@@ -320,7 +320,8 @@ const selectFeed = async (id) => {
        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
        LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${id}
-       WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+       WHERE tp.produto_status = true
+       AND tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
        GROUP BY tp.id_produto
        
        UNION ALL
@@ -348,7 +349,8 @@ const selectFeed = async (id) => {
        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
        LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${id}
-       WHERE tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
+       WHERE tp.postagem_status = true 
+       AND tcp.id_categoria IN (SELECT id_categoria FROM tbl_preferencia WHERE id_usuario = ${id} AND preferencia_status = true)
        GROUP BY tp.id_postagem
        
        UNION ALL
@@ -376,6 +378,7 @@ const selectFeed = async (id) => {
        LEFT JOIN tbl_categoria_produto AS tcp ON tp.id_produto = tcp.id_produto AND tcp.categoria_produto_status = true
        LEFT JOIN tbl_curtida_produto AS cp ON tp.id_produto = cp.id_produto AND cp.id_usuario = ${id}
        LEFT JOIN tbl_produto_favorito AS pf ON tp.id_produto = pf.id_produto AND pf.id_usuario = ${id}
+       WHERE tp.produto_status = true
        GROUP BY tp.id_produto
        HAVING tp.id_produto NOT IN (
         SELECT tp.id_produto FROM tbl_produto AS tp
@@ -408,6 +411,7 @@ const selectFeed = async (id) => {
        LEFT JOIN tbl_categoria_postagem AS tcp ON tp.id_postagem = tcp.id_postagem AND tcp.categoria_postagem_status = true
        LEFT JOIN tbl_curtida_postagem AS cp ON tp.id_postagem = cp.id_postagem AND cp.id_usuario = ${id}
        LEFT JOIN tbl_postagem_favorita AS pf ON tp.id_postagem = pf.id_postagem AND pf.id_usuario = ${id}
+       WHERE tp.postagem_status = true
        GROUP BY tp.id_postagem
        HAVING tp.id_postagem NOT IN (
         SELECT tp.id_postagem FROM tbl_postagem AS tp
