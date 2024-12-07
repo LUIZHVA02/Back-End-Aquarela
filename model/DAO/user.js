@@ -211,12 +211,16 @@ const updateUsuario = async function (id, dadosUsuarioUpdate) {
           sql += `, `;
         }
       } else {
-        sql += `${key} = '${dadosUsuarioUpdate[key]}'`;
+        if(typeof(dadosUsuarioUpdate[key]) === 'string'){
+          sql += `${key} = '${dadosUsuarioUpdate[key]}'`
+        }else{
+          sql += `${key} = ${dadosUsuarioUpdate[key]}`
+        }
         if (index !== keys.length - 1) {
           sql += `, `;
         }
       }
-    });
+    })
 
     sql += ` WHERE id_usuario = ${id};`;
 
