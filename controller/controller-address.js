@@ -11,7 +11,7 @@ const setNewAddress = async (dataAddress, contentType) => {
       if (
         dataAddress.logradouro == "" || dataAddress.logradouro == undefined || dataAddress.logradouro.length > 150 ||
         dataAddress.numero_casa == "" || dataAddress.numero_casa == undefined ||
-        dataAddress.complemento == "" || dataAddress.complemento == undefined || dataAddress.complemento.length > 150 ||
+        dataAddress.complemento == undefined ||
         dataAddress.bairro == "" || dataAddress.bairro == undefined || dataAddress.bairro.length > 150 ||
         dataAddress.estado == "" || dataAddress.estado == undefined || dataAddress.estado.length > 20 ||
         dataAddress.cidade == "" || dataAddress.cidade == undefined || dataAddress.cidade.length > 100 ||
@@ -99,7 +99,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           complemento != "" &&
           complemento != undefined &&
           complemento != null &&
-          complemento.length == 300
+          complemento.length < 300
         ) {
           updateAddressJson.complemento = complemento;
         } else if (
@@ -113,7 +113,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           bairro != "" &&
           bairro != undefined &&
           bairro != null &&
-          bairro.length == 300
+          bairro.length < 300
         ) {
           updateAddressJson.bairro = bairro;
         } else if (bairro == "" && bairro == undefined && bairro == null) {
@@ -123,7 +123,7 @@ const setUpdateAddress = async (dataAddress, contentType, id_endereco) => {
           estado != "" &&
           estado != undefined &&
           estado != null &&
-          estado.length == 50
+          estado.length < 50
         ) {
           updateAddressJson.estado = estado;
         } else if (estado == "" && estado == undefined && estado == null) {

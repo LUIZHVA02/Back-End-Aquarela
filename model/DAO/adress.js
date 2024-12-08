@@ -17,7 +17,7 @@ const insertAddress = async (dataAddress) => {
                                             values 
                                             (
                                                 '${dataAddress.logradouro}', 
-                                                '${dataAddress.numero_casa}', 
+                                                ${dataAddress.numero_casa}, 
                                                 '${dataAddress.complemento}', 
                                                 '${dataAddress.bairro}',
                                                 '${dataAddress.estado}', 
@@ -48,7 +48,11 @@ const updateAddress = async function (id, dataAddress) {
         const keys = Object.keys(dataAddress)
 
         keys.forEach((key, index) => {
-            sql += `${key} = '${dataAddress[key]}'`
+            if(typeof(dataAddress[key]) === 'string'){
+                sql += `${key} = '${dataAddress[key]}'`
+            }else{
+                sql += `${key} = ${dataAddress[key]}`
+            }
             if (index !== keys.length - 1) {
                 sql += `, `
             }
